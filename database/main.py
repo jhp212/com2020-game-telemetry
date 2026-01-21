@@ -18,6 +18,7 @@ Base = declarative_base()
 
 
 # Database model
+# These define the structure of the database tables
 class Telemetry(Base):
     __tablename__ = "telemetry"
 
@@ -34,12 +35,13 @@ class Parameters(Base):
     name = Column(String, primary_key=True, index=True)
     value = Column(Float, nullable=False)
 
+# Create tables if they don't exist
 Base.metadata.create_all(bind=engine)
 
 
 
 # Pydantic models
-# Models for request and response bodies, used for data validation
+# These define the structure of the data we send and receive via the API
 class TelemetryCreate(BaseModel):
     user_id: int
     stage_id: int
@@ -83,7 +85,6 @@ def get_db():
 
 # FastAPI app
 app = FastAPI()
-
 
 # Telemetry endpoints
 
