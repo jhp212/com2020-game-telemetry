@@ -1,3 +1,3 @@
-# Telemetry Dashboard with Balancing Suite
+# Telemetry Dashboard with Balancing Toolkit
 
 This directory contains the Telemetry Dashboard implementation.
