@@ -13,3 +13,7 @@ A simple tower defence game that records user telemetry data in order to facilit
 - Bela Roth (Dev team - QA & Testing) @brm457
 - Thomas Wilkin-Jones (Dev team - Game dev) @twj64
 - Zak Salmon (Dev team - Dashboard dev) @Salmonellaa
+
+## Port Mappings
+
+- 8000: Database Server
