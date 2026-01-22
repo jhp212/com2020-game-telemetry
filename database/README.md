@@ -37,6 +37,7 @@ To stop the server, press `Ctrl+C` in the terminal window in which the server is
 
 First, build the docker image by running:
 `docker build --tag td_database .`
+inside the database directory. Do not forget the `.` at the end
 
 Once it has built the image, start the container with:
 `docker run -p 8000:8000 td_database -d`
@@ -49,6 +50,8 @@ to find the container ID and then run
 to stop the container.
 
 ## Database Schema
+
+[Link to the Google Doc containing the schema](https://docs.google.com/document/d/1bH9D6rqOORPg6F0HKWtgtwtgyDObWbTXG5sBDbqe-9g/edit?usp=sharing)
 
 ## Defined telemetry entries
 
