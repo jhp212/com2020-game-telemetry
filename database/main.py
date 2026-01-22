@@ -3,9 +3,10 @@ from pydantic import BaseModel
 from sqlalchemy import create_engine, Column, Integer, String, JSON, DateTime, Float, ForeignKey
 from sqlalchemy.orm import sessionmaker, declarative_base, Session, relationship
 from datetime import datetime
+import os
 
-# Database setup
-DATABASE_URL = "sqlite:///./td.db"
+# Database setup (get url from environment variable or use default)
+DATABASE_URL = os.getenv("DATABASE_URL", "sqlite:///./td.db")
 
 engine = create_engine(
     DATABASE_URL,
@@ -25,14 +26,14 @@ class Telemetry(Base):
     id = Column(Integer, primary_key=True, index=True)
     user_id = Column(Integer, index=True, nullable=False)
     stage_id = Column(Integer, nullable=False)
-    telemetry_type = Column(String, nullable=False)
+    telemetry_type = Column(String(30), nullable=False)
     dateTime = Column(DateTime, default=datetime.now(), nullable=False)
     data = Column(JSON)
 
 class Parameters(Base):
     __tablename__ = "Parameter"
 
-    name = Column(String, primary_key=True, index=True)
+    name = Column(String(50), primary_key=True, index=True)
     value = Column(Float, nullable=False)
 
     decisions = relationship("DecisionLog", back_populates="parameter")
@@ -49,10 +50,10 @@ class DecisionLog(Base):
     __tablename__ = "DecisionLog"
 
     id = Column(Integer, primary_key=True, index=True)
-    parameter_name = Column(String, ForeignKey("Parameter.name"), nullable=False) # Foreign key which references Parameters.name
+    parameter_name = Column(String(50), ForeignKey("Parameter.name"), nullable=False) # Foreign key which references Parameters.name
     stage_id = Column(Integer, nullable=True)
     change = Column(String, nullable=False)
-    rationale = Column(String, nullable=False)
+    rationale = Column(String, nullable=True)
     evidence = Column(String, nullable=True)
     dateTime = Column(DateTime, default=datetime.now(), nullable=False)
 
@@ -81,6 +82,7 @@ class TelemetryResponse(BaseModel):
     dateTime: datetime
     data: dict
 
+    # Needed to convert from SQLAlchemy model objects to Pydantic model
     model_config = {"from_attributes": True}
 
 class ParameterCreate(BaseModel):
@@ -235,7 +237,7 @@ def create_decision_log(entry: DecisionLogCreate, db: Session = Depends(get_db))
 
 # Read all decision log entries
 @app.get("/decision_logs/", response_model=list[DecisionLogResponse])
-def read_all_decision_logs(decision_id: int | None = None, parameter_name: str | None = None, stage_id: int | None = None,
+def read_decision_logs(decision_id: int | None = None, parameter_name: str | None = None, stage_id: int | None = None,
                            start_time: datetime | None = None, end_time: datetime | None = None, db: Session = Depends(get_db)):
     query = db.query(DecisionLog)
     if decision_id is not None:

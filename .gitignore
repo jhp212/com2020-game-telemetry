@@ -1,2 +1,7 @@
+# directories
 .vscode/
+.venv/
 database/__pycache__/
+
+# files
+.env

@@ -1,0 +1,10 @@
+services:
+  database_api:
+    build:
+      context: ./database
+      dockerfile: Dockerfile
+    container_name: game-telemetry-database-api
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./database:/app
