@@ -1,7 +1,7 @@
-from fastapi import FastAPI, HTTPException, Depends
+from fastapi import FastAPI, Depends
 from pydantic import BaseModel
-from sqlalchemy import create_engine, Column, Integer, String, JSON, DateTime, Float
-from sqlalchemy.orm import sessionmaker, declarative_base, Session
+from sqlalchemy import create_engine, Column, Integer, String, JSON, DateTime, Float, ForeignKey
+from sqlalchemy.orm import sessionmaker, declarative_base, Session, relationship
 from datetime import datetime
 
 # Database setup
@@ -20,7 +20,7 @@ Base = declarative_base()
 # Database model
 # These define the structure of the database tables
 class Telemetry(Base):
-    __tablename__ = "telemetry"
+    __tablename__ = "Telemetry"
 
     id = Column(Integer, primary_key=True, index=True)
     user_id = Column(Integer, index=True, nullable=False)
@@ -30,10 +30,34 @@ class Telemetry(Base):
     data = Column(JSON)
 
 class Parameters(Base):
-    __tablename__ = "parameters"
+    __tablename__ = "Parameter"
 
     name = Column(String, primary_key=True, index=True)
     value = Column(Float, nullable=False)
+
+    decisions = relationship("DecisionLog", back_populates="parameter")
+
+class BalancingRule(Base):
+    __tablename__ = "BalancingRule"
+
+    id = Column(Integer, primary_key=True, index=True)
+    trigger_condition = Column(String, nullable=False)
+    suggested_change = Column(String, nullable=False)
+    explanation = Column(String, nullable=True)
+
+class DecisionLog(Base):
+    __tablename__ = "DecisionLog"
+
+    id = Column(Integer, primary_key=True, index=True)
+    parameter_name = Column(String, ForeignKey("Parameter.name"), nullable=False) # Foreign key which references Parameters.name
+    stage_id = Column(Integer, nullable=True)
+    change = Column(String, nullable=False)
+    rationale = Column(String, nullable=False)
+    evidence = Column(String, nullable=True)
+    dateTime = Column(DateTime, default=datetime.now(), nullable=False)
+
+    parameter = relationship("Parameters", back_populates="decisions")
+
 
 # Create tables if they don't exist
 Base.metadata.create_all(bind=engine)
@@ -57,8 +81,7 @@ class TelemetryResponse(BaseModel):
     dateTime: datetime
     data: dict
 
-    class Config:
-        from_attributes = True
+    model_config = {"from_attributes": True}
 
 class ParameterCreate(BaseModel):
     name: str
@@ -68,10 +91,39 @@ class ParameterResponse(BaseModel):
     name: str
     value: float
 
-    class Config:
-        from_attributes = True
+    model_config = {"from_attributes": True}
 
+class BalancingRuleCreate(BaseModel):
+    trigger_condition: str
+    suggested_change: str
+    explanation: str | None = None
 
+class BalancingRuleResponse(BaseModel):
+    id: int
+    trigger_condition: str
+    suggested_change: str
+    explanation: str | None = None
+
+    model_config = {"from_attributes": True}
+
+class DecisionLogCreate(BaseModel):
+    parameter_name: str
+    stage_id: int | None = None
+    change: str
+    rationale: str
+    evidence: str | None = None
+    dateTime: datetime
+
+class DecisionLogResponse(BaseModel):
+    id: int
+    parameter_name: str
+    stage_id: int | None = None
+    change: str
+    rationale: str
+    evidence: str | None = None
+    dateTime: datetime
+
+    model_config = {"from_attributes": True}
 
 # Dependency to get DB session
 def get_db():
@@ -97,24 +149,25 @@ def create_telemetry(telemetry: TelemetryCreate, db: Session = Depends(get_db)):
     db.refresh(db_telemetry)
     return db_telemetry
 
-# Read all telemetry records
+# Get all telemetry that satisfy the given conditions
 @app.get("/telemetry/", response_model=list[TelemetryResponse])
-def read_all_telemetry(db: Session = Depends(get_db)):
-    telemetry_records = db.query(Telemetry).all()
-    return telemetry_records
+def read_telemetry(telemetry_id: int | None = None, user_id: int | None = None, stage_id: int | None = None,
+                   start_time: datetime | None = None, end_time: datetime | None = None, db: Session = Depends(get_db)):
+    query = db.query(Telemetry)
+    if telemetry_id is not None:
+        query = query.filter(Telemetry.id == telemetry_id)
+    if user_id is not None:
+        query = query.filter(Telemetry.user_id == user_id)
+    if stage_id is not None:
+        query = query.filter(Telemetry.stage_id == stage_id)
+    if start_time is not None and end_time is not None:
+        query = query.filter(Telemetry.dateTime >= start_time, Telemetry.dateTime <= end_time)
+    elif start_time is not None:
+        query = query.filter(Telemetry.dateTime >= start_time)
+    elif end_time is not None:
+        query = query.filter(Telemetry.dateTime <= end_time)
 
-# Read telemetry records for a specific user
-@app.get("/telemetry/user/{user_id}", response_model=list[TelemetryResponse])
-def read_telemetry(user_id: int, db: Session = Depends(get_db)):
-    telemetry_records = db.query(Telemetry).filter(Telemetry.user_id == user_id).all()
-    return telemetry_records
-
-# Read telemetry records for a specific stage
-@app.get("/telemetry/stage/{stage_id}", response_model=list[TelemetryResponse])
-def read_telemetry_by_stage(stage_id: int, db: Session = Depends(get_db)):
-    telemetry_records = db.query(Telemetry).filter(Telemetry.stage_id == stage_id).all()
-    return telemetry_records
-
+    return query.all()
 
 # Parameters endpoints
 
@@ -140,14 +193,62 @@ def create_parameter(parameter: ParameterCreate, db: Session = Depends(get_db)):
 
 # Read all parameters
 @app.get("/parameters/", response_model=list[ParameterResponse])
-def read_all_parameters(db: Session = Depends(get_db)):
-    parameters = db.query(Parameters).all()
-    return parameters
+def read_parameters(parameter_name: str | None = None, db: Session = Depends(get_db)):
+    query = db.query(Parameters)
+    if parameter_name is not None:
+        query = query.filter(Parameters.name == parameter_name)
+    return query.all()
 
-# Read parameter by name
-@app.get("/parameters/{name}", response_model=ParameterResponse)
-def read_parameter(name: str, db: Session = Depends(get_db)):
-    parameter = db.query(Parameters).filter(Parameters.name == name).first()
-    if parameter is None:
-        raise HTTPException(status_code=404, detail="Parameter not found")
-    return parameter
+
+
+# BalancingRule endpoints
+
+# Create balancing rule
+@app.post("/balancing_rules/", response_model=BalancingRuleResponse)
+def create_balancing_rule(rule: BalancingRuleCreate, db: Session = Depends(get_db)):
+    db_rule = BalancingRule(**rule.model_dump())
+    db.add(db_rule)
+    db.commit()
+    db.refresh(db_rule)
+    return db_rule
+
+# Read all balancing rules
+@app.get("/balancing_rules/", response_model=list[BalancingRuleResponse])
+def read_balancing_rules(rule_id: int | None = None, db: Session = Depends(get_db)):
+    query = db.query(BalancingRule)
+    if rule_id is not None:
+        query = query.filter(BalancingRule.id == rule_id)
+    return query.all()
+
+
+
+# DecisionLog endpoints
+
+# Create decision log entry
+@app.post("/decision_logs/", response_model=DecisionLogResponse)
+def create_decision_log(entry: DecisionLogCreate, db: Session = Depends(get_db)):
+    db_entry = DecisionLog(**entry.model_dump())
+    db.add(db_entry)
+    db.commit()
+    db.refresh(db_entry)
+    return db_entry
+
+# Read all decision log entries
+@app.get("/decision_logs/", response_model=list[DecisionLogResponse])
+def read_all_decision_logs(decision_id: int | None = None, parameter_name: str | None = None, stage_id: int | None = None,
+                           start_time: datetime | None = None, end_time: datetime | None = None, db: Session = Depends(get_db)):
+    query = db.query(DecisionLog)
+    if decision_id is not None:
+        query = query.filter(DecisionLog.decision_id == decision_id)
+    if parameter_name is not None:
+        query = query.filter(DecisionLog.parameter_name == parameter_name)
+    if stage_id is not None:
+        query = query.filter(DecisionLog.stage_id == stage_id)
+    if start_time is not None and end_time is not None:
+        query = query.filter(DecisionLog.dateTime >= start_time, DecisionLog.dateTime <= end_time)
+    elif start_time is not None:
+        query = query.filter(DecisionLog.dateTime >= start_time)
+    elif end_time is not None:
+        query = query.filter(DecisionLog.dateTime <= end_time)
+
+    return query.all()
