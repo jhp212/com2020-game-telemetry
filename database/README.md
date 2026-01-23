@@ -55,8 +55,18 @@ to stop the container.
 
 ## Defined telemetry entries
 
-None as of yet.
+- stage_start {}
+- stage_end {}
+- enemy_defeated {enemy_id: Integer}
+- damage_taken {amount: Integer, remaining_health: Integer}
+- tower_spawn {tower_id: Integer}
+- tower_upgrade {tower_id: Integer, upgrade_id: Integer}
+- money_spent {amount: Integer, remaining_amount: Integer}
 
 ## Defined parameters
 
-None as of yet.
+- enemy_damage_multiplier {value: float}
+
+## Balancing rules
+
+- enemy_damage_stage_fail_rate {"If the death rate is greater than __%, reduce the enemy_damage_multipler"}

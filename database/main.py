@@ -1,8 +1,9 @@
-from fastapi import FastAPI, Depends
+from fastapi import FastAPI, Depends, HTTPException
 from pydantic import BaseModel
 from sqlalchemy import create_engine, Column, Integer, String, JSON, DateTime, Float, ForeignKey
 from sqlalchemy.orm import sessionmaker, declarative_base, Session, relationship
 from datetime import datetime
+from constants import *
 import os
 
 # Database setup (get url from environment variable or use default)
@@ -145,6 +146,8 @@ app = FastAPI()
 # Create telemetry record
 @app.post("/telemetry/", response_model=TelemetryResponse)
 def create_telemetry(telemetry: TelemetryCreate, db: Session = Depends(get_db)):
+    if telemetry.telemetry_type not in ALLOWED_TELEMETRY_TYPES:
+        raise HTTPException(status_code=400, detail=f"Invalid telemetry_type. Allowed types: {ALLOWED_TELEMETRY_TYPES}")
     db_telemetry = Telemetry(**telemetry.model_dump())
     db.add(db_telemetry)
     db.commit()
