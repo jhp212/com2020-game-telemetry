@@ -3,8 +3,17 @@ from pydantic import BaseModel
 from sqlalchemy import create_engine, Column, Integer, String, JSON, DateTime, Float, ForeignKey
 from sqlalchemy.orm import sessionmaker, declarative_base, Session, relationship
 from datetime import datetime
-from database.constants import *
 import os
+
+# Import allowed telemetry types from constants module
+# This try-except block allows for flexible importing depending on whether you are running the script or running pytests
+try:
+    from database.constants import ALLOWED_TELEMETRY_TYPES
+except ModuleNotFoundError:
+    try:
+        from constants import ALLOWED_TELEMETRY_TYPES
+    except ModuleNotFoundError:
+        raise ModuleNotFoundError("Could not import ALLOWED_TELEMETRY_TYPES from database.constants or constants. Please ensure the file exists.")
 
 # Database setup (get url from environment variable or use default)
 DATABASE_URL = os.getenv("DATABASE_URL", "sqlite:///./td.db")
