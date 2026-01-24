@@ -40,7 +40,7 @@ First, build the docker image by running:
 inside the database directory. Do not forget the `.` at the end
 
 Once it has built the image, start the container with:
-`docker run -p 10101:10101 td_database -d`
+`docker run -p 10101:10101 -d td_database`
 This runs the container detached so that it runs in the background.
 
 To stop the container, first, run:
