@@ -15,7 +15,10 @@ sys.path.insert(0, str(ROOT))
 from database.main import Base, app, get_db  
 
 #creating an database engine just for tests so real data isn't affected
-engine = create_engine("sqlite:///./test.db")
+engine = create_engine(
+    "sqlite:///./test.db",
+    connect_args={"check_same_thread": False}
+)
 TestingSessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 
 #runs before and then after all tests
