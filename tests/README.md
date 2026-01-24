@@ -10,7 +10,7 @@ Currently, tests verify API endpoints, datebase models and relationships
 Assumes the `database/` directory is located at the same level as the `tests/` directory
 
 - Python 3.9 or newer
-- All requirements specified in `requirements.txt` To install all necessary requirements, run the following command from the `test/` directory: `pip install -r requirements.txt`
+- All requirements specified in `requirements.txt` To install all necessary requirements, run the following command from the `tests/` directory: `pip install -r requirements.txt`
 
 ## Running Tests
 
