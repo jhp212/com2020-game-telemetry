@@ -15,6 +15,6 @@ It is designed to display telemetry data from a database in structured tables.
 
 From the `dashboard/` directory, run:
 
-`python -m uvicorn app:app --reload`
+`uvicorn app:app --port 10102 --reload`
 
-Open `http://127.0.0.1:8000/` in your browser.
+Open `http://127.0.0.1:10102/` in your browser.

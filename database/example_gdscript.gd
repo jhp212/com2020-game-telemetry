@@ -1,6 +1,6 @@
 extends Node
 
-const BASE_URL = "http://127.0.0.1:8000"
+const BASE_URL = "http://127.0.0.1:10101"
 
 func create_telemetry(telemetry_data):
     var http_request = HTTPRequest.new()

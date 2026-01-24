@@ -1,6 +1,6 @@
 import requests, json
 
-BASE_URL = "http://127.0.0.1:8000"
+BASE_URL = "http://127.0.0.1:10101"
 
 def create_telemetry(telemetry_data):
     response = requests.post(f"{BASE_URL}/telemetry/", json=telemetry_data)

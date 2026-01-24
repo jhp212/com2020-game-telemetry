@@ -2,6 +2,7 @@
 .vscode/
 .venv/
 database/__pycache__/
+dashboard/__pycache__/
 
 # files
 .env

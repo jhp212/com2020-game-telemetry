@@ -5,6 +5,16 @@ services:
       dockerfile: Dockerfile
     container_name: game-telemetry-database-api
     ports:
-      - "8000:8000"
+      - "10101:10101"
     volumes:
       - ./database:/app
+  
+  dashboard:
+    build:
+      context: ./dashboard
+      dockerfile: Dockerfile
+    container_name: game-telemetry-dashboard
+    ports:
+      - "10102:10102"
+    volumes:
+      - ./dashboard:/app

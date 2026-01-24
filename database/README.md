@@ -25,10 +25,10 @@ There are 2 ways to run this server:
 ### Bare metal
 
 To run the project, inside the database directory, run the following in a terminal window:
-`uvicorn main:app --reload`
+`uvicorn main:app --port 10101 --reload`
 
 To verify it is running, in a web browser, visit:
-`http://127.0.0.1:8000/docs`
+`http://127.0.0.1:10101/docs`
 If all is working, you should be brought to the documentation page where you can test the different endpoints.
 
 To stop the server, press `Ctrl+C` in the terminal window in which the server is running.
@@ -40,7 +40,7 @@ First, build the docker image by running:
 inside the database directory. Do not forget the `.` at the end
 
 Once it has built the image, start the container with:
-`docker run -p 8000:8000 td_database -d`
+`docker run -p 10101:10101 td_database -d`
 This runs the container detached so that it runs in the background.
 
 To stop the container, first, run:

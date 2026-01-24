@@ -16,4 +16,5 @@ A simple tower defence game that records user telemetry data in order to facilit
 
 ## Port Mappings
 
-- 8000: Database Server
+- 10101: Database Server
+- 10102: Dashboard Server
