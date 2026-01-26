@@ -1,9 +1,26 @@
 {% extends "base.html" %}
 
 {% block content %}
-  <h1>Welcome</h1>
+  <h2>Telemetry</h2>
 
-    <!-- This is where telemetry tables will be rendered -->
-
-  <p>no content yet...</p>
+  <table>
+    <thead>
+      <tr>
+        <th>Time</th>
+        <th>User</th>
+        <th>Stage</th>
+        <th>Event Type</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for r in telemetry_rows %}
+        <tr>
+          <td>{{ r.dateTime }}</td>
+          <td>{{ r.user_id }}</td>
+          <td>{{ r.stage_id }}</td>
+          <td>{{ r.telemetry_type }}</td>
+        </tr>
+      {% endfor %}
+    </tbody>
+  </table>
 {% endblock %}
