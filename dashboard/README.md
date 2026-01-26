@@ -3,7 +3,8 @@
 This directory contains the Telemetry Dashboard implementation built with FastAPI and Jinja2.
 It is designed to display telemetry data from a database in structured tables.
 
-# Tech Stack
+## Tech Stack
+
     * Python 3.14
     * FastAPI
     * Jinja2
@@ -11,7 +12,7 @@ It is designed to display telemetry data from a database in structured tables.
     * SQLAlchemy
     * HTML + CSS
 
-# Running the Dashboard
+## Running the Dashboard
 
 From the `dashboard/` directory, run:
 

@@ -1,11 +1,10 @@
-# Test Suite 
+# Test Suite
 
-This directory contains the automated test suite for the db and FastAPI backend 
+This directory contains the automated test suite for the db and FastAPI backend
 
 Currently, tests verify API endpoints, datebase models and relationships
 
-
-## Requirements 
+## Requirements
 
 Assumes the `database/` directory is located at the same level as the `tests/` directory
 
@@ -17,8 +16,10 @@ Assumes the `database/` directory is located at the same level as the `tests/` d
 Run tests from the **project root directory**
 
 To run all tests:
+
 - `pytest`
 
 To run specific tests:
+
 - `pytest tests/api`
 - `pytest tests/db`
