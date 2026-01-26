@@ -1,0 +1,32 @@
+{% extends "base.html" %}
+{% block content %}
+  <h2>Decision Log</h2>
+
+  <table>
+    <thead>
+      <tr>
+        <th>Time</th>
+        <th>id</th>
+        <th>Parameter</th>
+        <th>Stage</th>
+        <th>Change</th>
+        <th>Rationale</th>
+        <th>Evidence</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for r in decision_log_rows %}
+        <tr>
+          <td>{{ r.dateTime }}</td>
+          <td>{{ r.id }}</td>
+          <td>{{ r.parameter_name }}</td>
+          <td>{{ r.stage_id }}</td>
+          <td>{{ r.change }}</td>
+          <td>{{ r.rationale }}</td>
+          <td>{{ r.evidence }}</td>
+          
+        </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+{% endblock %}

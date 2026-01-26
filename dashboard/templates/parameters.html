@@ -1,0 +1,21 @@
+{% extends "base.html" %}
+{% block content %}
+  <h2>Parameters</h2>
+
+  <table>
+    <thead>
+      <tr>
+        <th>Parameter Name</th>
+        <th>Value</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for r in decision_log_rows %}
+        <tr>
+          <td>{{ r.name }}</td>
+          <td>{{ r.value }}</td>
+        </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+{% endblock %}

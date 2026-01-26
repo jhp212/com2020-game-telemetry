@@ -1,7 +1,7 @@
 from datetime import datetime, timedelta
 import random
 
-from database.main import SessionLocal, Telemetry, Parameters
+from database.main import SessionLocal, Telemetry, Parameters, DecisionLog
 
 def seed():
     db = SessionLocal()
@@ -45,9 +45,20 @@ def seed():
                 },
             )
             db.add(t)
+            
+        for i in range(100):
+            d = DecisionLog(
+                id=random.randint(1, 10000),
+                parameter_name = random.choice(["enemy_damage","enemy_health","player_speed","spawn_rate"]),
+                stage_id=random.randint(1, 3),
+                change= "TESTING CHANGE MADE",
+                rationale = "TESTING RATIONALE",
+                evidence = "TESTING EVIDENCE",
+                dateTime=base_time + timedelta(seconds=i * 10),
+            )
+            db.add(d)
 
         db.commit()
-        print("Seed complete: parameters + 300 telemetry rows inserted.")
 
     finally:
         db.close()
