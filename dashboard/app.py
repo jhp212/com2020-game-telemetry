@@ -4,6 +4,7 @@ from fastapi.responses import HTMLResponse
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates # Jinja2 will be used for templates
 from database.main import *
+import random
 
 # Absolute path of dashboard/app.py
 BASE_DIR = Path(__file__).resolve().parent
@@ -40,7 +41,9 @@ async def dashboard(request: Request, db: Session = Depends(get_db)):
                 "dateTime": t.dateTime,
                 "user_id": t.user_id,
                 "stage_id": t.stage_id,
-                "telemetry_type": t.telemetry_type
+                "telemetry_type": t.telemetry_type,
+                "data": t.data,
+                "enemy_damage_multiplier": random.randint(1, 5)
             }
         )
     return templates.TemplateResponse(

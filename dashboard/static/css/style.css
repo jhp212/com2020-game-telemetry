@@ -1,0 +1,22 @@
+body{
+    background-color: #333;
+    color: #b9b9b9;
+}
+
+table {
+  border-collapse: collapse; /* makes borders look clean */
+  width: 100%;
+  margin: 1rem 0;
+}
+
+th,
+td {
+    background-color: #333;
+    border: 1px solid #b9b9b9;
+    padding: 8px 10px;
+    text-align: left;
+}
+
+th {
+  font-weight: 600;
+}

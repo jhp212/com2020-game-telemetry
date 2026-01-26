@@ -10,6 +10,10 @@
         <th>User</th>
         <th>Stage</th>
         <th>Event Type</th>
+        <th>Data</th>
+        <th>Enemy Damage Multiplier</th>
+       
+
       </tr>
     </thead>
     <tbody>
@@ -19,6 +23,9 @@
           <td>{{ r.user_id }}</td>
           <td>{{ r.stage_id }}</td>
           <td>{{ r.telemetry_type }}</td>
+          <td>{{ r.data }}</td>
+          <td>{{ r.enemy_damage_multiplier }}</td>
+          
         </tr>
       {% endfor %}
     </tbody>
