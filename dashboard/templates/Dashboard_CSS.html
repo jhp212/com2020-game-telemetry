@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Dashboard Hub</title>
+    <style>
+        body {
+            margin: 0;
+            background-color: #3B3B3B;
+        }
+        header {
+            background-color: grey;
+            color: aliceblue;
+            display: flex;
+        }
+        .container{
+            display: grid;
+            grid-template-columns: 50px 50px 50px;
+        }
+        .sideNavBar {
+            background: #555;
+            padding: 5px;
+            border: 5px solid black;
+            width: fit-content;
+        }
+        .tile {
+            background-color: gray;
+            color: white;
+            text-align: center;
+            padding: 15px;
+        }
+    </style>
+</head>    
+<body>
+
+    <header>
+        <h1>Dashboard Hub</h1>
+        <button>Logout</button>
+    </header>
+    <div class="sideNavBar">
+
+        <div class="tile">Telemetry Overview</div>
+        <div class="tile">Funnel View</div>
+        <div class="tile">Simulation mode</div>
+        <div class="tile">Comparison mode</div>
+        <div class="tile">Decision log</div>
+    </div>
+    </body>
+</html>
