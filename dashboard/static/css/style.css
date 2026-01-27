@@ -1,6 +1,8 @@
 body{
     background-color: #333;
     color: #b9b9b9;
+    font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
+    margin: 0;
 }
 
 table {
@@ -12,11 +14,40 @@ table {
 th,
 td {
     background-color: #333;
-    border: 1px solid #b9b9b9;
+    border: 3px solid #b9b9b9;
     padding: 8px 10px;
     text-align: left;
 }
 
 th {
   font-weight: 600;
+}
+
+ul {
+  list-style-type: none;
+  margin: 0;
+  padding: 0;
+  width: 150px;
+  background-color: #f1f1f1;
+  position: fixed;
+  height: 100%;
+  overflow: auto;
+}
+
+
+li a {
+  display: block;
+  color: black;
+  padding: 120px 30px;
+  text-decoration: none;
+}
+
+li a.active {
+  background-color: #04AA6D;
+  color: white;
+}
+
+li a:hover:not(.active) {
+  background-color: #555555;
+  color: white;
 }

@@ -26,8 +26,18 @@ def get_db():
     finally:
         db.close()
 
-# Root page for the dashboard
+# root page
 @app.get("/", response_class=HTMLResponse)
+async def home(request: Request):
+    
+    return templates.TemplateResponse(
+        "base.html",
+        {"request": request, "title": "Home"}
+    )
+
+
+# dashboard
+@app.get("/dashboard", response_class=HTMLResponse)
 async def dashboard(request: Request, db: Session = Depends(get_db)):
     
     raw = (

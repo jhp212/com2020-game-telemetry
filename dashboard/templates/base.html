@@ -7,14 +7,18 @@
     <!-- Title injected from FastAPI-->
     <title>{{ title }}</title>
     <!-- CSS injected from FastAPI-->
-    <link rel="stylesheet" href="{{ url_for('static', path='/css/style.css') }}">
+    <link rel="stylesheet" href="static/css/style.css">
 </head>
 <body>
-    <nav style="margin-bottom: 1rem;">
-        <a href="/">Dashboard</a> |
-        <a href="/decisionLog">Decision Log</a> |
-        <a href="/parameters">Parameters</a>
-    </nav>    
+    <ul>
+        <li> <a href="/">Home</a></li>
+        <li><a href="/dashboard">Dashboard</a></li>
+        <li><a href="/decisionLog">Decision Log</a></li>
+        <li><a href="/parameters">Parameters</a></li>
+    </ul>
+    <div style="margin-left:150px;padding:1px 16px;height:1px;">
+
+    </div>  
     <main>
         {% block content %}{% endblock %}
     </main>
