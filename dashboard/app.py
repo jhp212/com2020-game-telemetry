@@ -5,12 +5,12 @@ from fastapi import FastAPI, Request, HTTPException
 from fastapi.responses import HTMLResponse
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates # Jinja2 will be used for templates
-from database.main import *
-import requests
+# from database.main import 
+import requests, os
 
 # Absolute path of dashboard/app.py
 BASE_DIR = Path(__file__).resolve().parent
-BASE_URL = "http://127.0.0.1:10101"
+BASE_URL = os.getenv("API_URL", "http://127.0.0.1:10101")
 
 # FastAPI app
 app = FastAPI()
@@ -101,7 +101,7 @@ async def dashboard(request: Request):
     
     
 @app.get("/decisionLog", response_class=HTMLResponse)
-async def decisionLog(request: Request, db: Session = Depends(get_db)):
+async def decisionLog(request: Request):
     
     response = requests.get(f"{BASE_URL}/decision_logs/")
     if not response.ok:
