@@ -1,0 +1,19 @@
+[gd_scene load_steps=4 format=3 uid="uid://dl17kej4x123r"]
+
+[ext_resource type="Texture2D" uid="uid://86e3l88crkw8" path="res://Assets/Towers/Circle - Small.png" id="1_jmena"]
+[ext_resource type="Script" uid="uid://d4akmc2uj5byh" path="res://Scenes/Enemies/small_circle.gd" id="1_ro72h"]
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_ro72h"]
+radius = 16.0312
+
+[node name="SmallCircle" type="PathFollow2D"]
+loop = false
+script = ExtResource("1_ro72h")
+
+[node name="Body" type="CharacterBody2D" parent="."]
+
+[node name="Sprite2D" type="Sprite2D" parent="Body"]
+texture = ExtResource("1_jmena")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Body"]
+shape = SubResource("CircleShape2D_ro72h")

@@ -1,0 +1,20 @@
+[gd_scene load_steps=4 format=3 uid="uid://cbw33st3poesk"]
+
+[ext_resource type="Script" uid="uid://c5vgsbbphwsl3" path="res://Scenes/Towers/square_stock.gd" id="1_7p6d0"]
+[ext_resource type="Texture2D" uid="uid://bhiac8wfhdbsu" path="res://Assets/Towers/Square  -Stock.png" id="2_7p6d0"]
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_7p6d0"]
+
+[node name="SquareStock" type="Node2D"]
+script = ExtResource("1_7p6d0")
+
+[node name="Body" type="Sprite2D" parent="."]
+texture = ExtResource("2_7p6d0")
+
+[node name="ShootPosition" type="Marker2D" parent="Body"]
+position = Vector2(20, -20)
+
+[node name="Range" type="Area2D" parent="."]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Range"]
+shape = SubResource("CircleShape2D_7p6d0")

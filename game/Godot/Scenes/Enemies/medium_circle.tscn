@@ -1,0 +1,19 @@
+[gd_scene load_steps=4 format=3 uid="uid://cjvus6awcy4fx"]
+
+[ext_resource type="Script" uid="uid://b60sw4o57bejr" path="res://Scenes/Enemies/medium_circle.gd" id="1_8q8hi"]
+[ext_resource type="Texture2D" uid="uid://cffhrcyqbd3c" path="res://Assets/Enemies/Circle - Medium.png" id="1_oixid"]
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_8q8hi"]
+radius = 32.249
+
+[node name="MediumCircle" type="PathFollow2D"]
+loop = false
+script = ExtResource("1_8q8hi")
+
+[node name="Body" type="CharacterBody2D" parent="."]
+
+[node name="Sprite2D" type="Sprite2D" parent="Body"]
+texture = ExtResource("1_oixid")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Body"]
+shape = SubResource("CircleShape2D_8q8hi")
