@@ -13,6 +13,13 @@ def seed():
             ("player_speed", 6.2),
             ("spawn_rate", 1.4),
         ]
+        
+        # deleting child tables first to avoid errors during seeding
+        db.query(DecisionLog).delete()
+        db.query(Telemetry).delete()
+        db.query(Parameters).delete()
+        db.commit()
+
 
         for name, value in params:
             existing = db.query(Parameters).filter(Parameters.name == name).first()

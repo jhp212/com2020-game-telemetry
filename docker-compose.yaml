@@ -18,3 +18,7 @@ services:
       - "10102:10102"
     volumes:
       - ./dashboard:/app
+    environment:
+      - API_URL=http://database_api:10101
+    depends_on:
+      - database_api

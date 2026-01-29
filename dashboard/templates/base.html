@@ -10,17 +10,19 @@
     <link rel="stylesheet" href="static/css/style.css">
 </head>
 <body>
-    <ul>
-        <li> <a href="/">Home</a></li>
-        <li><a href="/dashboard">Dashboard</a></li>
-        <li><a href="/decisionLog">Decision Log</a></li>
-        <li><a href="/parameters">Parameters</a></li>
-    </ul>
-    <div style="margin-left:150px;padding:1px 16px;height:1px;">
+    <div class="layout">
+        <aside class="sidebar">
+        <nav class="nav">
+            <a href="/">Home</a>
+            <a href="/dashboard">Dashboard</a>
+            <a href="/decisionLog">Decision Log</a>
+            <a href="/parameters">Parameters</a>
+        </nav>
+        </aside>
 
-    </div>  
-    <main>
-        {% block content %}{% endblock %}
+    <main class="content">
+      {% block content %}{% endblock %}
     </main>
+  </div>
 </body>
 </html>
