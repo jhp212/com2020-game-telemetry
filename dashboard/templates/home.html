@@ -1,0 +1,37 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="page">
+  <h1>{{ title }}</h1>
+
+  <section class="graphs">
+    <div class="graph half">
+      <h3>Telemetry Type Counts</h3>
+      <div class="chartWrap">
+        <canvas id="telemetryCountsChart"></canvas>
+      </div>
+    </div>
+  </section>
+</div>
+
+
+<!-- We will use chart.js for the visual representation of data --> 
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+  const typeLabels = {{ type_labels_json | safe }};
+  const typeValues = {{ type_values_json | safe }};
+
+  /* Telemetry Chart */
+  new Chart(document.getElementById("telemetryCountsChart"), {
+    type: "bar",
+    data: {
+      labels: typeLabels,
+      datasets: [{ label: "Count", data: typeValues }]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false
+    }
+  });
+</script>
+{% endblock %}

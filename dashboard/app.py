@@ -1,5 +1,7 @@
+import json
+from collections import Counter
 from pathlib import Path
-from fastapi import FastAPI, Request
+from fastapi import FastAPI, Request, HTTPException
 from fastapi.responses import HTMLResponse
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates # Jinja2 will be used for templates
@@ -24,11 +26,40 @@ templates = Jinja2Templates(directory=str(BASE_DIR / "templates"))
 @app.get("/", response_class=HTMLResponse)
 async def home(request: Request):
     
-    return templates.TemplateResponse(
-        "base.html",
-        {"request": request, "title": "Home"}
-    )
+    r = requests.get(f"{BASE_URL}/telemetry/")
+    if not r.ok:
+        raise HTTPException(status_code=r.status_code, detail=r.text)
 
+    try:
+        telemetry = r.json()
+    except ValueError:
+        raise HTTPException(
+            status_code=500,
+            detail=f"Telemetry API did not return JSON. Content-Type={r.headers.get('content-type')} Body starts: {r.text[:200]}"
+        )
+
+    # Chart 1: Money spent over time (uses nested data.amount)
+    money_rows = [t for t in telemetry if t.get("telemetry_type") == "money_spent"]
+
+    money_spent_labels = [t.get("dateTime") for t in money_rows]
+    money_spent_values = [t.get("data", {}).get("amount") for t in money_rows]
+
+    # Chart 2: Count of telemetry types
+    type_counts = Counter(t.get("telemetry_type") for t in telemetry if t.get("telemetry_type"))
+    type_labels = list(type_counts.keys())
+    type_values = list(type_counts.values())
+
+    return templates.TemplateResponse(
+        "home.html",
+        {
+            "request": request,
+            "title": "Home",
+            "money_spent_labels_json": json.dumps(money_spent_labels),
+            "money_spent_values_json": json.dumps(money_spent_values),
+            "type_labels_json": json.dumps(type_labels),
+            "type_values_json": json.dumps(type_values),
+        }
+    )
 
 # dashboard
 @app.get("/dashboard", response_class=HTMLResponse)

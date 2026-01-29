@@ -1,6 +1,6 @@
 {% extends "base.html" %}
 {% block content %}
-<div style="margin-left:150px;padding:1px 16px;height:1px;">
+
   <h2>Parameters</h2>
 
   <table>
@@ -11,7 +11,7 @@
       </tr>
     </thead>
     <tbody>
-      {% for r in decision_log_rows %}
+      {% for r in parameter_rows %}
         <tr>
           <td>{{ r.name }}</td>
           <td>{{ r.value }}</td>
