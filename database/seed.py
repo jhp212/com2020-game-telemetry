@@ -1,7 +1,7 @@
 from datetime import datetime, timedelta
 import random
 
-from database.main import SessionLocal, Telemetry, Parameters, DecisionLog
+from main import SessionLocal, Telemetry, Parameters, DecisionLog
 
 def seed():
     db = SessionLocal()
@@ -24,7 +24,7 @@ def seed():
         for name, value in params:
             existing = db.query(Parameters).filter(Parameters.name == name).first()
             if existing:
-                existing.value = value
+                existing.value = value # type: ignore (safe to ignore as we checked for existence)
             else:
                 db.add(Parameters(name=name, value=value))
 
@@ -55,7 +55,6 @@ def seed():
             
         for i in range(100):
             d = DecisionLog(
-                id=random.randint(1, 10000),
                 parameter_name = random.choice(["enemy_damage","enemy_health","player_speed","spawn_rate"]),
                 stage_id=random.randint(1, 3),
                 change= "TESTING CHANGE MADE",
