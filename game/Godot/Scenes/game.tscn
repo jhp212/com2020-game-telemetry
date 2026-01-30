@@ -1,4 +1,4 @@
-[gd_scene load_steps=7 format=3 uid="uid://bw36ka3wx3gww"]
+[gd_scene load_steps=8 format=3 uid="uid://bw36ka3wx3gww"]
 
 [ext_resource type="PackedScene" uid="uid://dx73chnapq65w" path="res://Scenes/level_1_map.tscn" id="1_ebmjs"]
 [ext_resource type="Script" uid="uid://s0xabfgj4tei" path="res://Scenes/game.gd" id="1_qxrlw"]
@@ -6,6 +6,7 @@
 [ext_resource type="Texture2D" uid="uid://bg4cy6fcpqckt" path="res://Assets/Towers/Triangle - Stock.png" id="3_wrm1d"]
 [ext_resource type="Texture2D" uid="uid://dr1dia6nyt4un" path="res://Assets/Towers/Square - Stock.png" id="5_i6g32"]
 [ext_resource type="Texture2D" uid="uid://brx5cmnunc36u" path="res://Assets/Towers/Star - Stock.png" id="6_i6g32"]
+[ext_resource type="Texture2D" uid="uid://52mjc60fym5w" path="res://Assets/Health Bar.png" id="7_1l0tm"]
 
 [node name="Game" type="Node2D"]
 script = ExtResource("1_qxrlw")
@@ -74,4 +75,39 @@ horizontal_alignment = 2
 
 [node name="Cash" type="Label" parent="UI/HUD/CashUI/HBoxContainer"]
 layout_mode = 2
+theme_override_font_sizes/font_size = 15
 text = "00000"
+
+[node name="HealthUI" type="ColorRect" parent="UI/HUD"]
+modulate = Color(1, 1, 1, 0.470588)
+layout_mode = 0
+offset_left = 900.0
+offset_top = 589.0
+offset_right = 1140.0
+offset_bottom = 609.0
+color = Color(0, 0, 0, 1)
+
+[node name="HBoxContainer" type="HBoxContainer" parent="UI/HUD/HealthUI"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="Text" type="Label" parent="UI/HUD/HealthUI/HBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 6
+theme_override_font_sizes/font_size = 10
+text = "Health:"
+horizontal_alignment = 2
+
+[node name="HealthBar" type="TextureProgressBar" parent="UI/HUD/HealthUI/HBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 6
+size_flags_vertical = 4
+value = 100.0
+texture_under = ExtResource("7_1l0tm")
+texture_progress = ExtResource("7_1l0tm")
+tint_under = Color(0.252028, 0.252028, 0.252028, 1)
+tint_progress = Color(0, 0.745098, 0, 1)

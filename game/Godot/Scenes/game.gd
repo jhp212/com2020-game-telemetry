@@ -1,5 +1,6 @@
 extends Node2D
 
+signal game_finished(result)
 
 var map_node
 
@@ -12,6 +13,8 @@ var build_type
 var current_wave = 0
 var enemies_in_wave = 0
 # number of enemies spawned logged?
+
+var base_health = 100
 
 func _ready():
 	map_node = get_node("Level1Map")
@@ -42,6 +45,7 @@ func retrieve_wave_data():
 func spawn_enemies(wave_data):
 	for i in wave_data:
 		var new_enemy = load("res://Scenes/Enemies/" + i[0] + ".tscn").instantiate()
+		#new_enemy.connect("damage", self, 'on_damage')
 		map_node.get_node("Path2D").add_child(new_enemy, true)
 		await get_tree().create_timer(i[1]).timeout
 
@@ -88,7 +92,8 @@ func cancel_build_mode():
 	get_node("UI/TowerPreview").free()
 	
 func verify_and_build():
-	if build_valid:
+	var cost = GameData.tower_data[build_type]["cost"]
+	if build_valid and GameData.spend(cost):
 		#check cash
 		var new_tower = load("res://Scenes/Towers/" + build_type + ".tscn").instantiate()
 		new_tower.position = build_location
@@ -97,3 +102,10 @@ func verify_and_build():
 		map_node.get_node("TowerExclusion").set_cell(-1, build_tile, 3, Vector2i(0, 0))
 		#deduct cash
 		#update cash ui
+
+#func on_damage(damage):
+#	base_health -= damage
+#	if base_health <= 0:
+#		emit_signal("game_finished", false)
+#	else:
+#		get_node("UI").update_health_bar(base_health)
