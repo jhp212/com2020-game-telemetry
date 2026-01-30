@@ -6,7 +6,7 @@ var enemy
 var ready_to_shoot = true
 
 @onready var collision_shape: CollisionShape2D = $Range/CollisionShape2D
-
+@onready var shoot_position: Marker2D = $Body/ShootPosition
 
 func _physics_process(delta):
 	if enemy_array.size() != 0 and built:
@@ -31,11 +31,24 @@ func turn():
 
 func fire():
 	ready_to_shoot = false
+	apply_recoil()
 	enemy.on_hit(GameData.tower_data["triangle_stock"]["damage"])
 	await get_tree().create_timer(GameData.tower_data["triangle_stock"]["rof"]).timeout
 	ready_to_shoot = true
+	
 
+func apply_recoil():
+	var body := $Body
+	var recoil_distance := 8.0
+	var recoil_time := 0.04
 
+	var recoil_dir = -body.transform.x
+	var start_pos = body.position
+	var recoil_pos = start_pos + recoil_dir * recoil_distance
+
+	var tween = create_tween()
+	tween.tween_property(body, "position", recoil_pos, recoil_time)
+	tween.tween_property(body, "position", start_pos, recoil_time)
 
 func _init():
 	pass

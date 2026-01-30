@@ -1,9 +1,46 @@
-[gd_scene load_steps=4 format=3 uid="uid://6k8oc4r4w8ho"]
+[gd_scene load_steps=7 format=3 uid="uid://6k8oc4r4w8ho"]
 
 [ext_resource type="Script" uid="uid://dviqfftby2xeh" path="res://Scenes/Towers/triangle_stock.gd" id="1_e7kqv"]
 [ext_resource type="Texture2D" uid="uid://bg4cy6fcpqckt" path="res://Assets/Towers/Triangle - Stock.png" id="1_skvv2"]
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_h1k1e"]
+
+[sub_resource type="Animation" id="Animation_h1k1e"]
+resource_name = "shoot"
+length = 0.1
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("Body:position")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 0.025, 0.1),
+"transitions": PackedFloat32Array(1, 1, 1),
+"update": 0,
+"values": [Vector2(0, 0), Vector2(-10, 0), Vector2(0, 0)]
+}
+
+[sub_resource type="Animation" id="Animation_82ld0"]
+length = 0.001
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("Body:position")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Vector2(-10, 0)]
+}
+
+[sub_resource type="AnimationLibrary" id="AnimationLibrary_gsnjh"]
+_data = {
+&"RESET": SubResource("Animation_82ld0"),
+&"shoot": SubResource("Animation_h1k1e")
+}
 
 [node name="TriangleStock" type="Node2D"]
 z_index = 1
@@ -12,6 +49,7 @@ script = ExtResource("1_e7kqv")
 
 [node name="Body" type="Sprite2D" parent="."]
 modulate = Color(0.779291, 0.779291, 0.779291, 1)
+position = Vector2(-10, 0)
 texture = ExtResource("1_skvv2")
 offset = Vector2(12, 0)
 
@@ -23,6 +61,11 @@ position = Vector2(1, 0)
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="Range"]
 shape = SubResource("CircleShape2D_h1k1e")
+
+[node name="ShootAnimation" type="AnimationPlayer" parent="."]
+libraries = {
+&"": SubResource("AnimationLibrary_gsnjh")
+}
 
 [connection signal="body_entered" from="Range" to="." method="_on_range_body_entered"]
 [connection signal="body_exited" from="Range" to="." method="_on_range_body_exited"]

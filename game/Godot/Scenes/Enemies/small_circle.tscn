@@ -6,7 +6,7 @@
 [sub_resource type="CircleShape2D" id="CircleShape2D_ro72h"]
 radius = 16.0312
 
-[node name="SmallCircle" type="PathFollow2D"]
+[node name="SmallCircle" type="PathFollow2D" groups=["enemies"]]
 loop = false
 script = ExtResource("1_ro72h")
 
