@@ -24,3 +24,13 @@ services:
       - API_URL=http://database_api:10101
     depends_on:
       - database_api
+    
+  game:
+    build:
+      context: ./game
+      dockerfile: Dockerfile
+    container_name: game-telemetry-game
+    ports:
+      - "10103:10103"
+    volumes:
+      - ./game:/app
