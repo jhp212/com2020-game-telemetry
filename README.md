@@ -18,3 +18,4 @@ A simple tower defence game that records user telemetry data in order to facilit
 
 - 10101: Database Server
 - 10102: Dashboard Server
+- 10103: Game Server
