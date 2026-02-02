@@ -21,7 +21,7 @@
     </tbody>
   </table>
 
-  <button onclick="saveAllChanges()" id="save-button">Save All Changes</button>
+  <button onclick="saveAllChanges()" id="save-btn">Save All Changes</button>
   
   <div id="status-display" style="display:none; margin-top:10px; padding:10px; border-radius:4px;"></div>
 </div>
@@ -30,7 +30,7 @@
   // Save Button to execute the POST action
 async function saveAllChanges() {
     const rows = document.querySelectorAll('.param-row');
-    const saveButton = document.getElementById('save-button');
+    const saveBtn = document.getElementById('save-btn');
     const statusBox = document.getElementById('status-display');
 
     saveBtn.disabled = true;
@@ -46,11 +46,25 @@ async function saveAllChanges() {
             continue;
         }
 
+        const response = await fetch("/parameters/", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({
+                    name: name,
+                    value: value
+                })
+            });
+
     }
 
-    saveButton.disabled = false;
-    saveButton.innerText = "Save All Changes";
+    saveBtn.disabled = false;
+    saveBtn.innerText = "Save All Changes";
     
+    statusBox.style.display = "block";
+    statusBox.style.background = "#49751c";
+    statusBox.innerText = "All parameters saved successfully";
 }
 </script>
 {% endblock %}
