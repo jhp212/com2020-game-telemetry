@@ -4,7 +4,7 @@ var speed = GameData.enemy_data["medium_circle"]["speed"]
 var health =  GameData.enemy_data["medium_circle"]["health"]
 var damage =  GameData.enemy_data["medium_circle"]["damage"]
 
-
+signal enemy_damage(damage)
 
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
@@ -21,9 +21,9 @@ func die():
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _physics_process(delta: float) -> void:
-	#if unit_progress == 1.0:
-	#	emit_signal("damage", damage)
-	#	queue_free()
+	if progress_ratio == 1.0:
+		enemy_damage.emit(damage)
+		queue_free()
 	move(delta)
 
 func move(delta):

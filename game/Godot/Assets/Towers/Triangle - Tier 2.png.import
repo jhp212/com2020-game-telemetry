@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://d1rcc1ekuiabw"
-path="res://.godot/imported/Triangle - T1.png-140101931c44e2d0584324838ad684ad.ctex"
+uid="uid://i1jj7hutpa1d"
+path="res://.godot/imported/Triangle - Tier 2.png-8e5d3524e9027a55d850f955aecf4bfa.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://Assets/Towers/Triangle - T1.png"
-dest_files=["res://.godot/imported/Triangle - T1.png-140101931c44e2d0584324838ad684ad.ctex"]
+source_file="res://Assets/Towers/Triangle - Tier 2.png"
+dest_files=["res://.godot/imported/Triangle - Tier 2.png-8e5d3524e9027a55d850f955aecf4bfa.ctex"]
 
 [params]
 

@@ -36,4 +36,5 @@ func _on_area_body_entered(body: Node2D) -> void:
 		enemy_array.append(enemy)
 		enemy.on_hit(GameData.tower_data["square_stock"]["damage"])
 		print("hit")
+	queue_free()
 	

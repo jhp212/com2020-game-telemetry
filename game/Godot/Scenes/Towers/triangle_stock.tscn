@@ -51,7 +51,7 @@ script = ExtResource("1_e7kqv")
 modulate = Color(0.779291, 0.779291, 0.779291, 1)
 position = Vector2(-10, 0)
 texture = ExtResource("1_skvv2")
-offset = Vector2(12, 0)
+offset = Vector2(25, 0)
 
 [node name="ShootPosition" type="Marker2D" parent="Body"]
 position = Vector2(30, 0)

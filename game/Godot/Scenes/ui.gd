@@ -3,8 +3,11 @@ extends CanvasLayer
 @onready var health_bar: TextureProgressBar = $HUD/HealthUI/HBoxContainer/HealthBar
 @onready var cash: Label = $HUD/CashUI/HBoxContainer/Cash
 
+var current_tween: Tween
 
 func _ready():
+	GameData.base_health_changed.connect(update_health_bar)
+	update_health_bar(GameData.base_health)
 	GameData.money_changed.connect(update_money)
 	update_money(GameData.money)
 
@@ -37,12 +40,10 @@ func update_tower_preview(new_position, color):
 		get_node("TowerPreview/DragTower").modulate = Color(color)
 		get_node("TowerPreview/Sprite2D").modulate = Color(color)
 
-#func update_health_bar(base_health):
-#	hp_bar_tween.interpolate_property(health_bar, 'value', health_bar.value, base_health, 0.1, Tween.TRANS_LINEAR, Tween.EASE_IN_OUT)
-##	health_bar_tween.start()
-#	if base_health >= 60:
-#		health_bar.set_tint_progress("3cc510")
-#	elif base_health <= 60 and base_health >= 25:
-#		health_bar.set_tint_progress("e1be32")
-#	else:
-#		health_bar.set_tinit_progress("e11e1e")
+func update_health_bar(base_health):
+	if current_tween:
+		current_tween.kill()
+	
+	current_tween = create_tween()
+	current_tween.tween_property(health_bar, "value", base_health, 0.15).set_trans(Tween.TRANS_LINEAR).set_ease(Tween.EASE_IN_OUT)
+	

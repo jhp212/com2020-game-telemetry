@@ -12,7 +12,7 @@ script = ExtResource("1_7p6d0")
 texture = ExtResource("2_7p6d0")
 
 [node name="ShootPosition" type="Marker2D" parent="Body"]
-position = Vector2(20, -20)
+position = Vector2(25, 0)
 
 [node name="Range" type="Area2D" parent="."]
 

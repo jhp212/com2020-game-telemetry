@@ -36,7 +36,7 @@ func _init():
 	
 func _ready():
 	if built:
-		collision_shape.shape.radius = GameData.tower_data["square_stock"]["range"] / 2
+		collision_shape.shape.radius = GameData.tower_data["square_stock"]["range"]
 	
 	
 func _process(delta):

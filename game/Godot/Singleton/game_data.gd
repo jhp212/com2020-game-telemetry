@@ -1,8 +1,16 @@
 extends Node
 
-# Money
-var money := 550
+# Player Health
+var base_health = 100
+signal base_health_changed(new_health)
 
+func damage_base(amount):
+	base_health -= amount
+	base_health = max(base_health, 0)
+	base_health_changed.emit(base_health)
+
+# Money
+var money := 850
 signal money_changed(new_amount)
 
 func can_afford(amount):
@@ -30,9 +38,9 @@ var tower_data = {
 		"range": 350,
 		"cost": 250},
 	"square_stock": {
-		"damage": 30,
+		"damage": 35,
 		"rof": 1,
-		"range": 250,
+		"range": 10000,
 		"cost": 550},
 	"star_stock": {
 		"damage": 10,
@@ -45,19 +53,19 @@ var tower_data = {
 var enemy_data = {
 	"medium_circle": {
 		"health": 50,
-		"speed": 90,
+		"speed": 200,
 		"cash": 100,
 		"damage": 2
 	},
 	"large_circle": {
-		"health": 100,
-		"speed": 60,
+		"health": 150,
+		"speed": 30,
 		"cash": 250,
 		"damage": 5
 	},
 	"small_circle": {
 		"health": 40,
-		"speed": 110,
+		"speed": 80,
 		"cash": 80,
 		"damage": 1
 	}
