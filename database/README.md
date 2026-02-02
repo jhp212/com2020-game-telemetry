@@ -57,6 +57,7 @@ to stop the container.
 
 - stage_start {}
 - stage_end {}
+- stage_fail {}
 - enemy_defeated {enemy_id: Integer}
 - damage_taken {amount: Integer, remaining_health: Integer}
 - tower_spawn {tower_id: Integer}

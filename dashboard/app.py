@@ -1,12 +1,12 @@
-import json
-from collections import Counter
+import json 
+from collections import Counter # Helpful for graphing
 from pathlib import Path
 from fastapi import FastAPI, Request, HTTPException
 from fastapi.responses import HTMLResponse
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates # Jinja2 will be used for templates
-# from database.main import 
 import requests, os
+from pydantic import BaseModel # Will be used in POST requests
 
 # Absolute path of dashboard/app.py
 BASE_DIR = Path(__file__).resolve().parent
@@ -38,26 +38,43 @@ async def home(request: Request):
             detail=f"Telemetry API did not return JSON. Content-Type={r.headers.get('content-type')} Body starts: {r.text[:200]}"
         )
 
-    # Chart 1: Money spent over time (uses nested data.amount)
-    money_rows = [t for t in telemetry if t.get("telemetry_type") == "money_spent"]
+    
 
-    money_spent_labels = [t.get("dateTime") for t in money_rows]
-    money_spent_values = [t.get("data", {}).get("amount") for t in money_rows]
-
-    # Chart 2: Count of telemetry types
+    #Variable definitions to hold y and x axis values
+    
     type_counts = Counter(t.get("telemetry_type") for t in telemetry if t.get("telemetry_type"))
+    
     type_labels = list(type_counts.keys())
     type_values = list(type_counts.values())
-
+    
+    stage_start_counts = Counter(t.get("stage_id") for t in telemetry if t.get("telemetry_type") == "stage_start" and t.get("stage_id") is not None)
+    stage_labels = sorted(stage_start_counts.keys(), reverse=True)
+    stage_values = [stage_start_counts[k] for k in stage_labels]
+    
+    stage_start_counts = Counter(t.get("stage_id") for t in telemetry if t.get("telemetry_type") == "stage_start" and t.get("stage_id") is not None)
+    stage_end_counts = Counter(t.get("stage_id") for t in telemetry if t.get("telemetry_type") == "stage_end" and t.get("stage_id") is not None)
+    stage_ids = sorted(stage_start_counts.keys())
+    stage_started_values = [stage_start_counts[s] for s in stage_ids]
+    stage_finished_values = [min(stage_start_counts[s], stage_end_counts.get(s, 0)) for s in stage_ids]
+    
+    
     return templates.TemplateResponse(
         "home.html",
         {
+            
             "request": request,
             "title": "Home",
-            "money_spent_labels_json": json.dumps(money_spent_labels),
-            "money_spent_values_json": json.dumps(money_spent_values),
-            "type_labels_json": json.dumps(type_labels),
-            "type_values_json": json.dumps(type_values),
+            
+            # Returning as JSON so that we can use these through JS scripts.
+            "type_labels_json": json.dumps(type_labels),                    
+            "type_values_json": json.dumps(type_values),                    
+            
+            "stage_starts_json": json.dumps(stage_values),
+            "stage_labels_json": json.dumps(stage_labels),
+            
+            "stage_id_labels_json": json.dumps(stage_ids),
+            "stage_started_json": json.dumps(stage_started_values),
+            "stage_finished_json": json.dumps(stage_finished_values)
         }
     )
 
@@ -175,4 +192,23 @@ async def parameters(request: Request):
     )
 
 
+# A template for expected POST format
+class ParameterUpdate(BaseModel):
+    name: str
+    value: float
+      
+      
+@app.post("/parameters/")
+async def proxy_update_parameter(data: ParameterUpdate):
+    response = requests.post(
+        f"{BASE_URL}/parameters/", 
+        json=data.model_dump()
+    )
 
+    if not response.ok:
+       
+        raise HTTPException(
+            status_code=response.status_code, 
+            detail=f"Database API error: {response.text}"
+        )
+    return response.json()

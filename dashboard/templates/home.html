@@ -8,7 +8,19 @@
     <div class="graph half">
       <h3>Telemetry Type Counts</h3>
       <div class="chartWrap">
-        <canvas id="telemetryCountsChart"></canvas>
+        <canvas id="telemetryFunnel"></canvas>
+      </div>
+    </div>
+    <div class="graph half">
+      <h3>Drop Off Points</h3>
+      <div class="chartWrap">
+        <canvas id="dropOffsChart"></canvas>
+      </div>
+    </div>
+    <div class="graph full">
+      <h3>Stage Start vs Finish</h3>
+      <div class="chartWrap">
+        <canvas id="stageConversionChart"></canvas>
       </div>
     </div>
   </section>
@@ -18,20 +30,104 @@
 <!-- We will use chart.js for the visual representation of data --> 
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script>
-  const typeLabels = {{ type_labels_json | safe }};
-  const typeValues = {{ type_values_json | safe }};
+  const funnelLabels = {{ type_labels_json | safe }};
+  const funnelValues = {{ type_values_json | safe }};
+
+  const stageLabels = {{ stage_labels_json | safe }};
+  const stageValues = {{ stage_starts_json | safe }};
+
+  const stageIdLabels = {{ stage_id_labels_json | safe }};
+  const stageStarted = {{ stage_started_json | safe }};
+  const stageFinished = {{ stage_finished_json | safe }};
 
   /* Telemetry Chart */
-  new Chart(document.getElementById("telemetryCountsChart"), {
+  // Now a horizontal funnel view chart, TO DO: descending order from the top
+  new Chart(document.getElementById("telemetryFunnel"), {
     type: "bar",
     data: {
-      labels: typeLabels,
-      datasets: [{ label: "Count", data: typeValues }]
+        labels: funnelLabels,
+        datasets: [{
+            label: "Telemetry Events",
+            data: funnelValues
+        }]
+    },
+    options: {
+        indexAxis: "y", 
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+            legend: {
+                display: false
+            },
+            tooltip: {
+                callbacks: {
+                    label: ctx => `${ctx.raw} events`
+                }
+            }
+        },
+        scales: {
+            x: {
+                beginAtZero: true,
+                grid: {
+                    drawBorder: false
+                }
+            },
+            y: {
+                reverse: true,
+                grid: {display: false}
+            }
+        }
+    }
+  });
+  
+  // beginning of a funnel...?
+  new Chart(document.getElementById("dropOffsChart"), {
+    type: "bar",
+    data: {
+      labels: stageLabels,
+      datasets: [{ label: "Stage Starts", data: stageValues }]
     },
     options: {
       responsive: true,
       maintainAspectRatio: false
     }
   });
+
+  // observing how many users manage to complete each level
+  new Chart(document.getElementById("stageConversionChart"), {
+    type: "bar",
+    data: {
+      labels: stageIdLabels,
+      datasets: [
+        {
+          label: "Started",
+          data: stageStarted,
+        },
+        {
+          label: "Finished",
+          data: stageFinished,
+        }
+      ]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      plugins: {
+        legend: { position: "top" },
+        tooltip: { mode: "index", intersect: false }
+      },
+      scales: {
+        x: {
+          title: { display: true, text: "Stage" }
+        },
+        y: {
+          beginAtZero: true,
+          title: { display: true, text: "Completion" }
+        }
+      }
+    }
+  });
+
+
 </script>
 {% endblock %}
