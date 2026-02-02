@@ -8,8 +8,8 @@ services:
       - "10101:10101"
     volumes:
       - ./database:/app
-    env_file:
-      - .env
+    environment:
+      - DATABASE_URL=sqlite:///./td.db
   
   dashboard:
     build:
