@@ -1,7 +1,7 @@
 from datetime import datetime, timedelta
 import random
 
-from main import SessionLocal, Telemetry, Parameters, DecisionLog
+from database.main import SessionLocal, Telemetry, Parameters, DecisionLog
 
 def seed():
     db = SessionLocal()
@@ -38,11 +38,11 @@ def seed():
         for i in range(300):
             t = Telemetry(
                 user_id=random.randint(1, 10000),
-                stage_id=random.randint(1, 3),
+                stage_id=random.randint(1, 5),
                 telemetry_type=random.choice(allowed_types),
                 dateTime=base_time + timedelta(seconds=i * 10),
                 data={
-                    "stage_start": random.randint(1,200),
+                    "stage_start": random.randint(200,1000), #02/02/26 changes to random intervals for logic fixes (eliminated the possibility of more ends than starts)
                     "stage_end": random.randint(1,200),
                     "enemy_defeated": random.randint(1,200),
                     "damage_taken": random.randint(1,200),

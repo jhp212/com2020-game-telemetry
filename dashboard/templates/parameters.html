@@ -1,9 +1,10 @@
 {% extends "base.html" %}
 {% block content %}
 
-  <h2>Parameters</h2>
+<h2>Parameters</h2>
 
-  <table>
+<div class="table-container">
+  <table id="parameterTable">
     <thead>
       <tr>
         <th>Parameter Name</th>
@@ -12,12 +13,44 @@
     </thead>
     <tbody>
       {% for r in parameter_rows %}
-        <tr>
-          <td>{{ r.name }}</td>
-          <td>{{ r.value }}</td>
+        <tr class="param-row">
+          <td class="param-name">{{ r.name }}</td>
+          <td class="param-value" contenteditable="true">{{ r.value }}</td>
         </tr>
       {% endfor %}
     </tbody>
   </table>
+
+  <button onclick="saveAllChanges()" id="save-button">Save All Changes</button>
+  
+  <div id="status-display" style="display:none; margin-top:10px; padding:10px; border-radius:4px;"></div>
 </div>
+
+<script>
+  // Save Button to execute the POST action
+async function saveAllChanges() {
+    const rows = document.querySelectorAll('.param-row');
+    const saveButton = document.getElementById('save-button');
+    const statusBox = document.getElementById('status-display');
+
+    saveBtn.disabled = true;
+    saveBtn.innerText = "Saving...";
+
+    for (const row of rows) {
+        const name = row.querySelector('.param-name').innerText.trim();
+        const rawValue = row.querySelector('.param-value').innerText.trim();
+        const value = parseFloat(rawValue);
+
+        if (isNaN(value)) {
+            console.error("Invalid number for", name);
+            continue;
+        }
+
+    }
+
+    saveButton.disabled = false;
+    saveButton.innerText = "Save All Changes";
+    
+}
+</script>
 {% endblock %}
