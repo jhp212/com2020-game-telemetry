@@ -1,0 +1,10 @@
+[gd_scene load_steps=3 format=3 uid="uid://d0pd6jabllmye"]
+
+[ext_resource type="PackedScene" uid="uid://bw36ka3wx3gww" path="res://Scenes/game_logic.tscn" id="1_ucdhh"]
+[ext_resource type="PackedScene" uid="uid://cxnd13uoh13q2" path="res://Scenes/Maps/map_2.tscn" id="2_oylv5"]
+
+[node name="Level2" type="Node2D"]
+
+[node name="GameLogic" parent="." instance=ExtResource("1_ucdhh")]
+
+[node name="Map2" parent="." instance=ExtResource("2_oylv5")]

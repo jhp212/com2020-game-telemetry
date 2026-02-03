@@ -1,0 +1,89 @@
+[gd_scene load_steps=4 format=3 uid="uid://ceqwvifw0ojeu"]
+
+[sub_resource type="GDScript" id="GDScript_erv1k"]
+script/source = "extends Control
+
+
+
+func _on_play_button_pressed() -> void:
+	queue_free()
+	# change loaded scene to continue in future?
+	var current_level = load(\"res://Scenes/Levels/level_1.tscn\").instantiate()
+	add_child(current_level)
+	
+"
+
+[sub_resource type="Gradient" id="Gradient_erv1k"]
+offsets = PackedFloat32Array(0.142857, 0.55, 0.728571, 1)
+colors = PackedColorArray(1, 0, 0, 1, 0.648577, 0, 0, 1, 0.241667, 0, 0, 1, 0, 0, 0, 1)
+
+[sub_resource type="GradientTexture2D" id="GradientTexture2D_28flt"]
+gradient = SubResource("Gradient_erv1k")
+fill = 1
+fill_from = Vector2(2, 0.5)
+fill_to = Vector2(0.3, 0.5)
+
+[node name="MainMenu" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = SubResource("GDScript_erv1k")
+
+[node name="Background" type="TextureRect" parent="."]
+modulate = Color(1, 0, 0, 1)
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+texture = SubResource("GradientTexture2D_28flt")
+
+[node name="Border" type="MarginContainer" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/margin_left = 70
+theme_override_constants/margin_top = 70
+theme_override_constants/margin_right = 70
+theme_override_constants/margin_bottom = 70
+
+[node name="VBoxContainer" type="VBoxContainer" parent="Border"]
+custom_minimum_size = Vector2(400, 0)
+layout_mode = 2
+size_flags_horizontal = 0
+theme_override_constants/separation = 10
+
+[node name="MainMenuText" type="Label" parent="Border/VBoxContainer"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 64
+text = "Main Menu"
+horizontal_alignment = 1
+
+[node name="Spacing" type="Control" parent="Border/VBoxContainer"]
+custom_minimum_size = Vector2(0, 20)
+layout_mode = 2
+
+[node name="PlayButton" type="Button" parent="Border/VBoxContainer"]
+custom_minimum_size = Vector2(300, 70)
+layout_mode = 2
+size_flags_horizontal = 4
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_font_sizes/font_size = 24
+text = "Play"
+
+[node name="LevelsButton" type="Button" parent="Border/VBoxContainer"]
+custom_minimum_size = Vector2(300, 70)
+layout_mode = 2
+size_flags_horizontal = 4
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_font_sizes/font_size = 24
+text = "Levels"
+
+[connection signal="pressed" from="Border/VBoxContainer/PlayButton" to="." method="_on_play_button_pressed"]

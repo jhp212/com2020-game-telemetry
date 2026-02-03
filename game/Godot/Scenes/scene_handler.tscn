@@ -1,3 +1,13 @@
-[gd_scene format=3 uid="uid://djepx4o8k18vd"]
+[gd_scene load_steps=4 format=3 uid="uid://djepx4o8k18vd"]
+
+[ext_resource type="Script" uid="uid://c4shnjmqotsgi" path="res://Scenes/scene_handler.gd" id="1_4dsqg"]
+[ext_resource type="PackedScene" uid="uid://ceqwvifw0ojeu" path="res://Scenes/main_menu.tscn" id="2_2axdk"]
+[ext_resource type="PackedScene" uid="uid://b2s2nphmisqm1" path="res://Scenes/level_selection.tscn" id="3_2axdk"]
 
 [node name="SceneHandler" type="Node"]
+script = ExtResource("1_4dsqg")
+
+[node name="MainMenu" parent="." instance=ExtResource("2_2axdk")]
+
+[node name="LevelSelection" parent="." instance=ExtResource("3_2axdk")]
+visible = false

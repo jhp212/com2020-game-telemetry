@@ -14,17 +14,17 @@ var current_wave = 0
 var enemies_in_wave = 0
 # number of enemies spawned logged?
 
-var base_health = 100
 
 func _ready():
-	map_node = get_node("Level1Map")
-	
+	map_node = get_tree().get_first_node_in_group("maps")
 	for i in get_tree().get_nodes_in_group("build_buttons"):
 		i.pressed.connect(initiate_build_mode.bind(i.name))
 	# not how this will be started
 	# start_game event log
 	start_next_wave()
 
+func get_map():
+	map_node = get_tree().get_first_node_in_group("maps")
 
 func _process(delta):
 	if build_mode:
@@ -43,6 +43,7 @@ func retrieve_wave_data():
 	return wave_data
 	
 func spawn_enemies(wave_data):
+	get_map()
 	for i in wave_data:
 		var new_enemy = load("res://Scenes/Enemies/" + i[0] + ".tscn").instantiate()
 		new_enemy.enemy_damage.connect(GameData.damage_base)

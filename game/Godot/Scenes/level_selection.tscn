@@ -1,0 +1,109 @@
+[gd_scene load_steps=5 format=3 uid="uid://b2s2nphmisqm1"]
+
+[ext_resource type="Texture2D" uid="uid://hjyeg8dscjlo" path="res://Assets/Level Images/Screenshot 2026-02-03 094835.png" id="1_bhq3g"]
+[ext_resource type="Texture2D" uid="uid://b31sscxqbolfv" path="res://Assets/Level Images/Screenshot 2026-02-03 094908.png" id="2_j13lr"]
+
+[sub_resource type="Gradient" id="Gradient_erv1k"]
+offsets = PackedFloat32Array(0.142857, 0.55, 0.728571, 1)
+colors = PackedColorArray(1, 0, 0, 1, 0.648577, 0, 0, 1, 0.241667, 0, 0, 1, 0, 0, 0, 1)
+
+[sub_resource type="GradientTexture2D" id="GradientTexture2D_6dews"]
+gradient = SubResource("Gradient_erv1k")
+fill = 1
+fill_from = Vector2(2, 0.5)
+fill_to = Vector2(0.3, 0.5)
+
+[node name="LevelSelection" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="Background" type="TextureRect" parent="."]
+modulate = Color(1, 0, 0, 1)
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+texture = SubResource("GradientTexture2D_6dews")
+
+[node name="Border" type="MarginContainer" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/margin_left = 70
+theme_override_constants/margin_top = 70
+theme_override_constants/margin_right = 70
+theme_override_constants/margin_bottom = 70
+
+[node name="VBoxContainer" type="VBoxContainer" parent="Border"]
+layout_mode = 2
+theme_override_constants/separation = 10
+
+[node name="MainMenuText" type="Label" parent="Border/VBoxContainer"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 64
+text = "Select Level"
+horizontal_alignment = 1
+
+[node name="Spacing" type="Control" parent="Border/VBoxContainer"]
+custom_minimum_size = Vector2(0, 20)
+layout_mode = 2
+
+[node name="Row1" type="HBoxContainer" parent="Border/VBoxContainer"]
+custom_minimum_size = Vector2(0, 200)
+layout_mode = 2
+size_flags_horizontal = 4
+theme_override_constants/separation = 40
+
+[node name="Level1" type="TextureButton" parent="Border/VBoxContainer/Row1"]
+custom_minimum_size = Vector2(300, 165)
+layout_mode = 2
+size_flags_horizontal = 0
+texture_normal = ExtResource("1_bhq3g")
+ignore_texture_size = true
+stretch_mode = 0
+
+[node name="Label" type="Label" parent="Border/VBoxContainer/Row1/Level1"]
+layout_mode = 1
+anchors_preset = 12
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_top = -23.0
+grow_horizontal = 2
+grow_vertical = 0
+theme_override_font_sizes/font_size = 32
+text = "Level 1"
+horizontal_alignment = 1
+
+[node name="Level2" type="TextureButton" parent="Border/VBoxContainer/Row1"]
+custom_minimum_size = Vector2(300, 50)
+layout_mode = 2
+texture_normal = ExtResource("2_j13lr")
+ignore_texture_size = true
+stretch_mode = 0
+
+[node name="Label" type="Label" parent="Border/VBoxContainer/Row1/Level2"]
+layout_mode = 1
+anchors_preset = 12
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_top = -23.0
+grow_horizontal = 2
+grow_vertical = 0
+theme_override_font_sizes/font_size = 32
+text = "Level 2"
+horizontal_alignment = 1
+
+[node name="BackButton" type="Button" parent="Border/VBoxContainer"]
+layout_mode = 2
+text = "Back"
