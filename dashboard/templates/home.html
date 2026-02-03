@@ -100,13 +100,14 @@
       labels: stageIdLabels,
       datasets: [
         {
-          label: "Started",
-          data: stageStarted,
-        },
-        {
           label: "Finished",
           data: stageFinished,
+        },
+        {
+          label: "Started",
+          data: stageStarted,
         }
+        
       ]
     },
     options: {
@@ -118,11 +119,13 @@
       },
       scales: {
         x: {
-          title: { display: true, text: "Stage" }
+          title: { display: true, text: "Stage" },
+          stacked: true
         },
         y: {
           beginAtZero: true,
-          title: { display: true, text: "Completion" }
+          title: { display: true, text: "Completion" },
+          
         }
       }
     }

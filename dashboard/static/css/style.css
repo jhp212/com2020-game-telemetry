@@ -5,6 +5,7 @@
 html, body {
   height: 100%;
   margin: 0;
+  font-family: Georgia, 'Times New Roman', Times, serif;
 }
 
 /* Using flex display to keep sidebar fixed*/
@@ -18,8 +19,8 @@ html, body {
 .sidebar {
   width: 220px;
   flex: 0 0 220px;
-  background: #f4f4f4;
-  border-right: 1px solid #ddd;
+  background: #ddcca1;
+  border-right: 1px solid #5f8634;
   padding: 16px;
   overflow-y: auto;
 }
@@ -51,8 +52,8 @@ html, body {
   padding: 24px;
   overflow-x: hidden;
   overflow-y: auto;
-  background: #1f1f1f; 
-  color: #f2f2f2;
+  background: #fff5dc; 
+  color: #5f8634;
 }
 
 
@@ -72,8 +73,8 @@ html, body {
 
 .graph {
   grid-column: span 12;
-  background: #2a2a2a;
-  border: 1px solid rgba(255,255,255,0.08);
+  background: #f2f2f2;
+  border: 1px solid rgba(84, 169, 87, 0.519);
   border-radius: 12px;
   padding: 16px;
 }
@@ -105,14 +106,15 @@ html, body {
 
 table {
   width: 100%;
+  border: #111;
   border-collapse: collapse;
-  background: #2a2a2a;
-  color: #f2f2f2;
+  background: #fff2d0;
+  color: solid rgba(84, 169, 87, 0.519);
   font-size: 14px;
 }
 
 thead {
-  background: #1f1f1f;
+  background: #ddcca1;
 }
 
 th,
@@ -131,11 +133,11 @@ th {
 }
 
 tbody tr:nth-child(even) {
-  background: rgba(255, 255, 255, 0.03);
+  background: rgba(6, 6, 10, 0.03);
 }
 
 tbody tr:hover {
-  background: rgba(255, 255, 255, 0.08);
+  background: rgba(251, 251, 222, 0.08);
 }
 
 
