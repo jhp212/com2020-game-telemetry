@@ -52,7 +52,7 @@ def seed():
                 },
             )
             db.add(t)
-            
+        """    
         for i in range(100):
             d = DecisionLog(
                 parameter_name = random.choice(["enemy_damage","enemy_health","player_speed","spawn_rate"]),
@@ -63,6 +63,7 @@ def seed():
                 dateTime=base_time + timedelta(seconds=i * 10),
             )
             db.add(d)
+        """
 
         db.commit()
 

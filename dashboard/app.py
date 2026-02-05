@@ -7,6 +7,7 @@ from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates # Jinja2 will be used for templates
 import requests, os
 from pydantic import BaseModel # Will be used in POST requests
+from datetime import datetime
 
 # Absolute path of dashboard/app.py
 BASE_DIR = Path(__file__).resolve().parent
@@ -211,4 +212,32 @@ async def proxy_update_parameter(data: ParameterUpdate):
             status_code=response.status_code, 
             detail=f"Database API error: {response.text}"
         )
+    return response.json()
+
+class DecisionLogCreate(BaseModel):
+    parameter_name: str
+    stage_id: int
+    change: str
+    rationale: str
+    evidence: str
+    dateTime: datetime
+    
+@app.post("/decision_logs/")
+async def proxy_create_decision_log(data: DecisionLogCreate):
+    payload = data.model_dump()
+
+    
+    payload["dateTime"] = data.dateTime.isoformat()
+
+    response = requests.post(
+        f"{BASE_URL}/decision_logs/",
+        json=payload
+    )
+
+    if not response.ok:
+        raise HTTPException(
+            status_code=response.status_code,
+            detail=f"Database API error: {response.text}"
+        )
+
     return response.json()
