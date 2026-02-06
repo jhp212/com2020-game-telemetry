@@ -1,4 +1,8 @@
-* {
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <style>
+        * {
   box-sizing: border-box;
 }
 
@@ -187,8 +191,8 @@ h3{
 
 .graph {
   grid-column: span 12;
-  background: #303030;
-  border: 1px solid rgba(142, 142, 142, 0.519);
+  background: #f2f2f2;
+  border: 1px solid rgba(84, 169, 87, 0.519);
   border-radius: 12px;
   padding: 16px;
 }
@@ -220,15 +224,15 @@ h3{
 
 table {
   width: 100%;
-  border: #4c00ff;
+  border: #111;
   border-collapse: collapse;
-  background: #8aa3ff;
-  color: solid rgb(255, 255, 255);
+  background: #fff2d0;
+  color: solid rgba(84, 169, 87, 0.519);
   font-size: 14px;
 }
 
 thead {
-  background: #3c6dc8;
+  background: #ddcca1;
 }
 
 th,
@@ -261,7 +265,7 @@ td pre {
   word-break: break-word;
   font-family: monospace;
   font-size: 12px;
-  color: #000000;
+  color: #ddd;
 }
 
 #decisionModel {
@@ -275,12 +279,11 @@ td pre {
 }
 
 #pop-up-container{
-  background:#ffffff; 
+  background:#fff; 
   padding:20px; 
   width:400px; 
   margin:10% auto; 
   border-radius:6px;
-  color: #191919;
 }
 
 
@@ -333,11 +336,55 @@ button:hover {
 
 #save-btn{
   margin-top: 10px;
-  margin-left: 80%;
+  margin-left: 90%;
   font-size: 14px;
 
 }
+    </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-#pop-up-title{
-  color: #000000;
-}
+    <!-- Title injected from FastAPI-->
+    <title>{{ title }}</title>
+    <!-- CSS injected from FastAPI-->
+    <!--<link rel="stylesheet" href="static/css/style.css">-->
+</head>
+<body>
+    <header class="header">
+        <div class="header_leftside">
+            <img src="TestLogo.png" class="logo">
+        </div>
+        <div class="header_center">
+        <h1>Dashboard</h1>
+        </div>
+        <div class="header_rightside">
+            <a class="logout_card">Logout</a>
+        </div>
+    </header>
+    <div class="layout">
+        <aside class="sidebar">
+        <nav class="nav">
+            <a href="/">Home</a>
+            <a href="/dashboard">Dashboard</a>
+            <a href="/decisionLog">Decision Log</a>
+            <a href="/parameters">Parameters</a>
+            <a href="">Telemetry Overview</a>
+            <a href="">Funnel View</a>
+            <a href="">Simulation Mode</a>
+        </nav>
+        </aside>
+        
+    <main class="content">
+        <!--{% block content %}{% endblock %}-->
+    </main>
+    </div>
+    <footer class="footer">
+        <div class="footer_leftside"><h2>Accessibility</h2>
+        </div>
+        <h2>Support Information</h2>
+        <div class="footer_rightside">
+            <a class="export_card">EXPORT</a>
+        </div>
+    </footer>
+</body>
+</html>

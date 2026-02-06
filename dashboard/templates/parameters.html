@@ -15,56 +15,118 @@
       {% for r in parameter_rows %}
         <tr class="param-row">
           <td class="param-name">{{ r.name }}</td>
-          <td class="param-value" contenteditable="true">{{ r.value }}</td>
+          <td class="param-value" contenteditable="true" data-original="{{ r.value }}">{{ r.value }}</td>
         </tr>
       {% endfor %}
     </tbody>
   </table>
 
-  <button onclick="saveAllChanges()" id="save-btn">Save All Changes</button>
-  
-  <div id="status-display" style="display:none; margin-top:10px; padding:10px; border-radius:4px;"></div>
+  <button id="save-btn">Save All Changes</button>
+
+  <div id="decisionModel">
+  <div id="pop-up-container">
+    
+    <h3 id="pop-up-title">Decision Justification</h3>
+
+    <label>Evidence</label>
+    <textarea id="evidenceInput" rows="3" style="width:100%"></textarea>
+
+    <label>Rationale</label>
+    <textarea id="rationaleInput" rows="3" style="width:100%"></textarea>
+
+    <div style="margin-top:15px; text-align:right;">
+      <button onclick="closeModel()">Cancel</button>
+      <button onclick="submitDecision()">Confirm</button>
+    </div>
+  </div>
 </div>
 
+
 <script>
-  // Save Button to execute the POST action
-async function saveAllChanges() {
-    const rows = document.querySelectorAll('.param-row');
-    const saveBtn = document.getElementById('save-btn');
-    const statusBox = document.getElementById('status-display');
+  document.addEventListener("DOMContentLoaded", () => {
 
-    saveBtn.disabled = true;
-    saveBtn.innerText = "Saving...";
+    let pendingChanges = [];
 
-    for (const row of rows) {
-        const name = row.querySelector('.param-name').innerText.trim();
-        const rawValue = row.querySelector('.param-value').innerText.trim();
-        const value = parseFloat(rawValue);
+    document.getElementById("save-btn").addEventListener("click", () => {
+      pendingChanges = [];
 
-        if (isNaN(value)) {
-            console.error("Invalid number for", name);
-            continue;
+      document.querySelectorAll(".param-row").forEach(row => {
+        const name = row.querySelector(".param-name").innerText.trim();
+        const cell = row.querySelector(".param-value");
+
+        const original = parseFloat(cell.dataset.original);
+        const current = parseFloat(cell.innerText);
+
+        if (!isNaN(current) && current !== original) {
+          pendingChanges.push({
+            parameter_name: name,
+            old_value: original,
+            new_value: current,
+            change: current - original
+          });
+        }
+      });
+
+      if (pendingChanges.length === 0) {
+        alert("No changes detected");
+        return;
+      }
+
+      document.getElementById("decisionModel").style.display = "block";
+    });
+
+    window.submitDecision = async function () {
+      const evidence = document.getElementById("evidenceInput").value.trim();
+      const rationale = document.getElementById("rationaleInput").value.trim();
+
+      if (!evidence || !rationale) {
+        alert("Evidence and rationale are required");
+        return;
+      }
+
+      const now = new Date().toISOString();
+
+      for (const c of pendingChanges) {
+        const resp = await fetch("/decision_logs/", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            parameter_name: c.parameter_name,
+            stage_id: 0,
+            change: `${c.change > 0 ? "+" : ""}${c.change}`,
+            rationale: rationale,
+            evidence: evidence,
+            dateTime: now
+          })
+        });
+
+        if (!resp.ok) {
+          alert("Decision log POST failed");
+          return;
         }
 
-        const response = await fetch("/parameters/", {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json"
-                },
-                body: JSON.stringify({
-                    name: name,
-                    value: value
-                })
-            });
+        const paramResp = await fetch("/parameters/", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            name: c.parameter_name,
+            value: c.new_value
+          })
+        });
 
-    }
+        if (!paramResp.ok) {
+          alert("Parameter update failed");
+          return;
+        }
+      }
 
-    saveBtn.disabled = false;
-    saveBtn.innerText = "Save All Changes";
-    
-    statusBox.style.display = "block";
-    statusBox.style.background = "#49751c";
-    statusBox.innerText = "All parameters saved successfully";
-}
+      location.reload();
+    };
+
+    window.closeModel = function () {
+      document.getElementById("decisionModel").style.display = "none";
+    };
+
+});
 </script>
 {% endblock %}

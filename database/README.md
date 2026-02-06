@@ -6,7 +6,7 @@ This directory contains the Database System that stores telemetry data and game 
 
 If running on bare metal:
 
-- Python 3.9 or newer
+- Python 3.10 or newer
 - All requirements specified in `requirements.txt`
 To install all necessary requirements, run the following command:
 `pip install -r requirements.txt`
