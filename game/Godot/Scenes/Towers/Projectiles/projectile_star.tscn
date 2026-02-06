@@ -1,0 +1,123 @@
+[gd_scene load_steps=8 format=3 uid="uid://ba6774m4f16v8"]
+
+[ext_resource type="Script" uid="uid://d325b8agpmbos" path="res://Scenes/Towers/Projectiles/projectile_star.gd" id="1_58mtq"]
+[ext_resource type="Texture2D" uid="uid://brx5cmnunc36u" path="res://Assets/Towers/Star - Stock.png" id="2_wjs0p"]
+
+[sub_resource type="Animation" id="Animation_o1am4"]
+length = 0.001
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath(".:scale")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Vector2(1e-05, 1e-05)]
+}
+tracks/1/type = "value"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath(".:modulate")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Color(1, 1, 1, 0)]
+}
+
+[sub_resource type="Animation" id="Animation_la0vn"]
+resource_name = "appear"
+length = 0.1
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath(".:scale")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 0.1),
+"transitions": PackedFloat32Array(1, 1),
+"update": 0,
+"values": [Vector2(1e-05, 1e-05), Vector2(0.3, 0.3)]
+}
+tracks/1/type = "value"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath(".:modulate")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0, 0.1),
+"transitions": PackedFloat32Array(1, 1),
+"update": 0,
+"values": [Color(1, 1, 1, 0), Color(1, 1, 1, 1)]
+}
+
+[sub_resource type="Animation" id="Animation_h534s"]
+resource_name = "remove"
+length = 0.3
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath(".:scale")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 0.3),
+"transitions": PackedFloat32Array(1, 1),
+"update": 0,
+"values": [Vector2(0.3, 0.3), Vector2(1e-05, 1e-05)]
+}
+tracks/1/type = "value"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath(".:modulate")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0, 0.3),
+"transitions": PackedFloat32Array(1, 1),
+"update": 0,
+"values": [Color(1, 1, 1, 1), Color(1, 1, 1, 0)]
+}
+
+[sub_resource type="AnimationLibrary" id="AnimationLibrary_h7jvs"]
+_data = {
+&"RESET": SubResource("Animation_o1am4"),
+&"appear": SubResource("Animation_la0vn"),
+&"remove": SubResource("Animation_h534s")
+}
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_wjs0p"]
+radius = 26.6667
+
+[node name="ProjectileStar" type="Node2D"]
+modulate = Color(1, 1, 1, 0)
+scale = Vector2(1e-05, 1e-05)
+script = ExtResource("1_58mtq")
+
+[node name="Body" type="Sprite2D" parent="."]
+position = Vector2(0, -3.33333)
+texture = ExtResource("2_wjs0p")
+
+[node name="Glow" type="Sprite2D" parent="."]
+
+[node name="AnimationPlayer" type="AnimationPlayer" parent="."]
+libraries = {
+&"": SubResource("AnimationLibrary_h7jvs")
+}
+autoplay = "appear"
+
+[node name="Area" type="Area2D" parent="."]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Area"]
+shape = SubResource("CircleShape2D_wjs0p")
+
+[node name="DistanceTimeout" type="Timer" parent="."]
+
+[connection signal="body_entered" from="Area" to="." method="_on_area_body_entered"]

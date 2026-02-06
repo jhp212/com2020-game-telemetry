@@ -1,17 +1,4 @@
-[gd_scene load_steps=4 format=3 uid="uid://ceqwvifw0ojeu"]
-
-[sub_resource type="GDScript" id="GDScript_erv1k"]
-script/source = "extends Control
-
-
-
-func _on_play_button_pressed() -> void:
-	queue_free()
-	# change loaded scene to continue in future?
-	var current_level = load(\"res://Scenes/Levels/level_1.tscn\").instantiate()
-	add_child(current_level)
-	
-"
+[gd_scene load_steps=3 format=3 uid="uid://ceqwvifw0ojeu"]
 
 [sub_resource type="Gradient" id="Gradient_erv1k"]
 offsets = PackedFloat32Array(0.142857, 0.55, 0.728571, 1)
@@ -19,6 +6,8 @@ colors = PackedColorArray(1, 0, 0, 1, 0.648577, 0, 0, 1, 0.241667, 0, 0, 1, 0, 0
 
 [sub_resource type="GradientTexture2D" id="GradientTexture2D_28flt"]
 gradient = SubResource("Gradient_erv1k")
+width = 720
+height = 720
 fill = 1
 fill_from = Vector2(2, 0.5)
 fill_to = Vector2(0.3, 0.5)
@@ -30,7 +19,6 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
-script = SubResource("GDScript_erv1k")
 
 [node name="Background" type="TextureRect" parent="."]
 modulate = Color(1, 0, 0, 1)

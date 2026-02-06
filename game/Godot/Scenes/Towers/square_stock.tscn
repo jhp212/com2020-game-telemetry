@@ -11,8 +11,20 @@ script = ExtResource("1_7p6d0")
 [node name="Body" type="Sprite2D" parent="."]
 texture = ExtResource("2_7p6d0")
 
-[node name="ShootPosition" type="Marker2D" parent="Body"]
+[node name="ShootPosition1" type="Marker2D" parent="Body"]
 position = Vector2(25, 0)
+
+[node name="ShootPosition2" type="Marker2D" parent="Body"]
+position = Vector2(0, 25)
+rotation = 1.5708
+
+[node name="ShootPosition3" type="Marker2D" parent="Body"]
+position = Vector2(-25, 0)
+rotation = 3.14159
+
+[node name="ShootPosition4" type="Marker2D" parent="Body"]
+position = Vector2(0, -25)
+rotation = 4.71239
 
 [node name="Range" type="Area2D" parent="."]
 

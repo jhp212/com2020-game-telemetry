@@ -1,0 +1,81 @@
+[gd_scene load_steps=4 format=3 uid="uid://drmevmx8200xv"]
+
+[ext_resource type="Script" uid="uid://sf34ob3miawk" path="res://Scenes/game_over.gd" id="1_ojehl"]
+
+[sub_resource type="Gradient" id="Gradient_ojehl"]
+offsets = PackedFloat32Array(0, 0.311321, 0.462264, 0.542453, 1)
+colors = PackedColorArray(1, 0, 0, 1, 0.979146, 0, 0, 1, 0.921387, 0, 0, 1, 0.830189, 0, 0, 1, 0, 0, 0, 1)
+
+[sub_resource type="GradientTexture2D" id="GradientTexture2D_i2yjh"]
+gradient = SubResource("Gradient_ojehl")
+width = 720
+height = 720
+fill = 1
+fill_from = Vector2(0.5, 0.5)
+fill_to = Vector2(0.0940171, 0.897436)
+
+[node name="GameOver" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_ojehl")
+
+[node name="Background" type="TextureRect" parent="."]
+modulate = Color(1, 0, 0, 1)
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_top = -187.0
+offset_bottom = 187.0
+grow_horizontal = 2
+grow_vertical = 2
+texture = SubResource("GradientTexture2D_i2yjh")
+
+[node name="Border" type="MarginContainer" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/margin_left = 70
+theme_override_constants/margin_top = 70
+theme_override_constants/margin_right = 70
+theme_override_constants/margin_bottom = 70
+
+[node name="VBoxContainer" type="VBoxContainer" parent="Border"]
+custom_minimum_size = Vector2(600, 0)
+layout_mode = 2
+size_flags_horizontal = 4
+size_flags_vertical = 4
+theme_override_constants/separation = 10
+
+[node name="Label" type="Label" parent="Border/VBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 4
+size_flags_vertical = 0
+theme_override_font_sizes/font_size = 64
+text = "GAME OVER"
+
+[node name="Spacing" type="Control" parent="Border/VBoxContainer"]
+custom_minimum_size = Vector2(0, 40)
+layout_mode = 2
+
+[node name="ReplayLevel" type="Button" parent="Border/VBoxContainer"]
+process_mode = 3
+visible = false
+layout_mode = 2
+text = "Replay Level"
+
+[node name="MainMenu" type="Button" parent="Border/VBoxContainer"]
+process_mode = 3
+visible = false
+layout_mode = 2
+text = "Main Menu"
+
+[connection signal="pressed" from="Border/VBoxContainer/ReplayLevel" to="." method="_on_replay_level_pressed"]
+[connection signal="pressed" from="Border/VBoxContainer/MainMenu" to="." method="_on_main_menu_pressed"]

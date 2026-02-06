@@ -5,7 +5,10 @@ var built = false
 var enemy
 var ready_to_shoot = true
 
-@onready var shoot_position: Marker2D = $Body/ShootPosition
+@onready var shoot_position_1: Marker2D = $Body/ShootPosition1
+@onready var shoot_position_2: Marker2D = $Body/ShootPosition2
+@onready var shoot_position_3: Marker2D = $Body/ShootPosition3
+@onready var shoot_position_4: Marker2D = $Body/ShootPosition4
 @onready var collision_shape: CollisionShape2D = $Range/CollisionShape2D
 
 const projectile_square_scene = preload("res://Scenes/Towers/Projectiles/projectile_square.tscn")
@@ -21,10 +24,25 @@ func fire():
 	ready_to_shoot = false
 	
 	#instance a projectile
-	var new_projectile = projectile_square_scene.instantiate()
-	new_projectile.global_position = shoot_position.global_position
-	new_projectile.global_rotation = shoot_position.global_rotation
-	get_parent().add_child(new_projectile)
+	var new_projectile_1 = projectile_square_scene.instantiate()
+	new_projectile_1.global_position = shoot_position_1.global_position
+	new_projectile_1.global_rotation = shoot_position_1.global_rotation
+	get_parent().add_child(new_projectile_1)
+	
+	var new_projectile_2 = projectile_square_scene.instantiate()
+	new_projectile_2.global_position = shoot_position_2.global_position
+	new_projectile_2.global_rotation = shoot_position_2.global_rotation
+	get_parent().add_child(new_projectile_2)
+	
+	var new_projectile_3 = projectile_square_scene.instantiate()
+	new_projectile_3.global_position = shoot_position_3.global_position
+	new_projectile_3.global_rotation = shoot_position_3.global_rotation
+	get_parent().add_child(new_projectile_3)
+	
+	var new_projectile_4 = projectile_square_scene.instantiate()
+	new_projectile_4.global_position = shoot_position_4.global_position
+	new_projectile_4.global_rotation = shoot_position_4.global_rotation
+	get_parent().add_child(new_projectile_4)
 	
 	#enemy.on_hit(GameData.tower_data["square_stock"]["damage"])
 	await get_tree().create_timer(GameData.tower_data["square_stock"]["rof"]).timeout
@@ -47,7 +65,7 @@ func _process(delta):
 
 func _on_range_body_entered(body: Node2D) -> void:
 	enemy_array.append(body.get_parent())
-	print(enemy_array)
+	print("bababoowee")
 
 
 func _on_range_body_exited(body: Node2D) -> void:

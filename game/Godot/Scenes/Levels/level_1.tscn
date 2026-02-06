@@ -5,6 +5,6 @@
 
 [node name="Level1" type="Node2D"]
 
-[node name="GameLogic" parent="." instance=ExtResource("2_4dpyx")]
-
 [node name="Map1" parent="." instance=ExtResource("1_tlcug")]
+
+[node name="GameLogic" parent="." instance=ExtResource("2_4dpyx")]

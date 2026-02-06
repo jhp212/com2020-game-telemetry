@@ -5,6 +5,7 @@ var health =  GameData.enemy_data["large_circle"]["health"]
 var damage =  GameData.enemy_data["large_circle"]["damage"]
 
 signal enemy_damage(damage)
+signal enemy_death()
 
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
@@ -17,6 +18,7 @@ func on_hit(damage):
 
 func die():
 	GameData.add_money(GameData.enemy_data["medium_circle"]["cash"])
+	enemy_death.emit()
 	self.queue_free()
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
