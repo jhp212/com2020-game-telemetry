@@ -73,7 +73,7 @@ html, body {
   height: 100%;
   color: white;
   font-size: 20px;
-  font-style: italic;
+  
   border-radius: 0;
   cursor: pointer;
   box-shadow: 0 0 0 rgba(0,0,0,0),-2px 2px 8px rgba(0,0,0,0.4);
@@ -88,7 +88,6 @@ h1{
   color: #ddd;
   font-family: "Goudy Old Style";
   font-size: 60px;
-  font-style: italic;
   letter-spacing: 2px;
   font-weight: 800;
 }
@@ -104,7 +103,7 @@ h3{
   height: 100%;
   color: white;
   font-size: 20px;
-  font-style: italic;
+  
   border-radius: 0;
   cursor: pointer;
   box-shadow: 0 0 0 rgba(0,0,0,0),-2px 2px 8px rgba(0,0,0,0.4);
@@ -146,7 +145,6 @@ h3{
   text-decoration: wavy;
   color: white;
   font-size: 20px;
-  font-style: italic;
   border-radius: 10px;
   cursor: pointer;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.4);
