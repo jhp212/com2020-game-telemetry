@@ -43,8 +43,13 @@
         </div>
         <h2>Support Information</h2>
         <div class="footer_rightside">
-            <a class="export_card">EXPORT</a>
+            <button id="export-btn" class="export_card">EXPORT</button>
         </div>
     </footer>
 </body>
+<script>
+    document.getElementById("export-btn").addEventListener("click", function () {
+        window.location.href = "/dashboard/export/csv";
+    });
+</script>
 </html>

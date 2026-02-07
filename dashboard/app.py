@@ -1,8 +1,11 @@
-import json 
+import json
+import csv
+import io
+import zipfile
 from collections import Counter # Helpful for graphing
 from pathlib import Path
 from fastapi import FastAPI, Request, HTTPException
-from fastapi.responses import HTMLResponse
+from fastapi.responses import HTMLResponse, StreamingResponse
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates # Jinja2 will be used for templates
 import requests, os
@@ -241,3 +244,86 @@ async def proxy_create_decision_log(data: DecisionLogCreate):
         )
 
     return response.json()
+
+
+@app.get("/dashboard/export/csv")
+async def export_dashboard_csv():
+    
+    # request data from all datasets
+    telemetry_resp = requests.get(f"{BASE_URL}/telemetry/")
+    decision_resp = requests.get(f"{BASE_URL}/decision_logs/")
+    params_resp = requests.get(f"{BASE_URL}/parameters/")
+    
+    
+    if not telemetry_resp.ok:
+        raise HTTPException(status_code=telemetry_resp.status_code, detail=telemetry_resp.text)
+    if not decision_resp.ok:
+        raise HTTPException(status_code=decision_resp.status_code, detail=decision_resp.text)
+    if not params_resp.ok:
+        raise HTTPException(status_code=params_resp.status_code, detail=params_resp.text)
+
+    telemetry = telemetry_resp.json()
+    decision_logs = decision_resp.json()
+    parameters = params_resp.json()
+
+    zip_buffer = io.BytesIO()
+
+    
+    with zipfile.ZipFile(zip_buffer, "w", zipfile.ZIP_DEFLATED) as z:
+
+        # telemetry dashboard
+        telemetry_csv = io.StringIO()
+        writer = csv.writer(telemetry_csv)
+        writer.writerow(["dateTime", "user_id", "stage_id", "telemetry_type", "data"])
+        for t in telemetry:
+            writer.writerow([
+                t.get("dateTime"),
+                t.get("user_id"),
+                t.get("stage_id"),
+                t.get("telemetry_type"),
+                t.get("data")
+            ])
+        z.writestr("telemetry.csv", telemetry_csv.getvalue())
+
+        # decision logs
+        decision_csv = io.StringIO()
+        writer = csv.writer(decision_csv)
+        writer.writerow([
+            "dateTime",
+            "parameter_name",
+            "stage_id",
+            "change",
+            "rationale",
+            "evidence"
+        ])
+        for d in decision_logs:
+            writer.writerow([
+                d.get("dateTime"),
+                d.get("parameter_name"),
+                d.get("stage_id"),
+                d.get("change"),
+                d.get("rationale"),
+                d.get("evidence")
+            ])
+        z.writestr("decision_logs.csv", decision_csv.getvalue())
+
+        # parameters
+        params_csv = io.StringIO()
+        writer = csv.writer(params_csv)
+        writer.writerow(["name", "value"])
+        for p in parameters:
+            writer.writerow([
+                p.get("name"),
+                p.get("value")
+            ])
+        z.writestr("parameters.csv", params_csv.getvalue())
+
+    zip_buffer.seek(0)
+
+    return StreamingResponse(
+        zip_buffer,
+        media_type="application/zip",
+        headers={
+            "Content-Disposition": "attachment; filename=telemetry_export.zip"
+        }
+    )
