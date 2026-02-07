@@ -34,6 +34,7 @@ async def home(request: Request):
     if not r.ok:
         raise HTTPException(status_code=r.status_code, detail=r.text)
 
+    # simple error handling
     try:
         telemetry = r.json()
     except ValueError:
@@ -50,6 +51,8 @@ async def home(request: Request):
     
     type_labels = list(type_counts.keys())
     type_values = list(type_counts.values())
+    
+    # all "******_counts" one liners below simply count every instance of an event per given key such as "stage id" to be displayed as a bar graph
     
     stage_start_counts = Counter(t.get("stage_id") for t in telemetry if t.get("telemetry_type") == "stage_start" and t.get("stage_id") is not None)
     stage_labels = sorted(stage_start_counts.keys(), reverse=True)
@@ -100,7 +103,7 @@ async def dashboard(request: Request):
             detail=f"Telemetry API did not return JSON. Content-Type={response.headers.get('content-type')} Body starts: {response.text[:200]}"
         )
     
-    # populate dict to be returned to the dashboard, accounting for HTTPException
+    # populate array with data in JSON format to be returned to the dashboard, accounting for HTTPException
     telemetry_rows = []
     for t in telemetry:
         if not isinstance(t, dict):
@@ -114,7 +117,7 @@ async def dashboard(request: Request):
                 "data": t.get("data"),
             }
         )
-        
+    # return to template to be displayed      
     return templates.TemplateResponse(
         "dashboard.html",
         {"request": request, "title": "Telemetry Dashboard", "telemetry_rows": telemetry_rows}
@@ -125,10 +128,12 @@ async def dashboard(request: Request):
 async def decisionLog(request: Request):
     
     response = requests.get(f"{BASE_URL}/decision_logs/")
+    
+    # simple error handling
     if not response.ok:
         raise HTTPException(status_code=response.status_code, detail=response.text)
    
-    
+    # simple error handling
     try:
         decisionLog = response.json()
     except ValueError:
@@ -138,7 +143,7 @@ async def decisionLog(request: Request):
         )
     
     
-    
+    # forming an array of decision log data in JSON format to be displayed on the decision log table
     decision_log_rows = []
     for d in decisionLog:
         if not isinstance(d, dict):
@@ -156,6 +161,7 @@ async def decisionLog(request: Request):
             }
         )
         
+    # return to template to be displayed      
     return templates.TemplateResponse(
         "decision_log.html",
         {"request": request, "title": "Decision Log", "decision_log_rows": decision_log_rows}
@@ -165,10 +171,13 @@ async def decisionLog(request: Request):
 async def parameters(request: Request):
         
     response = requests.get(f"{BASE_URL}/parameters/")
+    
+    # simple error handling
     if not response.ok:
         raise HTTPException(status_code=response.status_code, detail=response.text)
    
     
+    # simple error handling
     try:
         parameters = response.json()
     except ValueError:
@@ -177,7 +186,7 @@ async def parameters(request: Request):
             detail=f"Telemetry API did not return JSON. Content-Type={response.headers.get('content-type')} Body starts: {response.text[:200]}"
         )
         
-        
+    # forming an array of parameter names and values to be displayed
     parameter_rows = []
     for p in parameters:
         if not isinstance(p, dict):
@@ -189,7 +198,8 @@ async def parameters(request: Request):
                 "value": p.get("value"),
             }
         )
-            
+    
+    #return to template to be displayed        
     return templates.TemplateResponse(
         "parameters.html",
         {"request": request, "title": "Parameters", "parameter_rows": parameter_rows}
@@ -204,11 +214,15 @@ class ParameterUpdate(BaseModel):
       
 @app.post("/parameters/")
 async def proxy_update_parameter(data: ParameterUpdate):
+    
+    # after making a parameter change we want the change to be displayed on the parameters table by posting it to the DB
     response = requests.post(
         f"{BASE_URL}/parameters/", 
         json=data.model_dump()
     )
 
+    
+     # simple error handling
     if not response.ok:
        
         raise HTTPException(
@@ -224,6 +238,7 @@ class DecisionLogCreate(BaseModel):
     rationale: str
     evidence: str
     dateTime: datetime
+
     
 @app.post("/decision_logs/")
 async def proxy_create_decision_log(data: DecisionLogCreate):
@@ -232,11 +247,14 @@ async def proxy_create_decision_log(data: DecisionLogCreate):
     
     payload["dateTime"] = data.dateTime.isoformat()
 
+    # post the parameter change we made as a json payload to the decision log
     response = requests.post(
         f"{BASE_URL}/decision_logs/",
         json=payload
     )
 
+    
+    # simple error handling
     if not response.ok:
         raise HTTPException(
             status_code=response.status_code,
@@ -265,10 +283,12 @@ async def export_dashboard_csv():
     telemetry = telemetry_resp.json()
     decision_logs = decision_resp.json()
     parameters = params_resp.json()
-
+    
+    
+    # writing to buffer memory instead of real file for better performance
     zip_buffer = io.BytesIO()
 
-    
+    # initialise the zip file inn write mode
     with zipfile.ZipFile(zip_buffer, "w", zipfile.ZIP_DEFLATED) as z:
 
         # telemetry dashboard
@@ -318,7 +338,10 @@ async def export_dashboard_csv():
             ])
         z.writestr("parameters.csv", params_csv.getvalue())
 
+    # reset cursor back to the start
     zip_buffer.seek(0)
+
+
 
     return StreamingResponse(
         zip_buffer,
