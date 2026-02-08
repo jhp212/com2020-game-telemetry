@@ -350,3 +350,114 @@ async def export_dashboard_csv():
             "Content-Disposition": "attachment; filename=telemetry_export.zip"
         }
     )
+
+
+@app.get("/balancing", response_class=HTMLResponse)
+async def dashboard(request: Request):
+    
+    response = requests.get(f"{BASE_URL}/telemetry/")
+    if not response.ok:
+        raise HTTPException(status_code=response.status_code, detail=response.text)
+    
+    # confirm what was received and print status and type if not json
+    try:
+        telemetry = response.json()
+    except ValueError:
+        raise HTTPException(
+            status_code=500,
+            detail=f"Telemetry API did not return JSON. Content-Type={response.headers.get('content-type')} Body starts: {response.text[:200]}"
+        )
+        
+    data_dump = []
+    
+    for t in telemetry:
+        if not isinstance(t, dict):
+            raise HTTPException(status_code=500, detail=f"Expected dict row, got {type(t)}: {t}")
+        data_dump.append(
+            {
+                "data": t.get("data")
+            }
+        )
+    
+    extracted_data = []
+    for d in data_dump:
+           extracted_data.append(
+               {
+                   "stage_start": d.get("data", {}).get("stage_start"),
+                   "stage_end": d.get("data", {}).get("stage_end"),
+                   "enemy_defeated": d.get("data", {}).get("enemy_defeated"),
+                   "damage_taken": d.get("data", {}).get("damage_taken"),
+                   "tower_spawn": d.get("data", {}).get("tower_spawn"),
+                   "tower_upgrade": d.get("data", {}).get("tower_upgrade"),
+                   "money_spent": d.get("data", {}).get("money_spent"),
+                   
+               }
+           )
+           
+    # initialise total variables
+    total_money_spent = 0
+    total_enemies_defeated = 0
+    total_tower_upgrades = 0
+    
+    
+    
+    for item in extracted_data:
+        total_money_spent += int(item.get("money_spent"))
+        total_enemies_defeated += int(item.get("enemy_defeated"))
+        total_tower_upgrades += int(item.get("tower_upgrade"))
+        
+    
+    # calculating the averages of each event 
+    n = len(extracted_data)
+    average_money_spent = total_money_spent / n
+    average_enemies_defeated = total_enemies_defeated / n
+    average_tower_upgrades = total_tower_upgrades / n
+    
+    # Expected value constants
+    MONEY_SPENT = 4000
+    ENEMIES_DEFEATED = 100
+    TOWER_UPGRADES = 10
+    
+    balancing_response= []
+    
+    if(average_money_spent > MONEY_SPENT):
+        balancing_response.append(
+            {
+                "balancing_area": "Game Economy",
+                "expected_value": str(MONEY_SPENT),
+                "actual_value": str(average_money_spent),
+                "issue": "Players able to spend more money than expected",
+                "balancing_suggestion": "Decrease money given by each defeated enemy"
+            }
+        )
+    if(average_tower_upgrades > TOWER_UPGRADES):
+        balancing_response.append(
+            {
+                "balancing_area": "Upgrades",
+                "expected_value": str(TOWER_UPGRADES),
+                "actual_value": str(average_tower_upgrades),
+                "issue": "Players are able to upgrade their towers too many times resulting in unbalanced level difficulty",
+                "balancing_suggestion": "Increase tower upgrade cost"
+            }
+        )
+        
+    if(average_enemies_defeated < ENEMIES_DEFEATED):
+        balancing_response.append(
+            {
+                "balancing_area": "Defeating Enemies",
+                "expected_value": str(ENEMIES_DEFEATED),
+                "actual_value": str(average_enemies_defeated),
+                "issue": "Players are struggling to defeat most enemies",
+                "balancing_suggestion": "Decrease enemy health"
+            }
+        )
+        
+    
+        
+    
+    
+    
+    return templates.TemplateResponse(
+        "balancing.html",
+        {"request": request, "title": "Balancing", "balancing_response": balancing_response}
+    )
