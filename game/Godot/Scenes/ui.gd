@@ -5,11 +5,16 @@ extends CanvasLayer
 
 var current_tween: Tween
 
+var lose
+signal game_finished(result)
+
 func _ready():
+	self.show()
 	GameData.base_health_changed.connect(update_health_bar)
 	update_health_bar(GameData.base_health)
 	GameData.money_changed.connect(update_money)
 	update_money(GameData.money)
+	$HUD/PausePlay/AnimationPlayer.play("pulse")
 
 func update_money(amount: int):
 	cash.text = str(amount)
@@ -47,3 +52,16 @@ func update_health_bar(base_health):
 	current_tween = create_tween()
 	current_tween.tween_property(health_bar, "value", base_health, 0.15).set_trans(Tween.TRANS_LINEAR).set_ease(Tween.EASE_IN_OUT)
 	
+	if base_health <= 0:
+		game_finished.emit(lose)
+
+
+func _on_pause_play_pressed() -> void:
+	$HUD/PausePlay/AnimationPlayer.stop()
+	if get_tree().is_paused():
+		get_tree().paused = false
+	elif get_parent().current_wave == 0:
+		get_parent().current_wave += 1
+		get_parent().start_next_wave()
+	else:
+		get_tree().paused = true

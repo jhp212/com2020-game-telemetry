@@ -11,10 +11,30 @@ script = ExtResource("1_w0x0h")
 [node name="Body" type="Sprite2D" parent="."]
 texture = ExtResource("2_fuihj")
 
-[node name="ShootPosition" type="Marker2D" parent="Body"]
-position = Vector2(20, -3)
+[node name="ShootPosition1" type="Marker2D" parent="Body"]
+position = Vector2(20, -4)
+rotation = -0.20944
+
+[node name="ShootPosition2" type="Marker2D" parent="Body"]
+position = Vector2(13, 20)
+rotation = 1.02974
+
+[node name="ShootPosition3" type="Marker2D" parent="Body"]
+position = Vector2(-13, 20)
+rotation = 2.11185
+
+[node name="ShootPosition4" type="Marker2D" parent="Body"]
+position = Vector2(-20, -3)
+rotation = 3.35103
+
+[node name="ShootPosition5" type="Marker2D" parent="Body"]
+position = Vector2(0, -20)
+rotation = 4.71239
 
 [node name="Range" type="Area2D" parent="."]
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="Range"]
 shape = SubResource("CircleShape2D_m6j6g")
+
+[connection signal="body_entered" from="Range" to="." method="_on_range_body_entered"]
+[connection signal="body_exited" from="Range" to="." method="_on_range_body_exited"]

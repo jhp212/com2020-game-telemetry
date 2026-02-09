@@ -10,6 +10,17 @@
     <link rel="stylesheet" href="static/css/style.css">
 </head>
 <body>
+    <header class="header">
+        <div class="header_leftside">
+            <img src="static/css/TestLogo.png" class="logo">
+        </div>
+        <div class="header_center">
+        <h1>Dashboard</h1>
+        </div>
+        <div class="header_rightside">
+            <a class="logout_card">Logout</a>
+        </div>
+    </header>
     <div class="layout">
         <aside class="sidebar">
         <nav class="nav">
@@ -17,6 +28,10 @@
             <a href="/dashboard">Dashboard</a>
             <a href="/decisionLog">Decision Log</a>
             <a href="/parameters">Parameters</a>
+            <a href="/balancing">Balancing</a>
+            <!---<a href="">Telemetry Overview</a>--->
+            <!---<a href="">Funnel View</a>--->
+            <!---<a href="">Simulation Mode</a>--->
         </nav>
         </aside>
 
@@ -24,5 +39,18 @@
       {% block content %}{% endblock %}
     </main>
   </div>
+  <footer class="footer">
+        <div class="footer_leftside"><h2>Accessibility</h2>
+        </div>
+        <h2>Support Information</h2>
+        <div class="footer_rightside">
+            <button id="export-btn" class="export_card">EXPORT</button>
+        </div>
+    </footer>
 </body>
+<script>
+    document.getElementById("export-btn").addEventListener("click", function () {
+        window.location.href = "/dashboard/export/csv";
+    });
+</script>
 </html>

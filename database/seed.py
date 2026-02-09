@@ -42,17 +42,15 @@ def seed():
                 telemetry_type=random.choice(allowed_types),
                 dateTime=base_time + timedelta(seconds=i * 10),
                 data={
-                    "stage_start": random.randint(200,1000), #02/02/26 changes to random intervals for logic fixes (eliminated the possibility of more ends than starts)
-                    "stage_end": random.randint(1,200),
-                    "enemy_defeated": random.randint(1,200),
+                    "enemy_defeated": random.randint(1,20),
                     "damage_taken": random.randint(1,200),
                     "tower_spawn": random.randint(1,200),
-                    "tower_upgrade": random.randint(1,20),
-                    "money_spent": random.randint(1,10000)
+                    "tower_upgrade": random.randint(9,20),
+                    "money_spent": random.randint(3500,10000)
                 },
             )
             db.add(t)
-            
+        """    
         for i in range(100):
             d = DecisionLog(
                 parameter_name = random.choice(["enemy_damage","enemy_health","player_speed","spawn_rate"]),
@@ -63,6 +61,7 @@ def seed():
                 dateTime=base_time + timedelta(seconds=i * 10),
             )
             db.add(d)
+        """
 
         db.commit()
 
