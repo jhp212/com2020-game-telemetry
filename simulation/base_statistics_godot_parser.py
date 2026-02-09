@@ -17,7 +17,10 @@ for index,char in enumerate(potentialtowerdict):
     if len(stack) == 0:
         tower_data = eval("{"+potentialtowerdict[:index+1])
         break
-print(tower_data)
+if __name__ == "__main__":
+    print(tower_data)
+
+del tower_data_start, potentialtowerdict, stack
 
 enemy_data_start: int = data.index("var enemy_data = {")
 potentialenemydict = ''.join(map(lambda line: line.lstrip("\t"),data[enemy_data_start+1:]))
@@ -34,4 +37,7 @@ for index,char in enumerate(potentialenemydict):
     if len(stack) == 0:
         enemy_data = eval("{"+potentialenemydict[:index+1])
         break
-print(enemy_data)
+if __name__ == "__main__":
+    print(enemy_data)
+
+del enemy_data_start, potentialenemydict, stack
