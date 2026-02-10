@@ -27,11 +27,9 @@ def path_interpreter(level_name: str):
     points = pathdata['points'].toList()[2::3]
     delta = lambda start, end: tuple(map(lambda a, b: b-a, start, end))
     vectabs = lambda point: sum(map(lambda x: x**2, point))**0.5
-    print(points)
     distances = [vectabs(delta(points_i,points_idx)) for points_i, points_idx in zip(points[0:len(points)-1],points[1:len(points)])]
-    print(sum(distances))
-    def calculatePosition(distance: int) -> tuple[int, ...]:
-        if 0>=distance or distance >= sum(distances):
+    def calculatePosition(distance) -> tuple[int, ...]:
+        if 0>distance or distance > sum(distances):
             return (0,0)
         totaldist = 0
         index = -1
@@ -42,11 +40,14 @@ def path_interpreter(level_name: str):
                 break
         pointa = points[index]
         pointb = points[index+1]
-        len_along = totaldist - distance - distances[index]
-        ratio_along = distances[index]/len_along
-        result = tuple(map(lambda a,b: int(round(a+b,0)), map(lambda x: ratio_along*x,pointa),map(lambda x: (1-ratio_along)*x,pointb)))
+        len_along = distance - (totaldist - distances[index])
+        ratio_along = len_along/distances[index]
+        result = tuple(map(lambda a,b: int(round(a+b,0)), map(lambda x: ratio_along*x,pointb),map(lambda x: (1-ratio_along)*x,pointa)))
         return result
-    return calculatePosition
+    return sum(distances), calculatePosition
 if __name__ == "__main__":
-    path1 = path_interpreter('map_1')
-    print(path1(1500))
+    length, path1 = path_interpreter('map_1')
+    print(f'length: {length}')
+    for i in range(100):
+        t = i*length/100
+        print(f'{int(round(t))}: {path1(t)}')

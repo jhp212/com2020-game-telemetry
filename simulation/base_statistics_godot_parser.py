@@ -41,3 +41,23 @@ if __name__ == "__main__":
     print(enemy_data)
 
 del enemy_data_start, potentialenemydict, stack
+
+level_data_start: int = data.index("var level_data = {")
+potentialleveldict = ''.join(map(lambda line: line.lstrip("\t"),data[level_data_start+1:]))
+stack = ["{"]
+for index,char in enumerate(potentialleveldict):
+    if char in ['{', '[', '(','"']:
+        if char == '"' and stack[-1] == '"':
+            stack.pop()
+        else:
+            stack.append(char)
+    elif char in ['}',']',')','"']:
+        if  ['{', '[', '(','"'].index(stack[-1]) == ['}',']',')','"'].index(char):
+            stack.pop()
+    if len(stack) == 0:
+        level_data = eval("{"+potentialleveldict[:index+1])
+        break
+if __name__ == "__main__":
+    print(level_data)
+
+del level_data_start, potentialleveldict, stack
