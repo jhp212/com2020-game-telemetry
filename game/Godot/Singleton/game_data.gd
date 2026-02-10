@@ -6,7 +6,7 @@ var win = "win"
 
 var user_id = randi_range(0, 1000)
 var current_stage
-var enemy_damage_multiplier: float
+var enemy_damage_multiplier := 1.0
 
 #### tracking number of enemies ####
 var enemy_amount = 0
