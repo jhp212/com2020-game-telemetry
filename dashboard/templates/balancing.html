@@ -1,0 +1,31 @@
+{% extends "base.html" %}
+{% block content %}
+
+<h2>Balancing</h2>
+<div>
+  <p>{{ sum }}</p>
+</div>
+<table>
+    <thead>
+      <tr>
+        <th>Balancing Area</th>
+        <th>Expected Value</th>
+        <th>Actual Value</th>
+        <th>Issue</th>
+        <th>Balancing Suggestion</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for b in balancing_response %}
+        <tr>
+          <td>{{ b.balancing_area }}</td>
+          <td>{{ b.expected_value }}</td>
+          <td>{{ b.actual_value }}</td>
+          <td>{{ b.issue }}</td>
+          <td>{{ b.balancing_suggestion }}</td>
+        </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% endblock %}

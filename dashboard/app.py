@@ -1,8 +1,11 @@
-import json 
+import json
+import csv
+import io
+import zipfile
 from collections import Counter # Helpful for graphing
 from pathlib import Path
 from fastapi import FastAPI, Request, HTTPException
-from fastapi.responses import HTMLResponse
+from fastapi.responses import HTMLResponse, StreamingResponse
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates # Jinja2 will be used for templates
 import requests, os
@@ -31,6 +34,7 @@ async def home(request: Request):
     if not r.ok:
         raise HTTPException(status_code=r.status_code, detail=r.text)
 
+    # simple error handling
     try:
         telemetry = r.json()
     except ValueError:
@@ -47,6 +51,8 @@ async def home(request: Request):
     
     type_labels = list(type_counts.keys())
     type_values = list(type_counts.values())
+    
+    # all "******_counts" one liners below simply count every instance of an event per given key such as "stage id" to be displayed as a bar graph
     
     stage_start_counts = Counter(t.get("stage_id") for t in telemetry if t.get("telemetry_type") == "stage_start" and t.get("stage_id") is not None)
     stage_labels = sorted(stage_start_counts.keys(), reverse=True)
@@ -97,7 +103,7 @@ async def dashboard(request: Request):
             detail=f"Telemetry API did not return JSON. Content-Type={response.headers.get('content-type')} Body starts: {response.text[:200]}"
         )
     
-    # populate dict to be returned to the dashboard, accounting for HTTPException
+    # populate array with data in JSON format to be returned to the dashboard, accounting for HTTPException
     telemetry_rows = []
     for t in telemetry:
         if not isinstance(t, dict):
@@ -111,7 +117,7 @@ async def dashboard(request: Request):
                 "data": t.get("data"),
             }
         )
-        
+    # return to template to be displayed      
     return templates.TemplateResponse(
         "dashboard.html",
         {"request": request, "title": "Telemetry Dashboard", "telemetry_rows": telemetry_rows}
@@ -122,10 +128,12 @@ async def dashboard(request: Request):
 async def decisionLog(request: Request):
     
     response = requests.get(f"{BASE_URL}/decision_logs/")
+    
+    # simple error handling
     if not response.ok:
         raise HTTPException(status_code=response.status_code, detail=response.text)
    
-    
+    # simple error handling
     try:
         decisionLog = response.json()
     except ValueError:
@@ -135,7 +143,7 @@ async def decisionLog(request: Request):
         )
     
     
-    
+    # forming an array of decision log data in JSON format to be displayed on the decision log table
     decision_log_rows = []
     for d in decisionLog:
         if not isinstance(d, dict):
@@ -153,6 +161,7 @@ async def decisionLog(request: Request):
             }
         )
         
+    # return to template to be displayed      
     return templates.TemplateResponse(
         "decision_log.html",
         {"request": request, "title": "Decision Log", "decision_log_rows": decision_log_rows}
@@ -162,10 +171,13 @@ async def decisionLog(request: Request):
 async def parameters(request: Request):
         
     response = requests.get(f"{BASE_URL}/parameters/")
+    
+    # simple error handling
     if not response.ok:
         raise HTTPException(status_code=response.status_code, detail=response.text)
    
     
+    # simple error handling
     try:
         parameters = response.json()
     except ValueError:
@@ -174,7 +186,7 @@ async def parameters(request: Request):
             detail=f"Telemetry API did not return JSON. Content-Type={response.headers.get('content-type')} Body starts: {response.text[:200]}"
         )
         
-        
+    # forming an array of parameter names and values to be displayed
     parameter_rows = []
     for p in parameters:
         if not isinstance(p, dict):
@@ -186,7 +198,8 @@ async def parameters(request: Request):
                 "value": p.get("value"),
             }
         )
-            
+    
+    #return to template to be displayed        
     return templates.TemplateResponse(
         "parameters.html",
         {"request": request, "title": "Parameters", "parameter_rows": parameter_rows}
@@ -201,11 +214,15 @@ class ParameterUpdate(BaseModel):
       
 @app.post("/parameters/")
 async def proxy_update_parameter(data: ParameterUpdate):
+    
+    # after making a parameter change we want the change to be displayed on the parameters table by posting it to the DB
     response = requests.post(
         f"{BASE_URL}/parameters/", 
         json=data.model_dump()
     )
 
+    
+     # simple error handling
     if not response.ok:
        
         raise HTTPException(
@@ -221,6 +238,7 @@ class DecisionLogCreate(BaseModel):
     rationale: str
     evidence: str
     dateTime: datetime
+
     
 @app.post("/decision_logs/")
 async def proxy_create_decision_log(data: DecisionLogCreate):
@@ -229,11 +247,14 @@ async def proxy_create_decision_log(data: DecisionLogCreate):
     
     payload["dateTime"] = data.dateTime.isoformat()
 
+    # post the parameter change we made as a json payload to the decision log
     response = requests.post(
         f"{BASE_URL}/decision_logs/",
         json=payload
     )
 
+    
+    # simple error handling
     if not response.ok:
         raise HTTPException(
             status_code=response.status_code,
@@ -241,3 +262,202 @@ async def proxy_create_decision_log(data: DecisionLogCreate):
         )
 
     return response.json()
+
+
+@app.get("/dashboard/export/csv")
+async def export_dashboard_csv():
+    
+    # request data from all datasets
+    telemetry_resp = requests.get(f"{BASE_URL}/telemetry/")
+    decision_resp = requests.get(f"{BASE_URL}/decision_logs/")
+    params_resp = requests.get(f"{BASE_URL}/parameters/")
+    
+    
+    if not telemetry_resp.ok:
+        raise HTTPException(status_code=telemetry_resp.status_code, detail=telemetry_resp.text)
+    if not decision_resp.ok:
+        raise HTTPException(status_code=decision_resp.status_code, detail=decision_resp.text)
+    if not params_resp.ok:
+        raise HTTPException(status_code=params_resp.status_code, detail=params_resp.text)
+
+    telemetry = telemetry_resp.json()
+    decision_logs = decision_resp.json()
+    parameters = params_resp.json()
+    
+    
+    # writing to buffer memory instead of real file for better performance
+    zip_buffer = io.BytesIO()
+
+    # initialise the zip file inn write mode
+    with zipfile.ZipFile(zip_buffer, "w", zipfile.ZIP_DEFLATED) as z:
+
+        # telemetry dashboard
+        telemetry_csv = io.StringIO()
+        writer = csv.writer(telemetry_csv)
+        writer.writerow(["dateTime", "user_id", "stage_id", "telemetry_type", "data"])
+        for t in telemetry:
+            writer.writerow([
+                t.get("dateTime"),
+                t.get("user_id"),
+                t.get("stage_id"),
+                t.get("telemetry_type"),
+                t.get("data")
+            ])
+        z.writestr("telemetry.csv", telemetry_csv.getvalue())
+
+        # decision logs
+        decision_csv = io.StringIO()
+        writer = csv.writer(decision_csv)
+        writer.writerow([
+            "dateTime",
+            "parameter_name",
+            "stage_id",
+            "change",
+            "rationale",
+            "evidence"
+        ])
+        for d in decision_logs:
+            writer.writerow([
+                d.get("dateTime"),
+                d.get("parameter_name"),
+                d.get("stage_id"),
+                d.get("change"),
+                d.get("rationale"),
+                d.get("evidence")
+            ])
+        z.writestr("decision_logs.csv", decision_csv.getvalue())
+
+        # parameters
+        params_csv = io.StringIO()
+        writer = csv.writer(params_csv)
+        writer.writerow(["name", "value"])
+        for p in parameters:
+            writer.writerow([
+                p.get("name"),
+                p.get("value")
+            ])
+        z.writestr("parameters.csv", params_csv.getvalue())
+
+    # reset cursor back to the start
+    zip_buffer.seek(0)
+
+
+
+    return StreamingResponse(
+        zip_buffer,
+        media_type="application/zip",
+        headers={
+            "Content-Disposition": "attachment; filename=telemetry_export.zip"
+        }
+    )
+
+
+@app.get("/balancing", response_class=HTMLResponse)
+async def dashboard(request: Request):
+    
+    response = requests.get(f"{BASE_URL}/telemetry/")
+    if not response.ok:
+        raise HTTPException(status_code=response.status_code, detail=response.text)
+    
+    # confirm what was received and print status and type if not json
+    try:
+        telemetry = response.json()
+    except ValueError:
+        raise HTTPException(
+            status_code=500,
+            detail=f"Telemetry API did not return JSON. Content-Type={response.headers.get('content-type')} Body starts: {response.text[:200]}"
+        )
+        
+    data_dump = []
+    
+    for t in telemetry:
+        if not isinstance(t, dict):
+            raise HTTPException(status_code=500, detail=f"Expected dict row, got {type(t)}: {t}")
+        data_dump.append(
+            {
+                "data": t.get("data")
+            }
+        )
+    
+    extracted_data = []
+    for d in data_dump:
+           extracted_data.append(
+               {
+                   "stage_start": d.get("data", {}).get("stage_start"),
+                   "stage_end": d.get("data", {}).get("stage_end"),
+                   "enemy_defeated": d.get("data", {}).get("enemy_defeated"),
+                   "damage_taken": d.get("data", {}).get("damage_taken"),
+                   "tower_spawn": d.get("data", {}).get("tower_spawn"),
+                   "tower_upgrade": d.get("data", {}).get("tower_upgrade"),
+                   "money_spent": d.get("data", {}).get("money_spent"),
+                   
+               }
+           )
+           
+    # initialise total variables
+    total_money_spent = 0
+    total_enemies_defeated = 0
+    total_tower_upgrades = 0
+    
+    
+    
+    for item in extracted_data:
+        total_money_spent += int(item.get("money_spent"))
+        total_enemies_defeated += int(item.get("enemy_defeated"))
+        total_tower_upgrades += int(item.get("tower_upgrade"))
+        
+    
+    # calculating the averages of each event 
+    n = len(extracted_data)
+    average_money_spent = total_money_spent / n
+    average_enemies_defeated = total_enemies_defeated / n
+    average_tower_upgrades = total_tower_upgrades / n
+    
+    # Expected value constants
+    MONEY_SPENT = 4000
+    ENEMIES_DEFEATED = 100
+    TOWER_UPGRADES = 10
+    
+    balancing_response= []
+    
+    if(average_money_spent > MONEY_SPENT):
+        balancing_response.append(
+            {
+                "balancing_area": "Game Economy",
+                "expected_value": str(MONEY_SPENT),
+                "actual_value": str(average_money_spent),
+                "issue": "Players able to spend more money than expected",
+                "balancing_suggestion": "Decrease money given by each defeated enemy"
+            }
+        )
+    if(average_tower_upgrades > TOWER_UPGRADES):
+        balancing_response.append(
+            {
+                "balancing_area": "Upgrades",
+                "expected_value": str(TOWER_UPGRADES),
+                "actual_value": str(average_tower_upgrades),
+                "issue": "Players are able to upgrade their towers too many times resulting in unbalanced level difficulty",
+                "balancing_suggestion": "Increase tower upgrade cost"
+            }
+        )
+        
+    if(average_enemies_defeated < ENEMIES_DEFEATED):
+        balancing_response.append(
+            {
+                "balancing_area": "Defeating Enemies",
+                "expected_value": str(ENEMIES_DEFEATED),
+                "actual_value": str(average_enemies_defeated),
+                "issue": "Players are struggling to defeat most enemies",
+                "balancing_suggestion": "Decrease enemy health"
+            }
+        )
+        
+    
+        
+    
+    
+    
+    return templates.TemplateResponse(
+        "balancing.html",
+        {"request": request, "title": "Balancing", "balancing_response": balancing_response}
+    )

@@ -28,9 +28,10 @@
             <a href="/dashboard">Dashboard</a>
             <a href="/decisionLog">Decision Log</a>
             <a href="/parameters">Parameters</a>
-            <a href="">Telemetry Overview</a>
-            <a href="">Funnel View</a>
-            <a href="">Simulation Mode</a>
+            <a href="/balancing">Balancing</a>
+            <!---<a href="">Telemetry Overview</a>--->
+            <!---<a href="">Funnel View</a>--->
+            <!---<a href="">Simulation Mode</a>--->
         </nav>
         </aside>
 
@@ -43,8 +44,13 @@
         </div>
         <h2>Support Information</h2>
         <div class="footer_rightside">
-            <a class="export_card">EXPORT</a>
+            <button id="export-btn" class="export_card">EXPORT</button>
         </div>
     </footer>
 </body>
+<script>
+    document.getElementById("export-btn").addEventListener("click", function () {
+        window.location.href = "/dashboard/export/csv";
+    });
+</script>
 </html>
