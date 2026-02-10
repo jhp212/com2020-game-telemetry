@@ -14,18 +14,21 @@ func _ready() -> void:
 func on_hit(damage):
 	health -= damage
 	if health <= 0:
-		die()
+		die(0)
 
-func die():
-	GameData.add_money(GameData.enemy_data["medium_circle"]["cash"])
-	enemy_death.emit()
+func die(condition):
+	if condition == 0:
+		GameData.add_money(GameData.enemy_data["medium_circle"]["cash"])
+		enemy_death.emit()
+	if condition == 1:
+		enemy_death.emit()
 	self.queue_free()
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _physics_process(delta: float) -> void:
 	if progress_ratio == 1.0:
 		enemy_damage.emit(damage)
-		queue_free()
+		die(1)
 	move(delta)
 
 

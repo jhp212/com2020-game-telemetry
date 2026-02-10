@@ -3,8 +3,8 @@
 [ext_resource type="Script" uid="uid://dudmyrvr2buqo" path="res://win_screen.gd" id="1_l5sol"]
 
 [sub_resource type="Gradient" id="Gradient_erv1k"]
-offsets = PackedFloat32Array(0)
-colors = PackedColorArray(0.151421, 0.523333, 0, 1)
+offsets = PackedFloat32Array(0, 0.95283)
+colors = PackedColorArray(0.228172, 0.738368, 0, 1, 0.127304, 0.455761, 0, 1)
 
 [sub_resource type="GradientTexture2D" id="GradientTexture2D_a00f1"]
 gradient = SubResource("Gradient_erv1k")

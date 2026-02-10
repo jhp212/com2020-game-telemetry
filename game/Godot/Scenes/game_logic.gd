@@ -129,10 +129,3 @@ func on_game_over(result):
 	elif result == "win":
 		GameData.reset()
 		get_tree().change_scene_to_file("res://Scenes/win_screen.tscn")
-
-#func on_damage(damage):
-#	base_health -= damage
-#	if base_health <= 0:
-#		emit_signal("game_finished", false)
-#	else:
-#		get_node("UI").update_health_bar(base_health)

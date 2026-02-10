@@ -4,6 +4,7 @@ var enemy_array = []
 var built = false
 var enemy
 var ready_to_shoot = true
+var spin_speed = 1
 
 @onready var shoot_position_1: Marker2D = $Body/ShootPosition1
 @onready var shoot_position_2: Marker2D = $Body/ShootPosition2
@@ -11,12 +12,14 @@ var ready_to_shoot = true
 @onready var shoot_position_4: Marker2D = $Body/ShootPosition4
 @onready var shoot_position_5: Marker2D = $Body/ShootPosition5
 @onready var collision_shape: CollisionShape2D = $Range/CollisionShape2D
+@onready var body: Sprite2D = $Body
 
 const projectile_star_scene = preload("res://Scenes/Towers/Projectiles/projectile_star.tscn")
 
 
 func _physics_process(delta):
 	if enemy_array.size() != 0 and built:
+		body.rotation += spin_speed * delta
 		if ready_to_shoot:
 			fire()
 	else:

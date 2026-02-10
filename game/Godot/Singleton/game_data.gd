@@ -27,7 +27,7 @@ func damage_base(amount):
 		game_finished.emit(lose)
 
 #### Money ####
-var money := 850
+var money :=2000
 signal money_changed(new_amount)
 
 func can_afford(amount):
@@ -56,7 +56,7 @@ var tower_data = {
 		"cost": 250},
 	"square_stock": {
 		"damage": 35,
-		"rof": 2.5,
+		"rof": 1,
 		"range": 10000,
 		"cost": 550},
 	"star_stock": {
@@ -70,9 +70,9 @@ var tower_data = {
 var enemy_data = {
 	"medium_circle": {
 		"health": 50,
-		"speed": 50,
+		"speed": 500,
 		"cash": 100,
-		"damage": 2
+		"damage": 70
 	},
 	"large_circle": {
 		"health": 170,
@@ -92,8 +92,8 @@ var enemy_data = {
 var level_data = {
 	"Level1": {
 		"number_of_waves": 2,
-		"wave_1": [["medium_circle", 1], ["medium_circle", 1], ["medium_circle", 1], ["medium_circle", 2], ["large_circle", 3], ["small_circle", 1],  ["small_circle", 1],  ["small_circle", 1]], 
-		"wave_2": [["small_circle", 1], ["small_circle", 1], ["small_circle", 1], ["small_circle", 1], ["small_circle", 1], ["small_circle", 1], ["small_circle", 1], ["small_circle", 1], ["small_circle", 1], ["small_circle", 1], ["small_circle", 1], ["small_circle", 1], ["small_circle", 1], ["small_circle", 1]]
+		"wave_1": [["medium_circle", 1], ["medium_circle", 1]],
+		"wave_2": [["medium_circle", 1], ["medium_circle", 1]]
 	},
 	"Level2": {
 		"number_of_waves": 3,

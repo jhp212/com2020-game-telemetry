@@ -29,25 +29,29 @@ func fire():
 	new_projectile_1.global_rotation = shoot_position_1.global_rotation
 	get_parent().add_child(new_projectile_1)
 	
+	
+	
 	var new_projectile_2 = projectile_square_scene.instantiate()
 	new_projectile_2.global_position = shoot_position_2.global_position
 	new_projectile_2.global_rotation = shoot_position_2.global_rotation
 	get_parent().add_child(new_projectile_2)
+	
+
 	
 	var new_projectile_3 = projectile_square_scene.instantiate()
 	new_projectile_3.global_position = shoot_position_3.global_position
 	new_projectile_3.global_rotation = shoot_position_3.global_rotation
 	get_parent().add_child(new_projectile_3)
 	
+	
+	
 	var new_projectile_4 = projectile_square_scene.instantiate()
 	new_projectile_4.global_position = shoot_position_4.global_position
 	new_projectile_4.global_rotation = shoot_position_4.global_rotation
 	get_parent().add_child(new_projectile_4)
 	
-	#enemy.on_hit(GameData.tower_data["square_stock"]["damage"])
 	await get_tree().create_timer(GameData.tower_data["square_stock"]["rof"]).timeout
 	ready_to_shoot = true
-	
 
 func _init():
 	pass
