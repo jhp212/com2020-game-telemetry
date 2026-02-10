@@ -8,8 +8,8 @@ from math import sin, cos
 test_count = 20
 level = 1
 
-enemy_health_mult = 1
-enemy_damage_mult = 10
+enemy_health_mult = 0.5
+enemy_damage_mult = 5
 player_health_mult = 1
 enemy_speed_mult = 1
 player_rof_mult = 1
@@ -162,7 +162,7 @@ for i in range(test_count):
 		# run enemy spawning checks
 		if cooldown == 0 and len(waves[wavecount-1]) != 0:
 			nextenemy = waves[wavecount-1].pop(0)
-			enemies.append([nextenemy[0], 0, hit_mask[0], enemy_data[nextenemy[0]]['health']]*enemy_health_mult)
+			enemies.append([nextenemy[0], 0, hit_mask[0], enemy_data[nextenemy[0]]['health']*enemy_health_mult])
 			cooldown = nextenemy[1]
 			print(f'{nextenemy[0]} spawned: ENEMY ID: {0 if len(enemy_ids) == 0 else max(enemy_ids)+1}')
 			enemy_ids.append(0 if len(enemy_ids) == 0 else max(enemy_ids)+1)
