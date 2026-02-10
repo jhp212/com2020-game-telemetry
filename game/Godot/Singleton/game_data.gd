@@ -6,9 +6,35 @@ var win = "win"
 
 var user_id = randi_range(0, 1000)
 var current_stage
+var enemy_damage_multiplier: float
+
 #### tracking number of enemies ####
 var enemy_amount = 0
 
+func _ready() -> void:
+	var json = await Telemetry.get_parameter("enemy_damage_multiplier")
+	enemy_damage_multiplier = json[0]["value"]
+	enemy_data = {
+		"medium_circle": {
+			"health": 50,
+			"speed": 500,
+			"cash": 100,
+			"damage": 70 * enemy_damage_multiplier
+		},
+		"large_circle": {
+			"health": 170,
+			"speed": 30,
+			"cash": 250,
+			"damage": 5 * enemy_damage_multiplier
+		},
+		"small_circle": {
+			"health": 40,
+			"speed": 80,
+			"cash": 80,
+			"damage": 1 * enemy_damage_multiplier
+		}
+	}
+	
 func add_enemy_amount(number_of_enemies):
 	enemy_amount += number_of_enemies
 	print("more are added: " + str(enemy_amount))
@@ -76,19 +102,19 @@ var enemy_data = {
 		"health": 50,
 		"speed": 500,
 		"cash": 100,
-		"damage": 70
+		"damage": 70 * enemy_damage_multiplier
 	},
 	"large_circle": {
 		"health": 170,
 		"speed": 30,
 		"cash": 250,
-		"damage": 5
+		"damage": 5 * enemy_damage_multiplier
 	},
 	"small_circle": {
 		"health": 40,
 		"speed": 80,
 		"cash": 80,
-		"damage": 1
+		"damage": 1 * enemy_damage_multiplier
 	}
 }
 

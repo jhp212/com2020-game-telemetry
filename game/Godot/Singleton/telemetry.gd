@@ -18,7 +18,21 @@ func create_telemetry(telemetry_data):
 	http_request.queue_free()
 	return json.get_data()
 
-
+func get_parameter(parameter_name):
+	var http_request = HTTPRequest.new()
+	add_child(http_request)
+	var headers = ["Content-Type: application/json"]
+	var error = http_request.request(BASE_URL + "/parameters/?parameter_name=" + parameter_name, headers, HTTPClient.METHOD_GET)
+	if error != OK:
+		print("Error making request")
+		return null
+	var result = await http_request.request_completed
+	var response_body = result[3]
+	var json = JSON.new()
+	json.parse(response_body.get_string_from_utf8())
+	http_request.queue_free()
+	return json.get_data()
+	
 func log_event(event_type: String, payload := {}):
 	var telemetry_data := {
 		"user_id": GameData.user_id,
