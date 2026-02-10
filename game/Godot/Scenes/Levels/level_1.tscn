@@ -8,3 +8,4 @@
 [node name="Map1" parent="." instance=ExtResource("1_tlcug")]
 
 [node name="GameLogic" parent="." instance=ExtResource("2_4dpyx")]
+level = 1

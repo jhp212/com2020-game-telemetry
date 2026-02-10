@@ -64,6 +64,7 @@ func _init():
 func _ready():
 	if built:
 		collision_shape.shape.radius = GameData.tower_data["star_stock"]["range"]
+		Telemetry.log_event("tower_spawn", {"tower_id": 3})
 	
 func _process(delta):
 	pass

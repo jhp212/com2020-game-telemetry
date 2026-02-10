@@ -4,6 +4,8 @@ signal game_finished(result)
 var lose = "lose"
 var win = "win"
 
+var user_id = randi_range(0, 1000)
+var current_stage
 #### tracking number of enemies ####
 var enemy_amount = 0
 
@@ -23,8 +25,9 @@ func damage_base(amount):
 	base_health -= amount
 	base_health = max(base_health, 0)
 	base_health_changed.emit(base_health)
-	if base_health <= 0:
+	if base_health == 0:
 		game_finished.emit(lose)
+	Telemetry.log_event("damage_taken", {"amount": amount, "remaining_health": base_health})
 
 #### Money ####
 var money :=2000
@@ -40,6 +43,7 @@ func spend(amount):
 
 	money -= amount
 	money_changed.emit(money)
+	Telemetry.log_event("money_spent", {"amount": amount, "remaining_amount": money})
 	return true
 
 func add_money(amount):

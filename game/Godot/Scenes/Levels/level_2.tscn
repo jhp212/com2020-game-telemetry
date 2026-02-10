@@ -8,3 +8,4 @@
 [node name="Map2" parent="." instance=ExtResource("2_oylv5")]
 
 [node name="GameLogic" parent="." instance=ExtResource("1_ucdhh")]
+level = 2

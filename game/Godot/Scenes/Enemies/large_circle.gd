@@ -19,6 +19,7 @@ func on_hit(damage):
 func die():
 	GameData.add_money(GameData.enemy_data["medium_circle"]["cash"])
 	enemy_death.emit()
+	Telemetry.log_event("enemy_defeated", {"enemy_id": 3})
 	self.queue_free()
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
