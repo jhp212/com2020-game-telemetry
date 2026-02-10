@@ -5,14 +5,14 @@ import random
 from copy import deepcopy
 from math import sin, cos
 
-test_count = 20
+test_count = 40
 level = 1
 
 enemy_health_mult = 0.5
 enemy_damage_mult = 5
 player_health_mult = 1
 enemy_speed_mult = 1
-player_rof_mult = 1
+player_rof_mult = 5
 
 
 
@@ -37,6 +37,7 @@ def within_bounds(tower_type, tower_location: tuple, path_location: tuple)  -> b
 lvlname = 'Level' + str(level)
 mapname = "map_" + str(level)
 length, path = path_interpreter(mapname)
+successes = 0
 
 #Time is distance / speed
 
@@ -91,7 +92,8 @@ for i in range(test_count):
 	# Third: this constant rate of fire will deal an average amount of damage for the duration the enemy is within line of fire.
 	# Fourth: if you can place a tower, you will place a tower.
 	while base_money + earnable > 0:
-		tower = random.choice(list(tower_data.keys()))
+		#tower = random.choice(list(tower_data.keys()))
+		tower = 'triangle_stock'
 		tower_queue.append(tower)
 		base_money -= tower_data[tower]['cost']
 		if base_money >= 0:
@@ -105,12 +107,12 @@ for i in range(test_count):
 		pathpoint = Vector(path(alongcurve))
 		towerCentre = tuple((offset + pathpoint).values)
 		ctrs.append(towerCentre)
-		# mask calculation
-		for pointindex, point in enumerate(sample_points):
-			if within_bounds(tower, towerCentre, point):
-				hit_mask[pointindex] += 2**index
 		# for each point in the hit_mask, there will be a number, whos binary representation is which towers can hit this point.
 	for i in range(len(towers)):
+		# mask calculation
+		for pointindex, point in enumerate(sample_points):
+			if within_bounds(towers[i], ctrs[i], point):
+				hit_mask[pointindex] += 2**i
 		tower_queue.pop(0)
 		print(f'Tower {i} ({towers[i]}) created at {ctrs[i]}')
 	# The towers are now all set up, time to simulate the game
@@ -157,8 +159,11 @@ for i in range(test_count):
 		# run tower spawning checks
 		while money >= tower_data[tower_queue[0]]['cost']:
 			money -= tower_data[tower_queue[0]]['cost']
+			for pointindex, point in enumerate(sample_points):
+				if within_bounds(tower_queue[0], ctrs[len(towers)], point):
+					hit_mask[pointindex] += 2**len(towers)
 			towers.append(tower_queue.pop(0))
-			print("Built new tower")
+			print(f"Built new tower {len(towers)-1}: {towers[len(towers)-1]}")
 		# run enemy spawning checks
 		if cooldown == 0 and len(waves[wavecount-1]) != 0:
 			nextenemy = waves[wavecount-1].pop(0)
@@ -168,4 +173,8 @@ for i in range(test_count):
 			enemy_ids.append(0 if len(enemy_ids) == 0 else max(enemy_ids)+1)
 		cooldown = max(0, cooldown - timesamplerate)
 	print(base_health > 0)
+	successes += base_health > 0
 	reset()
+
+print("                RESULTS                ")
+print(f"{successes} out of {test_count} were successful ({round(successes*100/test_count,1)}%)")
