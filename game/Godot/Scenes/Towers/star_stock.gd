@@ -28,7 +28,7 @@ func _physics_process(delta):
 func fire():
 	ready_to_shoot = false
 	
-	#instance a projectile
+	# Instance a projectile in each direction
 	var new_projectile_1 = projectile_star_scene.instantiate()
 	new_projectile_1.global_position = shoot_position_1.global_position
 	new_projectile_1.global_rotation = shoot_position_1.global_rotation
@@ -54,27 +54,18 @@ func fire():
 	new_projectile_5.global_rotation = shoot_position_5.global_rotation
 	get_parent().add_child(new_projectile_5)
 	
-	#enemy.on_hit(GameData.tower_data["square_stock"]["damage"])
+	# Wait for the rof cooldown before being able to shoot again
 	await get_tree().create_timer(GameData.tower_data["star_stock"]["rof"]).timeout
 	ready_to_shoot = true
 
-func _init():
-	pass
-	
 func _ready():
 	if built:
 		collision_shape.shape.radius = GameData.tower_data["star_stock"]["range"]
 		Telemetry.log_event("tower_spawn", {"tower_id": 3})
-	
-func _process(delta):
-	pass
-	
-
 
 func _on_range_body_entered(body: Node2D) -> void:
 	enemy_array.append(body.get_parent())
 	print(enemy_array)
-
 
 func _on_range_body_exited(body: Node2D) -> void:
 	enemy_array.erase(body.get_parent())

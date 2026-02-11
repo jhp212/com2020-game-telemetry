@@ -1,51 +1,58 @@
 extends Node2D
 
+# Signal for game state changes
 signal game_finished(result)
 signal number_of_enemies(amount)
 
+# Connect nodes
 @export var level: int
+@onready var grace_period: Timer = $GracePeriod
 
+# Map reference
 var map_node
 
+# Build
 var build_mode = false
 var build_valid = false
 var build_tile
 var build_location
 var build_type
 
+# Tracking waves
 var current_wave = 0
 var enemies_in_wave = 0
 
-# number of enemies spawned logged?
-
-@onready var grace_period: Timer = $GracePeriod
 
 func _ready():
+	# Connect signals for enemy count and game over
 	number_of_enemies.connect(GameData.add_enemy_amount)
 	GameData.game_finished.connect(on_game_over)
+	# Get map
 	map_node = get_tree().get_first_node_in_group("maps")
+	# Connect build buttons
 	for i in get_tree().get_nodes_in_group("build_buttons"):
 		i.pressed.connect(initiate_build_mode.bind(i.name))
-	GameData.current_stage = level
+	# Set current stage and log telemetry event
 	Telemetry.log_event("stage_start", {})
-	# not how this will be started
-	# start_game event log
 
 func get_map():
+	# Refresh map reference
 	map_node = get_tree().get_first_node_in_group("maps")
 
 func _process(delta):
+	# Check for win condition
 	if current_wave == (GameData.level_data[get_parent().name]["number_of_waves"] + 1) and GameData.enemy_amount == 0:
 		print("waves completed")
 		Telemetry.log_event("stage_end", {})
 		GameData.reset()
 		get_tree().change_scene_to_file("res://Scenes/win_screen.tscn")
-		
+	# Update toqer preview when placing
 	if build_mode:
 		update_tower_preview()
 
 func start_next_wave():
-	# round event log
+	# Start next wave
+	## round event log
 	if current_wave <= GameData.level_data[get_parent().name]["number_of_waves"]:
 		var wave_data = retrieve_wave_data()
 		current_wave += 1
@@ -53,16 +60,20 @@ func start_next_wave():
 		
 	
 func retrieve_wave_data():
+	# Get wave data from GameData
 	var wave_data = GameData.level_data[get_parent().name]["wave_" + str(current_wave)]
 	var enemies_in_wave = wave_data.size()
 	print("cw " + str(current_wave))
+	# Notify GameData how many enemies will spawn
 	number_of_enemies.emit(enemies_in_wave)
 	return wave_data
 	
 func spawn_enemies(wave_data):
+	# Spawn enemies one by one with predetermined delays
 	map_node = get_tree().get_first_node_in_group("maps")
 	for i in wave_data:
 		var new_enemy = load("res://Scenes/Enemies/" + i[0] + ".tscn").instantiate()
+		# Connect enemy signals
 		new_enemy.enemy_damage.connect(GameData.damage_base)
 		new_enemy.enemy_death.connect(GameData.remove_enemy_amount)
 		map_node.get_node("Path2D").add_child(new_enemy, true)
@@ -70,24 +81,30 @@ func spawn_enemies(wave_data):
 	start_grace_period()
 
 func start_grace_period():
+	# Wait before starting next wave
 	await get_tree().create_timer(10).timeout
 	start_next_wave()
 
 func _unhandled_input(event):
+	# Cancel build mode
 	if event.is_action_released("ui_cancel") and build_mode == true:
 		cancel_build_mode()
+	# Confirm tower placement
 	if event.is_action_released("ui_accept") and build_mode == true:
 		verify_and_build()
 		cancel_build_mode()
 	
 func initiate_build_mode(tower_type):
+	# Start building a tower
 	if build_mode:
 		cancel_build_mode()
 	build_type = tower_type 
 	build_mode = true
+	# Create preview at position of mouse
 	get_node("UI").set_tower_preview(build_type, get_global_mouse_position())
 	
 func update_tower_preview():
+	# Update preview position and color based on tile validity
 	map_node = get_tree().get_first_node_in_group("maps")
 	var mouse_position = get_global_mouse_position()
 	var tilemap: TileMapLayer = map_node.get_node("Ground/TowerExclusion")
@@ -100,7 +117,7 @@ func update_tower_preview():
 	var tile_position = tilemap.to_global(
 		tilemap.map_to_local(current_tile)
 	)
-
+	# Check if tile is valid
 	if tilemap.get_cell_source_id(current_tile) == -1:
 		$UI.update_tower_preview(tile_position, "c7c7c7")
 		build_valid = true
@@ -112,26 +129,32 @@ func update_tower_preview():
 
 	
 func cancel_build_mode():
+	# Remove preview
 	build_mode = false
 	build_valid = false
 	get_node("UI/TowerPreview").free()
 	
 func verify_and_build():
+	# Cost of selected tower
 	var cost = GameData.tower_data[build_type]["cost"]
+	# Only build if placement is valid and player has enough money
 	if build_valid and GameData.spend(cost):
+		# Create tower
 		var new_tower = load("res://Scenes/Towers/" + build_type + ".tscn").instantiate()
 		new_tower.position = build_location
 		new_tower.built = true
 		map_node.get_node("Towers").add_child(new_tower, true)
+		# Mark tile as occupied
 		map_node.get_node("Ground/TowerExclusion").set_cell(build_tile, 3, Vector2i(0, 0))
-		#deduct cash
 		#update cash ui
 
 func on_game_over(result):
+	# Handle losing and log telemetry event
 	if result == "lose":
 		Telemetry.log_event("stage_fail", {})
 		GameData.reset()
 		get_tree().change_scene_to_file("res://Scenes/game_over.tscn")
+	# Handle wining and log telemetry event
 	elif result == "win":
 		Telemetry.log_event("stage_end", {})
 		GameData.reset()

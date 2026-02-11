@@ -12,19 +12,26 @@ func _ready():
 	
 
 func on_play_pressed():
-	# change loaded scene to continue in future?
+	# Changes scene to Level1
+	GameData.current_stage = 1
 	get_tree().change_scene_to_file("res://Scenes/Levels/level_1.tscn")
 
 func on_levels_pressed():
+	# Go to LevelSelection page
 	get_node("LevelSelection").show()
 
 func on_back_button_pressed():
+	# Go back to main menu
 	get_node("LevelSelection").hide()
 
 func on_levels_1_pressed():
+	# Changes scene to Level1
+	GameData.current_stage = 1
 	get_tree().change_scene_to_file("res://Scenes/Levels/level_1.tscn")
 
 func on_levels_2_pressed():
+	# Changes scene to Level2
+	GameData.current_stage = 2
 	get_tree().change_scene_to_file("res://Scenes/Levels/level_2.tscn")
 
 #func on_game_over(result):

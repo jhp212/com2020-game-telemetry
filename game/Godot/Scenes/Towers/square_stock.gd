@@ -1,19 +1,25 @@
 extends Node2D
 
+# Track enemies
 var enemy_array = []
-var built = false
 var enemy
+
+# Tower state
+var built = false
 var ready_to_shoot = true
 
+# Connect nodes
 @onready var shoot_position_1: Marker2D = $Body/ShootPosition1
 @onready var shoot_position_2: Marker2D = $Body/ShootPosition2
 @onready var shoot_position_3: Marker2D = $Body/ShootPosition3
 @onready var shoot_position_4: Marker2D = $Body/ShootPosition4
 @onready var collision_shape: CollisionShape2D = $Range/CollisionShape2D
 
+# Connect projectile scene
 const projectile_square_scene = preload("res://Scenes/Towers/Projectiles/projectile_square.tscn")
 
 func _physics_process(delta):
+	# Act if enemies are in range and tower is built
 	if enemy_array.size() != 0 and built:
 		if ready_to_shoot:
 			fire()
@@ -53,25 +59,16 @@ func fire():
 	await get_tree().create_timer(GameData.tower_data["square_stock"]["rof"]).timeout
 	ready_to_shoot = true
 
-func _init():
-	pass
-	
 func _ready():
+	# Set size of the range and log telemetry event
 	if built:
 		collision_shape.shape.radius = GameData.tower_data["square_stock"]["range"]
 		Telemetry.log_event("tower_spawn", {"tower_id": 2})
-	
-	
-func _process(delta):
-	pass
-	
-
-
 
 func _on_range_body_entered(body: Node2D) -> void:
+	# Add enemy when it enters the range
 	enemy_array.append(body.get_parent())
-	print("bababoowee")
-
 
 func _on_range_body_exited(body: Node2D) -> void:
+	# Remove enemy when it leaves the range
 	enemy_array.erase(body.get_parent())
