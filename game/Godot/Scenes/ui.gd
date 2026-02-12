@@ -2,7 +2,11 @@ extends CanvasLayer
 
 # Connect nodes
 @onready var health_bar: TextureProgressBar = $HUD/HealthUI/HBoxContainer/HealthBar
-@onready var cash: Label = $HUD/CashUI/HBoxContainer/Cash
+@onready var cash: Label = $HUD/TextureRect/BuildBar/CashUI/HBoxContainer/Cash
+@onready var triangle_cost: Label = $HUD/TextureRect/BuildBar/HBoxContainer/VBoxContainer2/TriangleCost
+@onready var square_cost: Label = $HUD/TextureRect/BuildBar/HBoxContainer/VBoxContainer2/SquareCost
+@onready var star_cost: Label = $HUD/TextureRect/BuildBar/HBoxContainer/VBoxContainer2/StarCost
+
 
 var current_tween: Tween
 var lose
@@ -19,6 +23,10 @@ func _ready():
 	update_money(GameData.money)
 	# Play "pulse" animation on the play/pause button
 	$HUD/PausePlay/AnimationPlayer.play("pulse")
+	
+	triangle_cost.text = str(GameData.tower_data["triangle_stock"]["cost"])
+	square_cost.text = str(GameData.tower_data["square_stock"]["cost"])
+	star_cost.text = str(GameData.tower_data["star_stock"]["cost"])
 
 func update_money(amount: int):
 	# Update displayed cash

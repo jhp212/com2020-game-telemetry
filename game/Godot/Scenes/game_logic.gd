@@ -33,14 +33,15 @@ func _ready():
 	for i in get_tree().get_nodes_in_group("build_buttons"):
 		i.pressed.connect(initiate_build_mode.bind(i.name))
 	# Set current stage and log telemetry event
-	Telemetry.log_event("stage_start", {})
+	#GameData.current_stage = level
+	#Telemetry.log_event("stage_start", {})
 
 func get_map():
 	# Refresh map reference
 	map_node = get_tree().get_first_node_in_group("maps")
 
 func _process(delta):
-	# Check for win condition
+	# Check for win condition and log telemetry event
 	if current_wave == (GameData.level_data[get_parent().name]["number_of_waves"] + 1) and GameData.enemy_amount == 0:
 		print("waves completed")
 		Telemetry.log_event("stage_end", {})
@@ -155,7 +156,7 @@ func on_game_over(result):
 		GameData.reset()
 		get_tree().change_scene_to_file("res://Scenes/game_over.tscn")
 	# Handle wining and log telemetry event
-	elif result == "win":
-		Telemetry.log_event("stage_end", {})
-		GameData.reset()
-		get_tree().change_scene_to_file("res://Scenes/win_screen.tscn")
+	#elif result == "win":
+	#	Telemetry.log_event("stage_end", {})
+	#	GameData.reset()
+	#	get_tree().change_scene_to_file("res://Scenes/win_screen.tscn")

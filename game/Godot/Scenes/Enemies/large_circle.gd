@@ -28,7 +28,6 @@ func die(condition):
 	if condition == 1:
 		# Emit death signal and log telemetry event, then remove enemy
 		enemy_death.emit()
-		Telemetry.log_event("enemy_defeated", {"enemy_id": 3})
 	self.queue_free()
 
 func _physics_process(delta: float) -> void:
