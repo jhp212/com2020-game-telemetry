@@ -1,11 +1,13 @@
-[gd_scene load_steps=16 format=3 uid="uid://bw36ka3wx3gww"]
+[gd_scene load_steps=14 format=3 uid="uid://bw36ka3wx3gww"]
 
 [ext_resource type="Script" uid="uid://s0xabfgj4tei" path="res://Scenes/game_logic.gd" id="1_qxrlw"]
 [ext_resource type="Script" uid="uid://dkaot6l8a7grx" path="res://Scenes/ui.gd" id="3_3dryh"]
 [ext_resource type="Texture2D" uid="uid://bg4cy6fcpqckt" path="res://Assets/Towers/Triangle - Stock.png" id="3_wrm1d"]
 [ext_resource type="Texture2D" uid="uid://dr1dia6nyt4un" path="res://Assets/Towers/Square - Stock.png" id="5_i6g32"]
 [ext_resource type="Texture2D" uid="uid://brx5cmnunc36u" path="res://Assets/Towers/Star - Stock.png" id="6_i6g32"]
-[ext_resource type="Texture2D" uid="uid://52mjc60fym5w" path="res://Assets/Health Bar.png" id="7_1l0tm"]
+[ext_resource type="Texture2D" uid="uid://52mjc60fym5w" path="res://Assets/UI/Health Bar.png" id="6_q556h"]
+[ext_resource type="Texture2D" uid="uid://cpc3vvvimuyld" path="res://Assets/UI/play_button.png" id="7_q556h"]
+[ext_resource type="Texture2D" uid="uid://cuu1dauurthu4" path="res://Assets/UI/pause_button.png" id="8_3jyqh"]
 
 [sub_resource type="Gradient" id="Gradient_xsymc"]
 offsets = PackedFloat32Array(0)
@@ -14,18 +16,6 @@ colors = PackedColorArray(0.226707, 0.226707, 0.226707, 0.921569)
 [sub_resource type="GradientTexture1D" id="GradientTexture1D_q556h"]
 gradient = SubResource("Gradient_xsymc")
 width = 125
-
-[sub_resource type="Gradient" id="Gradient_aoada"]
-colors = PackedColorArray(0, 0, 0, 1, 0, 1, 0, 1)
-
-[sub_resource type="GradientTexture2D" id="GradientTexture2D_xsymc"]
-gradient = SubResource("Gradient_aoada")
-
-[sub_resource type="Gradient" id="Gradient_q556h"]
-colors = PackedColorArray(0, 0, 0, 1, 1, 0, 0, 1)
-
-[sub_resource type="GradientTexture2D" id="GradientTexture2D_3jyqh"]
-gradient = SubResource("Gradient_q556h")
 
 [sub_resource type="Animation" id="Animation_xsymc"]
 length = 0.001
@@ -192,8 +182,8 @@ layout_mode = 2
 size_flags_horizontal = 6
 size_flags_vertical = 4
 value = 100.0
-texture_under = ExtResource("7_1l0tm")
-texture_progress = ExtResource("7_1l0tm")
+texture_under = ExtResource("6_q556h")
+texture_progress = ExtResource("6_q556h")
 tint_under = Color(0.252028, 0.252028, 0.252028, 1)
 tint_progress = Color(0, 0.745098, 0, 1)
 
@@ -209,8 +199,8 @@ size_flags_horizontal = 4
 size_flags_vertical = 4
 toggle_mode = true
 action_mode = 0
-texture_normal = SubResource("GradientTexture2D_xsymc")
-texture_pressed = SubResource("GradientTexture2D_3jyqh")
+texture_normal = ExtResource("7_q556h")
+texture_pressed = ExtResource("8_3jyqh")
 
 [node name="AnimationPlayer" type="AnimationPlayer" parent="UI/HUD/PausePlay"]
 libraries = {

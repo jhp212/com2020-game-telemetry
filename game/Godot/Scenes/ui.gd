@@ -43,7 +43,7 @@ func set_tower_preview(tower_type, mouse_position):
 	range_texture.position = Vector2(0,0)
 	var scaling = GameData.tower_data[tower_type]["range"] / 600.0
 	range_texture.scale = Vector2(scaling, scaling)
-	var texture = load("res://Assets/Range Indicator.png")
+	var texture = load("res://Assets/UI/Range Indicator.png")
 	range_texture.texture = texture
 	
 	# Make the tower preview follow the mouse
@@ -77,15 +77,17 @@ func update_health_bar(base_health):
 
 func _on_pause_play_pressed() -> void:
 	
-	$HUD/PausePlay/AnimationPlayer.stop()
 	if get_tree().is_paused():
 		# Unpause game
 		get_tree().paused = false
+		$HUD/PausePlay/AnimationPlayer.stop()
 	elif get_parent().current_wave == 0:
 		# Start first wave and log telemetry event
+		$HUD/PausePlay/AnimationPlayer.stop()
 		get_parent().current_wave += 1
 		get_parent().start_next_wave()
 		Telemetry.log_event("stage_start", {})
 	else:
 		# Pause game
 		get_tree().paused = true
+		$HUD/PausePlay/AnimationPlayer.play("pulse")
