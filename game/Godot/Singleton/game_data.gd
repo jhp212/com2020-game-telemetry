@@ -111,9 +111,9 @@ var tower_data = {
 		"range": 10000,
 		"cost": 550},
 	"star_stock": {
-		"damage": 30,
+		"damage": 5,
 		"rof": 1.5,
-		"range": 10000,
+		"range": 400,
 		"cost": 550}
 	}
 
@@ -121,7 +121,7 @@ var tower_data = {
 var enemy_data = {
 	"medium_circle": {
 		"health": 50,
-		"speed": 500,
+		"speed": 60,
 		"cash": 100,
 		"damage": 70 * enemy_damage_multiplier
 	},
@@ -143,7 +143,7 @@ var enemy_data = {
 var level_data = {
 	"Level1": {
 		"number_of_waves": 2,
-		"wave_1": [["medium_circle", 1], ["medium_circle", 1]],
+		"wave_1": [["medium_circle", 1], ["medium_circle", 1], ["medium_circle", 1], ["medium_circle", 1], ["medium_circle", 1], ["medium_circle", 1]],
 		"wave_2": [["medium_circle", 1], ["medium_circle", 1]]
 	},
 	"Level2": {

@@ -1,40 +1,21 @@
-[gd_scene load_steps=4 format=3 uid="uid://dxmnb02ph8crn"]
+[gd_scene load_steps=4 format=3 uid="uid://ciqid2pt7cxw8"]
 
-[ext_resource type="Script" uid="uid://mlfds1nhxord" path="res://Scenes/Towers/star_stock.gd" id="1_w0x0h"]
+[ext_resource type="Script" uid="uid://d1xvur2713b3g" path="res://Scenes/Towers/star_stock.gd" id="1_w0x0h"]
 [ext_resource type="Texture2D" uid="uid://brx5cmnunc36u" path="res://Assets/Towers/Star - Stock.png" id="2_fuihj"]
 
-[sub_resource type="CircleShape2D" id="CircleShape2D_m6j6g"]
+[sub_resource type="CircleShape2D" id="CircleShape2D_nh53x"]
 
 [node name="StarStock" type="Node2D"]
 script = ExtResource("1_w0x0h")
 
 [node name="Body" type="Sprite2D" parent="."]
+position = Vector2(0, -2)
 texture = ExtResource("2_fuihj")
-
-[node name="ShootPosition1" type="Marker2D" parent="Body"]
-position = Vector2(20, -4)
-rotation = -0.20944
-
-[node name="ShootPosition2" type="Marker2D" parent="Body"]
-position = Vector2(13, 20)
-rotation = 1.02974
-
-[node name="ShootPosition3" type="Marker2D" parent="Body"]
-position = Vector2(-13, 20)
-rotation = 2.11185
-
-[node name="ShootPosition4" type="Marker2D" parent="Body"]
-position = Vector2(-20, -3)
-rotation = 3.35103
-
-[node name="ShootPosition5" type="Marker2D" parent="Body"]
-position = Vector2(0, -20)
-rotation = 4.71239
 
 [node name="Range" type="Area2D" parent="."]
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="Range"]
-shape = SubResource("CircleShape2D_m6j6g")
+shape = SubResource("CircleShape2D_nh53x")
 
 [connection signal="body_entered" from="Range" to="." method="_on_range_body_entered"]
 [connection signal="body_exited" from="Range" to="." method="_on_range_body_exited"]

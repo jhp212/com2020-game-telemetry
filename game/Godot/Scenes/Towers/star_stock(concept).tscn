@@ -1,0 +1,40 @@
+[gd_scene load_steps=4 format=3 uid="uid://dxmnb02ph8crn"]
+
+[ext_resource type="Script" uid="uid://mlfds1nhxord" path="res://Scenes/Towers/star_stock(conecpt).gd" id="1_dkcnk"]
+[ext_resource type="Texture2D" uid="uid://brx5cmnunc36u" path="res://Assets/Towers/Star - Stock.png" id="2_cusn2"]
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_m6j6g"]
+
+[node name="StarStockConcept" type="Node2D"]
+script = ExtResource("1_dkcnk")
+
+[node name="Body" type="Sprite2D" parent="."]
+texture = ExtResource("2_cusn2")
+
+[node name="ShootPosition1" type="Marker2D" parent="Body"]
+position = Vector2(20, -4)
+rotation = -0.20944
+
+[node name="ShootPosition2" type="Marker2D" parent="Body"]
+position = Vector2(13, 20)
+rotation = 1.02974
+
+[node name="ShootPosition3" type="Marker2D" parent="Body"]
+position = Vector2(-13, 20)
+rotation = 2.11185
+
+[node name="ShootPosition4" type="Marker2D" parent="Body"]
+position = Vector2(-20, -3)
+rotation = 3.35103
+
+[node name="ShootPosition5" type="Marker2D" parent="Body"]
+position = Vector2(0, -20)
+rotation = 4.71239
+
+[node name="Range" type="Area2D" parent="."]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Range"]
+shape = SubResource("CircleShape2D_m6j6g")
+
+[connection signal="body_entered" from="Range" to="." method="_on_range_body_entered"]
+[connection signal="body_exited" from="Range" to="." method="_on_range_body_exited"]
