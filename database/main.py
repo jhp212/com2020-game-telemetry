@@ -1,4 +1,5 @@
 from fastapi import FastAPI, Depends, HTTPException
+from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 from sqlalchemy import create_engine, Column, Integer, String, JSON, DateTime, Float, ForeignKey
 from sqlalchemy.orm import sessionmaker, declarative_base, Session, relationship
@@ -149,6 +150,15 @@ def get_db():
 
 # FastAPI app
 app = FastAPI()
+
+# Add CORS middleware so external origins (e.g. Godot game) can fetch resources
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 # Telemetry endpoints
 
