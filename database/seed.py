@@ -33,35 +33,68 @@ def seed():
 
         allowed_types = ["stage_start", "stage_end", "enemy_defeated", "damage_taken", "tower_spawn","tower_upgrade","money_spent"] 
 
-        
+        def generate_telemetry_data(telemetry_type):
+            if telemetry_type == "stage_end":
+                return {
+                    "enemy_defeated": random.randint(1, 20),
+                    "damage_taken": random.randint(1, 200),
+                    "tower_spawn": random.randint(1, 200),
+                    "tower_upgrade": random.randint(9, 20),
+                    "money_spent": random.randint(3500, 10000)
+                }
+
+            if telemetry_type == "enemy_defeated":
+                return {
+                    "enemy_id": random.randint(1, 500),
+                    "enemy_type": random.choice(["small", "medium", "big"]),
+                    "enemy_health": random.randint(50, 500),
+                }
+
+            if telemetry_type == "tower_spawn":
+                return {
+                    "tower_type": random.choice(["square", "triangle", "star"]),
+                    "tower_cost": random.randint(100, 800),
+                    "xPos": random.randint(0, 15),
+                    "yPos": random.randint(0, 15)
+                }
+
+            if telemetry_type == "tower_upgrade":
+                return {
+                    "tower_type": random.choice(["square", "triangle", "star"]),
+                    "upgrade_level": random.randint(2, 5),
+                    "upgrade_cost": random.randint(150, 600)
+                }
+
+            if telemetry_type == "stage_start":
+                return {
+                    "stage_difficulty": random.choice(["easy", "normal", "hard"]),
+                    "starting_money": random.randint(1000, 3000)
+                }
+                
+            if telemetry_type == "money_spent":
+                return {
+                    "amount": random.randint(1000, 10000)
+                    
+                }
+                
+            if telemetry_type == "damage_taken":
+                return {
+                    "amount": random.randint(1, 100)
+                    
+                }
+
+            return {}
         
         for i in range(300):
+            telemetry_type = random.choice(allowed_types)
             t = Telemetry(
-                user_id=random.randint(1, 10000),
-                stage_id=random.randint(1, 5),
-                telemetry_type=random.choice(allowed_types),
-                dateTime=base_time + timedelta(seconds=i * 10),
-                data={
-                    "enemy_defeated": random.randint(1,20),
-                    "damage_taken": random.randint(1,200),
-                    "tower_spawn": random.randint(1,200),
-                    "tower_upgrade": random.randint(9,20),
-                    "money_spent": random.randint(3500,10000)
-                },
+                user_id = random.randint(1, 10000),
+                stage_id = random.randint(1, 5),
+                telemetry_type = telemetry_type,
+                dateTime = base_time + timedelta(seconds=i * 10),
+                data= generate_telemetry_data(telemetry_type)
             )
             db.add(t)
-        """    
-        for i in range(100):
-            d = DecisionLog(
-                parameter_name = random.choice(["enemy_damage","enemy_health","player_speed","spawn_rate"]),
-                stage_id=random.randint(1, 3),
-                change= "TESTING CHANGE MADE",
-                rationale = "TESTING RATIONALE",
-                evidence = "TESTING EVIDENCE",
-                dateTime=base_time + timedelta(seconds=i * 10),
-            )
-            db.add(d)
-        """
 
         db.commit()
 
