@@ -1,6 +1,6 @@
-from path_godot_parser import *
-from base_statistics_godot_parser import *
-from vector import *
+from simulation.path_godot_parser import *
+from simulation.base_statistics_godot_parser import *
+from simulation.vector import *
 import random
 from copy import deepcopy
 from math import sin, cos
@@ -182,6 +182,9 @@ def simulation(test_count, level):
 	# FAST API:
 	#print("                RESULTS                ")
 	print(f"{successes} out of {test_count} were successful ({round(successes*100/test_count,1)}%)")
-	return successes
+	return {
+		"success_rate": successes*100/test_count,
+		"suggestedAction": "Near expected, no action required" if successes*100/test_count > 80 else "Consider decreasing enemy damage"
+	}
 
-simulation(20,1)
+#simulation(2,1)

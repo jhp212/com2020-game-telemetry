@@ -2,6 +2,8 @@
 {% block content %}
 
 <h2>Simulation</h2>
+
+
 <div id="sim-page-container">
     <section id="sim-left">
     <div>
@@ -42,10 +44,35 @@
 <script>
     document.getElementById("test-btn").addEventListener("click", runTest);
 
-    async function rTest() {
-        const response = await fetch("http://127.0.0.1:8000/simulation");
-        const data = await response.json();
-        
-    }
+async function runTest() {
+    const testCount = document.getElementById("TestCountInput").value;
+    const testLevel = document.getElementById("TestLevelInput").value;
+
+    const response = await fetch("/simulation/run", {
+        method: "POST",
+        headers: {"Content-Type": "application/json"},
+        body: JSON.stringify({
+            test_count: Number(testCount),
+            level: Number(testLevel)
+        })
+    });
+
+    const data = await response.json();
+    fillTable(data);
+}
+
+function fillTable(data) {
+    const tbody = document.querySelector("#testTable tbody");
+
+    data.forEach(row => {
+        const tr = document.createElement("tr");
+        tr.innerHTML = `
+            <td>${row.success_rate}</td>
+            <td>${row.suggestedAction}</td>
+        `;
+        tbody.appendChild(tr);
+    });
+}
+
 </script>
 {% endblock %}

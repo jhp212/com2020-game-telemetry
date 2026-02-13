@@ -11,6 +11,7 @@ from fastapi.templating import Jinja2Templates # Jinja2 will be used for templat
 import requests, os
 from pydantic import BaseModel # Will be used in POST requests
 from datetime import datetime
+from simulation.simulator import *
 
 # Absolute path of dashboard/app.py
 BASE_DIR = Path(__file__).resolve().parent
@@ -464,12 +465,31 @@ async def dashboard(request: Request):
     
     
 @app.get("/simulation", response_class=HTMLResponse)
-async def dashboard(request: Request):
-    
-    # SIMULATION FILE
-    
-    
+async def getSimulation(request: Request):
+  
     return templates.TemplateResponse(
         "simulation.html",
         {"request": request, "title": "Simulation"}
     )
+    
+class SimulationRequest(BaseModel):
+    test_count: int
+    level: int    
+    
+@app.post("/simulation/run")
+async def runSimulation(payload: SimulationRequest):
+    try:
+        result = simulation(
+            test_count=payload.test_count,
+            level=payload.level
+        )
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+    
+    return [
+        {
+            "success_rate": result["success_rate"],
+            "suggestedAction": result["suggestedAction"]
+        }
+    ]
