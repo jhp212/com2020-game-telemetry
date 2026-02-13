@@ -1,13 +1,6 @@
 extends Node
 
-# Default to local dev server, but override for HTML5 (browser) exports
-const DEFAULT_BASE_URL = "http://127.0.0.1:10101"
-var BASE_URL = DEFAULT_BASE_URL
-
-func _ready():
-	# When running as an HTML5 export (in-browser), use same-origin relative URLs
-	if OS.has_feature("HTML5"):
-		BASE_URL = ""
+const BASE_URL = "https://db.mm25564.uk"
 
 func create_telemetry(telemetry_data):
 	# Send telemtry data to the database
