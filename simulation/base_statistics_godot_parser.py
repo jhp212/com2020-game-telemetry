@@ -2,6 +2,15 @@ with open("game/Godot/Singleton/game_data.gd") as game_data:
     data = list(map(lambda line: line.removesuffix("\n"), game_data.readlines()))
     game_data.close()
 
+for item in data:
+    if item[0:18] == 'var base_health = ':
+        healthind = data.index(item)
+    elif item[0:12] == 'var money :=':
+        moneyind = data.index(item)
+
+player_base_health = eval(data[healthind].lstrip('var base_health = '))
+player_base_money = eval(data[moneyind].lstrip('var money :='))
+
 tower_data_start: int = data.index("var tower_data = {")
 potentialtowerdict = ''.join(map(lambda line: line.lstrip("\t"),data[tower_data_start+1:]))
 stack = ["{"]
@@ -21,7 +30,7 @@ if __name__ == "__main__":
     print(tower_data)
 
 del tower_data_start, potentialtowerdict, stack
-
+enemy_damage_multiplier = 1
 enemy_data_start: int = data.index("var enemy_data = {")
 potentialenemydict = ''.join(map(lambda line: line.lstrip("\t"),data[enemy_data_start+1:]))
 stack = ["{"]
