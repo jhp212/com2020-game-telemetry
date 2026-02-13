@@ -369,3 +369,39 @@ button:active {
   transform: 0px;
   transition-duration: 0s;
 }
+
+#TestCountInput, #TestLevelInput{
+  position: relative;
+  margin: 0px 0 40px;
+  background-color: transparent;
+  border: 0;
+  border-bottom: 2px #fff solid;
+  width: 100%;
+  padding: 8px 0;
+  font-size: 18px;
+  color: #fff;
+}
+
+
+#sim-page-container {
+    display: flex;
+    gap: 40px; 
+    align-items: flex-start;
+    margin-top: 20px;
+}
+
+#sim-left {
+    flex: 0 0 200px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+#sim-right {
+    flex: 1; 
+}
+
+#sim-right table {
+    width: 100%;
+    border-collapse: collapse;
+}

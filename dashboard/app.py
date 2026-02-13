@@ -461,3 +461,15 @@ async def dashboard(request: Request):
         "balancing.html",
         {"request": request, "title": "Balancing", "balancing_response": balancing_response}
     )
+    
+    
+@app.get("/simulation", response_class=HTMLResponse)
+async def dashboard(request: Request):
+    
+    # SIMULATION FILE
+    
+    
+    return templates.TemplateResponse(
+        "simulation.html",
+        {"request": request, "title": "Simulation"}
+    )
