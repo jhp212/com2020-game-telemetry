@@ -13,13 +13,13 @@ services:
   
   dashboard:
     build:
-      context: ./dashboard
-      dockerfile: Dockerfile
+      context: .
+      dockerfile: dashboard/Dockerfile
     container_name: game-telemetry-dashboard
     ports:
       - "10102:10102"
     volumes:
-      - ./dashboard:/app
+      - ./dashboard:/app/dashboard
     environment:
       - API_URL=http://database_api:10101
     depends_on:

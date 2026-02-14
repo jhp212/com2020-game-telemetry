@@ -354,7 +354,7 @@ async def export_dashboard_csv():
 
 
 @app.get("/balancing", response_class=HTMLResponse)
-async def dashboard(request: Request):
+async def dashboard_balancing(request: Request):
     
     response = requests.get(f"{BASE_URL}/telemetry/")
     if not response.ok:
