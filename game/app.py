@@ -2,7 +2,6 @@ from fastapi import FastAPI, Request, Response
 from fastapi.responses import FileResponse
 import mimetypes
 import os
-import httpx
 
 mimetypes.add_type('application/wasm', '.wasm')
 

@@ -34,3 +34,5 @@ services:
       - "10103:10103"
     volumes:
       - ./game:/app
+    depends_on:
+      - database_api

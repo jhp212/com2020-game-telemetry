@@ -1,9 +1,20 @@
+import requests
 from simulation.path_godot_parser import *
 from simulation.base_statistics_godot_parser import *
 from simulation.vector import *
-import random
+import random, os
 from copy import deepcopy
 from math import sin, cos
+
+API_URL = os.getenv("API_URL", "http://127.0.0.1:10101")
+
+def get_parameter(parameter_name: str, default_value):
+	response = requests.get(f"{API_URL}/parameters/?parameter_name={parameter_name}")
+	try:
+		value = response.json()[0].get("value", default_value)
+		return value
+	except Exception:
+		return default_value
 
 def reset():
 		global wavecount, base_health, base_money, enemies, waves, towers, tower_queue, lvlname
@@ -20,12 +31,10 @@ def reset():
 def simulation(test_count, level):
 	global wavecount, base_health, base_money, enemies, waves, towers, tower_queue, lvlname
 
-	# FAST API NEEDED HERE
-	enemy_damage_mult = 0.34
+	enemy_damage_mult = get_parameter("enemy_damage_multiplier", 1)
 	enemy_health_mult = 1
 	enemy_speed_mult = 1
 	player_rof_mult = 1
-	# END FAST API
 
 
 
@@ -179,7 +188,6 @@ def simulation(test_count, level):
 		successes += base_health > 0
 		reset()
 
-	# FAST API:
 	#print("                RESULTS                ")
 	print(f"{successes} out of {test_count} were successful ({round(successes*100/test_count,1)}%)")
 	return {
