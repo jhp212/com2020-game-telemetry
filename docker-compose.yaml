@@ -34,5 +34,7 @@ services:
       - "10103:10103"
     volumes:
       - ./game:/app
+    environment:
+      - API_URL=http://database_api:10101
     depends_on:
       - database_api

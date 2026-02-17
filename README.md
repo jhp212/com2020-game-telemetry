@@ -36,6 +36,6 @@ This will download, build, and deploy every container. To verify it is working, 
 - `http://localhost:10102` You should see the dashboard.
 - `http://localhost:10103` You should see the game.
 
-### Individual Services (Not Recommended)
+### Individual READMEs
 
-Please refer to the README files in each service's folder for information on how to run that service individually.
+Each directory contains its own README.md file containing extra information pertaining to that specific section of the project

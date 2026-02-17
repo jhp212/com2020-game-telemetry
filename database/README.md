@@ -2,52 +2,9 @@
 
 This directory contains the Database System that stores telemetry data and game parameter information.
 
-## Requirements
+## Main Contributors
 
-If running on bare metal:
-
-- Python 3.10 or newer
-- All requirements specified in `requirements.txt`
-To install all necessary requirements, run the following command:
-`pip install -r requirements.txt`
-
-If running through docker:
-
-- CPU supporting virtualisation
-- Docker
-[Guide to installing Docker Desktop](https://docs.docker.com/desktop/)
-[Docker Engine for Linux](https://docs.docker.com/engine/install/)
-
-## Running the server
-
-There are 2 ways to run this server:
-
-### Bare metal
-
-To run the project, inside the database directory, run the following in a terminal window:
-`uvicorn main:app --port 10101 --reload`
-
-To verify it is running, in a web browser, visit:
-`http://127.0.0.1:10101/docs`
-If all is working, you should be brought to the documentation page where you can test the different endpoints.
-
-To stop the server, press `Ctrl+C` in the terminal window in which the server is running.
-
-### Docker
-
-First, build the docker image by running:
-`docker build --tag td_database .`
-inside the database directory. Do not forget the `.` at the end
-
-Once it has built the image, start the container with:
-`docker run -p 10101:10101 -d td_database`
-This runs the container detached so that it runs in the background.
-
-To stop the container, first, run:
-`docker ps`
-to find the container ID and then run
-`docker stop <container_id>`
-to stop the container.
+- Jake Phillips
 
 ## Database Schema
 
@@ -73,9 +30,6 @@ to stop the container.
 - enemy_damage_stage_fail_rate {"If the death rate is greater than __%, reduce the enemy_damage_multipler"}
 
 ## Endpoints
-
-<details>
-<summary><strong>Click to expand API Endpoint Documentation</strong></summary>
 
 ### Telemetry
 
@@ -214,5 +168,3 @@ Query Parameters:
 | `stage_id`       | Integer            | No       | Filter by Stage ID       |
 | `start_time`     | String (date-time) | No       | Filter by start range    |
 | `end_time`       | String (date-time) | No       | Filter by end range      |
-
-</details>

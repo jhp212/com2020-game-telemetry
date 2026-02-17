@@ -4,6 +4,10 @@ This directory contains the automated test suite for the db and FastAPI backend
 
 Currently, tests verify API endpoints, datebase models and relationships
 
+## Main Contributors
+
+- Bela Rothfuss Moore
+
 ## Requirements
 
 Assumes the `database/` directory is located at the same level as the `tests/` directory
