@@ -2,3 +2,5 @@ fastapi[standard]
 uvicorn
 sqlalchemy
 pydantic
+passlib[argon2]
+pyjwt
