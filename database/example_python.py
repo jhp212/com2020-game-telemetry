@@ -1,55 +1,64 @@
-import requests, json
+import requests, datetime
 
 BASE_URL = "http://127.0.0.1:10101"
 
-def create_telemetry(telemetry_data):
-    response = requests.post(f"{BASE_URL}/telemetry/", json=telemetry_data)
+# --- AUTHENTICATION ---
+def register(username: str, password: str):
+    response = requests.post(f"{BASE_URL}/auth/register", json={"username": username, "password": password})
+    if response.status_code != 200:
+        raise Exception(f"Registration failed: {response.text}")
     return response.json()
 
-def get_all_telemetry():
-    response = requests.get(f"{BASE_URL}/telemetry/")
+def authenticate(username: str, password: str):
+    response = requests.post(f"{BASE_URL}/auth/token", data={"username": username, "password": password})
+    if response.status_code != 200:
+        raise Exception(f"Authentication failed: {response.text}")
+    data = response.json()
+    access_token = data.get("access_token")
+    user_id = data.get("user_id")
+    if not access_token:
+        raise Exception("No access token returned")
+    return access_token, user_id
+
+def create_telemetry(token: str, telemetry_data: dict):
+    headers = {"Authorization": f"Bearer {token}"}
+    response = requests.post(f"{BASE_URL}/telemetry/", json=telemetry_data, headers=headers)
+    if response.status_code != 200:
+        raise Exception(f"Failed to create telemetry: {response.text}")
     return response.json()
 
-def create_parameter(parameter_data):
-    response = requests.post(f"{BASE_URL}/parameters/", json=parameter_data)
-    return response.json()
-
-def get_all_parameters():
-    response = requests.get(f"{BASE_URL}/parameters/")
-    return response.json()
-
+# --- EXAMPLE USAGE ---
 if __name__ == "__main__":
-    # Example telemetry data
+    # Register a new user
+    try:
+        register("testuser", "testpassword")
+        print("User registered successfully")
+    except Exception as e:
+        print(e)
+
+    # Authenticate and get access token
+    try:
+        token, user_id = authenticate("testuser", "testpassword")
+        print(f"Access token: {token}")
+        print(f"User ID: {user_id}")
+        if not token:
+            raise Exception("Authentication failed: No token received")
+        if not user_id:
+            raise Exception("Authentication failed: No user ID received")
+    except Exception as e:
+        print(e)
+
+    # Create a new telemetry entry
     telemetry_data = {
-        "user_id": 1,
-        "stage_id": 2,
-        "telemetry_type": "money_spent",
-        "dateTime": "2026-01-21T17:38:00",
-        "data": {"amount": 150, "total_remaining": 850}
+        "user_id": user_id, # type: ignore
+        "telemetry_type": "stage_start",
+        "stage_id": 1,
+        "data": {},
+        "dateTime": datetime.datetime.now().isoformat()
     }
 
-    # Create a new telemetry record
-    created_telemetry = create_telemetry(telemetry_data)
-    print("Created Telemetry:", json.dumps(created_telemetry, indent=2))
-
-    # Get all telemetry records
-    all_telemetry = get_all_telemetry()
-    print("All Telemetry Records:", json.dumps(all_telemetry, indent=2))
-
-    parameter_data = {
-        "name": "enemy_damage_multiplier",
-        "value": 1.5
-    }
-
-    # Create a new parameter record
-    created_parameter = create_parameter(parameter_data)
-    print("Created Parameter:", json.dumps(created_parameter, indent=2))
-
-    # Get all parameter records
-    all_parameters = get_all_parameters()
-    print("All Parameter Records:", json.dumps(all_parameters, indent=2))
-
-    # Update the parameter value
-    parameter_data["value"] = 2.0
-    created_parameter = create_parameter(parameter_data)
-    print("Updated Parameter:", json.dumps(created_parameter, indent=2))
+    try:
+        telemetry_entry = create_telemetry(token, telemetry_data) # type: ignore
+        print("Telemetry entry created:", telemetry_entry)
+    except Exception as e:
+        print(e)

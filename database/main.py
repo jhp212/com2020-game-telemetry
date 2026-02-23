@@ -6,6 +6,7 @@ from sqlalchemy import create_engine, Column, Integer, String, JSON, DateTime, F
 from sqlalchemy.orm import sessionmaker, declarative_base, Session, relationship
 from datetime import datetime, timedelta
 from passlib.context import CryptContext
+from contextlib import asynccontextmanager
 import jwt
 import os
 
@@ -34,6 +35,7 @@ SECRET_KEY = os.getenv("SECRET_KEY", "SUPER_SECRET_DEV_KEY_CHANGE_IN_PRODUCTION"
 ALGORITHM = "HS256"
 ACCESS_TOKEN_EXPIRE_MINUTES = 30
 
+# Using the argon2 hashing algorithm for password hashing
 pwd_context = CryptContext(schemes=["argon2"], deprecated="auto")
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="auth/token")
 
@@ -137,6 +139,8 @@ class TelemetryResponse(BaseModel):
     telemetry_type: str
     dateTime: datetime
     data: dict
+
+    # Enable from_attributes to allow automatic conversion from SQLAlchemy models
     model_config = {"from_attributes": True}
 
 class ParameterCreate(BaseModel):
@@ -190,11 +194,38 @@ class UserResponse(BaseModel):
     model_config = {"from_attributes": True}
 
 class TokenResponse(BaseModel):
+    user_id: int
     access_token: str
     token_type: str
 
+# Default parameter values
+DEFAULT_PARAMETERS = [
+    {"name": "enemy_damage_multiplier", "value": 1.0}
+]
+
+def initialize_default_parameters():
+    db = SessionLocal()
+    try:
+        for param in DEFAULT_PARAMETERS:
+            existing = db.query(Parameters).filter(Parameters.name == param["name"]).first()
+            
+            if not existing:
+                new_param = Parameters(name=param["name"], value=param["value"])
+                db.add(new_param)
+        
+        db.commit()
+    finally:
+        db.close()
+
+# The lifespan context manager runs code before the server fully starts
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    initialize_default_parameters()
+    yield # This tells FastAPI to hand control back to the server
+
 # --- FASTAPI APP ---
-app = FastAPI()
+
+app = FastAPI(lifespan=lifespan)
 
 app.add_middleware(
     CORSMiddleware,
@@ -204,9 +235,9 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-
 # --- AUTHENTICATION ENDPOINTS ---
 
+# Registration endpoint - creates a new user with hashed password
 @app.post("/auth/register/", response_model=UserResponse)
 def register_user(user: UserCreate, db: Session = Depends(get_db)):
     existing = db.query(Users).filter(Users.username == user.username).first()
@@ -220,24 +251,22 @@ def register_user(user: UserCreate, db: Session = Depends(get_db)):
     db.refresh(db_user)
     return db_user
 
+# Login endpoint - verifies credentials and returns User ID and JWT token
 @app.post("/auth/token", response_model=TokenResponse)
 def login(form_data: OAuth2PasswordRequestForm = Depends(), db: Session = Depends(get_db)):
-    # Find user
     db_user = db.query(Users).filter(Users.username == form_data.username).first()
     
-    # Verify user exists AND password matches the Argon2 hash
     if not db_user or not verify_password(form_data.password, db_user.password_hash):
         raise HTTPException(status_code=401, detail="Invalid credentials")
 
-    # Generate a real JWT
     access_token = create_access_token(data={"sub": db_user.username})
-    return {"access_token": access_token, "token_type": "bearer"}
+    return {"user_id": db_user.id, "access_token": access_token, "token_type": "bearer"}
 
 
-# --- PROTECTED ENDPOINTS ---
+# --- API ENDPOINTS ---
+# All endpoints that modify or access data require authentication and will use the current_user dependency to ensure the user is authenticated.
 
-# Notice how we added `current_user: Users = Depends(get_current_user)` to all of these!
-
+# Create a new telemetry entry
 @app.post("/telemetry/", response_model=TelemetryResponse)
 def create_telemetry(telemetry: TelemetryCreate, db: Session = Depends(get_db), current_user: Users = Depends(get_current_user)):
     if telemetry.telemetry_type not in ALLOWED_TELEMETRY_TYPES:
@@ -248,6 +277,7 @@ def create_telemetry(telemetry: TelemetryCreate, db: Session = Depends(get_db), 
     db.refresh(db_telemetry)
     return db_telemetry
 
+# Read telemetry entries with optional filters
 @app.get("/telemetry/", response_model=list[TelemetryResponse])
 def read_telemetry(telemetry_id: int | None = None, user_id: int | None = None, stage_id: int | None = None,
                    start_time: datetime | None = None, end_time: datetime | None = None, 
@@ -267,6 +297,7 @@ def read_telemetry(telemetry_id: int | None = None, user_id: int | None = None, 
         query = query.filter(Telemetry.dateTime <= end_time)
     return query.all()
 
+# Create or update a parameter
 @app.post("/parameters/", response_model=ParameterResponse)
 def create_parameter(parameter: ParameterCreate, db: Session = Depends(get_db), current_user: Users = Depends(get_current_user)):
     existing = db.query(Parameters).filter(Parameters.name == parameter.name).first()
@@ -283,6 +314,7 @@ def create_parameter(parameter: ParameterCreate, db: Session = Depends(get_db), 
     db.refresh(db_parameter)
     return db_parameter
 
+# Read parameters with optional name filter
 @app.get("/parameters/", response_model=list[ParameterResponse])
 def read_parameters(parameter_name: str | None = None, db: Session = Depends(get_db), current_user: Users = Depends(get_current_user)):
     query = db.query(Parameters)
@@ -290,6 +322,7 @@ def read_parameters(parameter_name: str | None = None, db: Session = Depends(get
         query = query.filter(Parameters.name == parameter_name)
     return query.all()
 
+# Create a new balancing rule
 @app.post("/balancing_rules/", response_model=BalancingRuleResponse)
 def create_balancing_rule(rule: BalancingRuleCreate, db: Session = Depends(get_db), current_user: Users = Depends(get_current_user)):
     db_rule = BalancingRule(**rule.model_dump())
@@ -298,6 +331,7 @@ def create_balancing_rule(rule: BalancingRuleCreate, db: Session = Depends(get_d
     db.refresh(db_rule)
     return db_rule
 
+# Read balancing rules with optional id filter
 @app.get("/balancing_rules/", response_model=list[BalancingRuleResponse])
 def read_balancing_rules(rule_id: int | None = None, db: Session = Depends(get_db), current_user: Users = Depends(get_current_user)):
     query = db.query(BalancingRule)
@@ -305,6 +339,7 @@ def read_balancing_rules(rule_id: int | None = None, db: Session = Depends(get_d
         query = query.filter(BalancingRule.id == rule_id)
     return query.all()
 
+# Create a new decision log entry
 @app.post("/decision_logs/", response_model=DecisionLogResponse)
 def create_decision_log(entry: DecisionLogCreate, db: Session = Depends(get_db), current_user: Users = Depends(get_current_user)):
     db_entry = DecisionLog(**entry.model_dump())
@@ -313,6 +348,7 @@ def create_decision_log(entry: DecisionLogCreate, db: Session = Depends(get_db),
     db.refresh(db_entry)
     return db_entry
 
+# Read decision logs with optional filters
 @app.get("/decision_logs/", response_model=list[DecisionLogResponse])
 def read_decision_logs(decision_id: int | None = None, parameter_name: str | None = None, stage_id: int | None = None,
                            start_time: datetime | None = None, end_time: datetime | None = None, 
