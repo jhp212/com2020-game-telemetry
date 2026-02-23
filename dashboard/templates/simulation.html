@@ -41,38 +41,52 @@
 
 </div>
 
+<div id="loading-overlay" class="hidden">
+    <div class="spinner"></div>
+</div>
+
 <script>
     document.getElementById("test-btn").addEventListener("click", runTest);
+    
 
-async function runTest() {
-    const testCount = document.getElementById("TestCountInput").value;
-    const testLevel = document.getElementById("TestLevelInput").value;
 
-    const response = await fetch("/simulation/run", {
-        method: "POST",
-        headers: {"Content-Type": "application/json"},
-        body: JSON.stringify({
-            test_count: Number(testCount),
-            level: Number(testLevel)
-        })
-    });
+    async function runTest() {
+        const overlay = document.getElementById("loading-overlay");
+        overlay.classList.remove("hidden");
 
-    const data = await response.json();
-    fillTable(data);
-}
+        const testCount = document.getElementById("TestCountInput").value;
+        const testLevel = document.getElementById("TestLevelInput").value;
 
-function fillTable(data) {
-    const tbody = document.querySelector("#testTable tbody");
+        try {
+            const response = await fetch("/simulation/run", {
+                method: "POST",
+                headers: {"Content-Type": "application/json"},
+                body: JSON.stringify({
+                    test_count: Number(testCount),
+                    level: Number(testLevel)
+                })
+            });
 
-    data.forEach(row => {
-        const tr = document.createElement("tr");
-        tr.innerHTML = `
-            <td>${row.success_rate}</td>
-            <td>${row.suggestedAction}</td>
-        `;
-        tbody.appendChild(tr);
-    });
-}
+            const data = await response.json();
+            fillTable(data);
+
+        } finally {
+            overlay.classList.add("hidden");
+        }
+    }
+
+    function fillTable(data) {
+        const tbody = document.querySelector("#testTable tbody");
+
+        data.forEach(row => {
+            const tr = document.createElement("tr");
+            tr.innerHTML = `
+                <td>${row.success_rate}</td>
+                <td>${row.suggestedAction}</td>
+            `;
+            tbody.appendChild(tr);
+        });
+    }
 
 </script>
 {% endblock %}
