@@ -59,7 +59,7 @@ def get_db():
     finally:
         db.close()
 
-# Dependency to verify token and get current user
+# Dependency to verify token and get current user (For everyone)
 def get_current_user(token: str = Depends(oauth2_scheme), db: Session = Depends(get_db)):
     credentials_exception = HTTPException(
         status_code=401,
@@ -78,6 +78,15 @@ def get_current_user(token: str = Depends(oauth2_scheme), db: Session = Depends(
     if user is None:
         raise credentials_exception
     return user
+
+# Dependency to verify token AND check admin status (For dashboard access)
+def get_current_admin_user(current_user = Depends(get_current_user)):
+    if current_user.is_admin != 1:
+        raise HTTPException(
+            status_code=403, 
+            detail="Not enough privileges. Admin access required."
+        )
+    return current_user
 
 
 # --- DATABASE MODELS ---
@@ -189,7 +198,7 @@ class UserCreate(BaseModel):
 class UserResponse(BaseModel):
     id: int
     username: str
-    is_admin: bool
+    is_admin: int
     created_at: datetime
     model_config = {"from_attributes": True}
 
@@ -197,6 +206,7 @@ class TokenResponse(BaseModel):
     user_id: int
     access_token: str
     token_type: str
+    is_admin: int # Added so the dashboard immediately knows the user's role
 
 # Default parameter values
 DEFAULT_PARAMETERS = [
@@ -217,10 +227,32 @@ def initialize_default_parameters():
     finally:
         db.close()
 
+# Default users
+DEFAULT_USERS = [
+    {"username": "testadmin", "password": "adminpass", "is_admin": 1},
+    {"username": "testplayer", "password": "playerpass", "is_admin": 0}
+]
+
+def initialize_default_users():
+    db = SessionLocal()
+    try:
+        for user in DEFAULT_USERS:
+            existing = db.query(Users).filter(Users.username == user["username"]).first()
+            
+            if not existing:
+                password_hash = get_password_hash(user["password"])
+                new_user = Users(username=user["username"], password_hash=password_hash, is_admin=user["is_admin"])
+                db.add(new_user)
+        
+        db.commit()
+    finally:
+        db.close()
+
 # The lifespan context manager runs code before the server fully starts
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     initialize_default_parameters()
+    initialize_default_users()
     yield # This tells FastAPI to hand control back to the server
 
 # --- FASTAPI APP ---
@@ -260,13 +292,13 @@ def login(form_data: OAuth2PasswordRequestForm = Depends(), db: Session = Depend
         raise HTTPException(status_code=401, detail="Invalid credentials")
 
     access_token = create_access_token(data={"sub": db_user.username})
-    return {"user_id": db_user.id, "access_token": access_token, "token_type": "bearer"}
+    return {"user_id": db_user.id, "access_token": access_token, "token_type": "bearer", "is_admin": db_user.is_admin}
 
 
 # --- API ENDPOINTS ---
 # All endpoints that modify or access data require authentication and will use the current_user dependency to ensure the user is authenticated.
 
-# Create a new telemetry entry
+# Create a new telemetry entry (Access: Everyone)
 @app.post("/telemetry/", response_model=TelemetryResponse)
 def create_telemetry(telemetry: TelemetryCreate, db: Session = Depends(get_db), current_user: Users = Depends(get_current_user)):
     if telemetry.telemetry_type not in ALLOWED_TELEMETRY_TYPES:
@@ -277,11 +309,11 @@ def create_telemetry(telemetry: TelemetryCreate, db: Session = Depends(get_db), 
     db.refresh(db_telemetry)
     return db_telemetry
 
-# Read telemetry entries with optional filters
+# Read telemetry entries with optional filters (Access: Admin)
 @app.get("/telemetry/", response_model=list[TelemetryResponse])
 def read_telemetry(telemetry_id: int | None = None, user_id: int | None = None, stage_id: int | None = None,
                    start_time: datetime | None = None, end_time: datetime | None = None, 
-                   db: Session = Depends(get_db), current_user: Users = Depends(get_current_user)):
+                   db: Session = Depends(get_db), current_user: Users = Depends(get_current_admin_user)):
     query = db.query(Telemetry)
     if telemetry_id is not None:
         query = query.filter(Telemetry.id == telemetry_id)
@@ -297,9 +329,9 @@ def read_telemetry(telemetry_id: int | None = None, user_id: int | None = None, 
         query = query.filter(Telemetry.dateTime <= end_time)
     return query.all()
 
-# Create or update a parameter
+# Create or update a parameter (Access: Admin)
 @app.post("/parameters/", response_model=ParameterResponse)
-def create_parameter(parameter: ParameterCreate, db: Session = Depends(get_db), current_user: Users = Depends(get_current_user)):
+def create_parameter(parameter: ParameterCreate, db: Session = Depends(get_db), current_user: Users = Depends(get_current_admin_user)):
     existing = db.query(Parameters).filter(Parameters.name == parameter.name).first()
     if existing:
         existing.value = parameter.value # type: ignore (safe to ignore as we checked for existence)
@@ -314,7 +346,7 @@ def create_parameter(parameter: ParameterCreate, db: Session = Depends(get_db), 
     db.refresh(db_parameter)
     return db_parameter
 
-# Read parameters with optional name filter
+# Read parameters with optional name filter (Access: Everyone)
 @app.get("/parameters/", response_model=list[ParameterResponse])
 def read_parameters(parameter_name: str | None = None, db: Session = Depends(get_db), current_user: Users = Depends(get_current_user)):
     query = db.query(Parameters)
@@ -322,37 +354,37 @@ def read_parameters(parameter_name: str | None = None, db: Session = Depends(get
         query = query.filter(Parameters.name == parameter_name)
     return query.all()
 
-# Create a new balancing rule
+# Create a new balancing rule (Access: Admin)
 @app.post("/balancing_rules/", response_model=BalancingRuleResponse)
-def create_balancing_rule(rule: BalancingRuleCreate, db: Session = Depends(get_db), current_user: Users = Depends(get_current_user)):
+def create_balancing_rule(rule: BalancingRuleCreate, db: Session = Depends(get_db), current_user: Users = Depends(get_current_admin_user)):
     db_rule = BalancingRule(**rule.model_dump())
     db.add(db_rule)
     db.commit()
     db.refresh(db_rule)
     return db_rule
 
-# Read balancing rules with optional id filter
+# Read balancing rules with optional id filter (Access: Admin)
 @app.get("/balancing_rules/", response_model=list[BalancingRuleResponse])
-def read_balancing_rules(rule_id: int | None = None, db: Session = Depends(get_db), current_user: Users = Depends(get_current_user)):
+def read_balancing_rules(rule_id: int | None = None, db: Session = Depends(get_db), current_user: Users = Depends(get_current_admin_user)):
     query = db.query(BalancingRule)
     if rule_id is not None:
         query = query.filter(BalancingRule.id == rule_id)
     return query.all()
 
-# Create a new decision log entry
+# Create a new decision log entry (Access: Admin)
 @app.post("/decision_logs/", response_model=DecisionLogResponse)
-def create_decision_log(entry: DecisionLogCreate, db: Session = Depends(get_db), current_user: Users = Depends(get_current_user)):
+def create_decision_log(entry: DecisionLogCreate, db: Session = Depends(get_db), current_user: Users = Depends(get_current_admin_user)):
     db_entry = DecisionLog(**entry.model_dump())
     db.add(db_entry)
     db.commit()
     db.refresh(db_entry)
     return db_entry
 
-# Read decision logs with optional filters
+# Read decision logs with optional filters (Access: Admin)
 @app.get("/decision_logs/", response_model=list[DecisionLogResponse])
 def read_decision_logs(decision_id: int | None = None, parameter_name: str | None = None, stage_id: int | None = None,
                            start_time: datetime | None = None, end_time: datetime | None = None, 
-                           db: Session = Depends(get_db), current_user: Users = Depends(get_current_user)):
+                           db: Session = Depends(get_db), current_user: Users = Depends(get_current_admin_user)):
     query = db.query(DecisionLog)
     if decision_id is not None:
         query = query.filter(DecisionLog.decision_id == decision_id)
