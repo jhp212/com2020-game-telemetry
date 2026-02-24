@@ -12,11 +12,61 @@ import requests, os
 from pydantic import BaseModel # Will be used in POST requests
 from datetime import datetime
 from simulation.simulator import *
+from typing import Optional
 
 # Absolute path of dashboard/app.py
 BASE_DIR = Path(__file__).resolve().parent
 BASE_URL = os.getenv("API_URL", "http://127.0.0.1:10101")
 
+DASH_USER = os.getenv("DASH_USER", "testuser")
+DASH_PASS = os.getenv("DASH_PASS", "testpassword")
+
+_cached_token: Optional[str] = None
+
+    
+def get_db_token() -> str:
+    global _cached_token
+    if _cached_token:
+        return _cached_token
+
+    resp = requests.post(
+        f"{BASE_URL}/auth/token",
+        data={"username": DASH_USER, "password": DASH_PASS},
+        timeout=5
+    )
+
+    if not resp.ok:
+        raise Exception(f"DB auth failed: {resp.status_code} {resp.text}")
+
+    data = resp.json()
+    token = data.get("access_token")
+    if not token:
+        raise Exception("DB auth failed: no access_token returned")
+
+    _cached_token = token
+    return token
+
+
+def db_get(path: str) -> requests.Response:
+    global _cached_token
+    token = get_db_token()
+    
+    return requests.get(
+        f"{BASE_URL}{path}",
+        headers={"Authorization": f"Bearer {token}"},
+        timeout=10
+    )
+    
+def db_post(path: str, payload: dict) -> requests.Response:
+    global _cached_token
+    token = get_db_token()
+    
+    return requests.post(
+        f"{BASE_URL}{path}",
+        json=payload,
+        headers={"Authorization": f"Bearer {token}"},
+        timeout=10
+    )
 # FastAPI app
 app = FastAPI()
 
@@ -31,7 +81,7 @@ templates = Jinja2Templates(directory=str(BASE_DIR / "templates"))
 @app.get("/", response_class=HTMLResponse)
 async def home(request: Request):
     
-    r = requests.get(f"{BASE_URL}/telemetry/")
+    r = db_get("/telemetry/")
     if not r.ok:
         raise HTTPException(status_code=r.status_code, detail=r.text)
 
@@ -90,7 +140,8 @@ async def home(request: Request):
 @app.get("/dashboard", response_class=HTMLResponse)
 async def dashboard(request: Request):
     
-    response = requests.get(f"{BASE_URL}/telemetry/")
+   
+    response = db_get("/telemetry/")
     if not response.ok:
         raise HTTPException(status_code=response.status_code, detail=response.text)
     
@@ -98,11 +149,15 @@ async def dashboard(request: Request):
     # confirm what was received and print status and type if not json
     try:
         telemetry = response.json()
+        
     except ValueError:
         raise HTTPException(
             status_code=500,
             detail=f"Telemetry API did not return JSON. Content-Type={response.headers.get('content-type')} Body starts: {response.text[:200]}"
         )
+    
+    # we want to display the newest addition at the top, so reverse format via datetime
+    telemetry.sort( key=lambda t: datetime.fromisoformat(t.get("dateTime")), reverse=True)
     
     # populate array with data in JSON format to be returned to the dashboard, accounting for HTTPException
     telemetry_rows = []
@@ -128,7 +183,7 @@ async def dashboard(request: Request):
 @app.get("/decisionLog", response_class=HTMLResponse)
 async def decisionLog(request: Request):
     
-    response = requests.get(f"{BASE_URL}/decision_logs/")
+    response = db_get("/decision_logs/")
     
     # simple error handling
     if not response.ok:
@@ -171,7 +226,7 @@ async def decisionLog(request: Request):
 @app.get("/parameters", response_class=HTMLResponse)
 async def parameters(request: Request):
         
-    response = requests.get(f"{BASE_URL}/parameters/")
+    response = db_get("/parameters/")
     
     # simple error handling
     if not response.ok:
@@ -217,10 +272,7 @@ class ParameterUpdate(BaseModel):
 async def proxy_update_parameter(data: ParameterUpdate):
     
     # after making a parameter change we want the change to be displayed on the parameters table by posting it to the DB
-    response = requests.post(
-        f"{BASE_URL}/parameters/", 
-        json=data.model_dump()
-    )
+    response = db_post("/parameters/", data.model_dump())
 
     
      # simple error handling
@@ -249,10 +301,7 @@ async def proxy_create_decision_log(data: DecisionLogCreate):
     payload["dateTime"] = data.dateTime.isoformat()
 
     # post the parameter change we made as a json payload to the decision log
-    response = requests.post(
-        f"{BASE_URL}/decision_logs/",
-        json=payload
-    )
+    response = db_post("/decision_logs/", payload)
 
     
     # simple error handling
