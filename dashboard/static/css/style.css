@@ -259,7 +259,24 @@ td pre {
   word-break: break-word;
   font-family: monospace;
   font-size: 12px;
-  color: #000000;
+  color: black;
+}
+
+#telemetryTable th {
+    cursor: pointer;
+    user-select: none;
+    position: relative;
+    transition: background 0.2s ease;
+}
+
+#telemetryTable th.active-sort {
+    background-color: rgba(0, 0, 0, 0.05);
+    font-weight: 600;
+}
+
+.sort-indicator {
+    margin-left: 6px;
+    font-size: 0.75rem;
 }
 
 #decisionModel {
@@ -444,3 +461,4 @@ button:active {
 @keyframes spin {
     to { transform: rotate(360deg); }
 }
+

@@ -18,16 +18,32 @@ from typing import Optional
 BASE_DIR = Path(__file__).resolve().parent
 BASE_URL = os.getenv("API_URL", "http://127.0.0.1:10101")
 
-DASH_USER = os.getenv("DASH_USER", "testuser")
-DASH_PASS = os.getenv("DASH_PASS", "testpassword")
+DASH_USER = os.getenv("DASH_USER", "dashboard_admin")
+DASH_PASS = os.getenv("DASH_PASS", "dashboard_admin_password")
+
 
 _cached_token: Optional[str] = None
 
     
+def ensure_dashboard_admin_user() -> None:
+  
+    reg = requests.post(
+        f"{BASE_URL}/auth/register/",
+        json={"username": DASH_USER, "password": DASH_PASS},
+        timeout=5
+    )
+    promo = requests.post(
+        f"{BASE_URL}/auth/promote/{DASH_USER}",
+        timeout=5)
+
+    return
+
 def get_db_token() -> str:
     global _cached_token
     if _cached_token:
         return _cached_token
+
+    ensure_dashboard_admin_user()
 
     resp = requests.post(
         f"{BASE_URL}/auth/token",
@@ -41,7 +57,7 @@ def get_db_token() -> str:
     data = resp.json()
     token = data.get("access_token")
     if not token:
-        raise Exception("DB auth failed: no access_token returned")
+        raise Exception(f"DB auth failed: no access_token returned: {data}")
 
     _cached_token = token
     return token
@@ -50,23 +66,50 @@ def get_db_token() -> str:
 def db_get(path: str) -> requests.Response:
     global _cached_token
     token = get_db_token()
-    
-    return requests.get(
+
+    resp = requests.get(
         f"{BASE_URL}{path}",
         headers={"Authorization": f"Bearer {token}"},
         timeout=10
     )
+
     
+    if resp.status_code == 401:
+        _cached_token = None
+        token = get_db_token()
+        resp = requests.get(
+            f"{BASE_URL}{path}",
+            headers={"Authorization": f"Bearer {token}"},
+            timeout=10
+        )
+
+    return resp
+
+
 def db_post(path: str, payload: dict) -> requests.Response:
     global _cached_token
     token = get_db_token()
-    
-    return requests.post(
+
+    resp = requests.post(
         f"{BASE_URL}{path}",
         json=payload,
         headers={"Authorization": f"Bearer {token}"},
         timeout=10
     )
+
+    if resp.status_code == 401:
+        _cached_token = None
+        token = get_db_token()
+        resp = requests.post(
+            f"{BASE_URL}{path}",
+            json=payload,
+            headers={"Authorization": f"Bearer {token}"},
+            timeout=10
+        )
+
+    return resp
+
+
 # FastAPI app
 app = FastAPI()
 
@@ -164,9 +207,12 @@ async def dashboard(request: Request):
     for t in telemetry:
         if not isinstance(t, dict):
             raise HTTPException(status_code=500, detail=f"Expected dict row, got {type(t)}: {t}")
+        raw_dt = t.get("dateTime")
+        formatted_dt = datetime.fromisoformat(raw_dt).strftime("%d %b %Y, %H:%M:%S")
+        
         telemetry_rows.append(
             {
-                "dateTime": t.get("dateTime"),
+                "dateTime": formatted_dt,
                 "user_id": t.get("user_id"),
                 "stage_id": t.get("stage_id"),
                 "telemetry_type": t.get("telemetry_type"),

@@ -294,6 +294,17 @@ def login(form_data: OAuth2PasswordRequestForm = Depends(), db: Session = Depend
     access_token = create_access_token(data={"sub": db_user.username})
     return {"user_id": db_user.id, "access_token": access_token, "token_type": "bearer", "is_admin": db_user.is_admin}
 
+#promote a user to admin
+@app.post("/auth/promote/{username}")
+def promote_user_to_admin(username: str, db: Session = Depends(get_db)):
+    user = db.query(Users).filter(Users.username == username).first()
+    if not user:
+        raise HTTPException(status_code=404, detail="User not found")
+
+    user.is_admin = 1
+    db.commit()
+    db.refresh(user)
+    return {"username": user.username, "is_admin": user.is_admin}
 
 # --- API ENDPOINTS ---
 # All endpoints that modify or access data require authentication and will use the current_user dependency to ensure the user is authenticated.

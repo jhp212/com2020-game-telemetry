@@ -3,31 +3,76 @@
 {% block content %}
   <h2>Telemetry</h2>
 
-  <table>
+  <table id="telemetryTable">
     <thead>
-      <tr>
-        <th>Time</th>
-        <th>User</th>
-        <th>Stage</th>
-        <th>Event Type</th>
-        <th>Data</th>
-       
-
-      </tr>
-    </thead>
-    <tbody>
-      {% for r in telemetry_rows %}
         <tr>
-          <td>{{ r.dateTime }}</td>
-          <td>{{ r.user_id }}</td>
-          <td>{{ r.stage_id }}</td>
-          <td>{{ r.telemetry_type }}</td>
-          <td>{{ r.data }}</td>
-          
+            <th data-column="dateTime">Date Time <span class="sort-indicator"></span></th>
+            <th data-column="user_id">User ID <span class="sort-indicator"></span></th>
+            <th data-column="stage_id">Stage ID <span class="sort-indicator"></span></th>
+            <th data-column="telemetry_type">Telemetry Type <span class="sort-indicator"></span></th>
+            <th data-column="data">Data <span class="sort-indicator"></span></th>
         </tr>
-      {% endfor %}
+    </thead>
+
+    <tbody>
+        {% for row in telemetry_rows %}
+        <tr>
+            <td>{{ row.dateTime }}</td>
+            <td>{{ row.user_id }}</td>
+            <td>{{ row.stage_id }}</td>
+            <td>{{ row.telemetry_type }}</td>
+            <td>{{ row.data }}</td>
+        </tr>
+        {% endfor %}
     </tbody>
-  </table>
+</table>
 </div>
+
+<script>
+document.addEventListener("DOMContentLoaded", () => {
+    const table = document.getElementById("telemetryTable");
+    const headers = table.querySelectorAll("th");
+
+    headers.forEach((header, columnIndex) => {
+        header.addEventListener("click", () => {
+            const tbody = table.querySelector("tbody");
+            const rows = Array.from(tbody.querySelectorAll("tr"));
+
+            const currentOrder = header.dataset.order || "desc";
+            const newOrder = currentOrder === "asc" ? "desc" : "asc";
+            header.dataset.order = newOrder;
+
+            headers.forEach(h => {
+                h.classList.remove("active-sort");
+                h.querySelector(".sort-indicator").textContent = "";
+            });
+
+            header.classList.add("active-sort");
+            header.querySelector(".sort-indicator").textContent =
+                newOrder === "asc" ? "▲" : "▼";
+
+            rows.sort((a, b) => {
+                let aText = a.children[columnIndex].innerText;
+                let bText = b.children[columnIndex].innerText;
+
+                if (header.dataset.column === "dateTime") {
+                    aText = new Date(aText);
+                    bText = new Date(bText);
+                } else if (!isNaN(aText) && !isNaN(bText)) {
+                    aText = Number(aText);
+                    bText = Number(bText);
+                }
+
+                if (aText < bText) return newOrder === "asc" ? -1 : 1;
+                if (aText > bText) return newOrder === "asc" ? 1 : -1;
+                return 0;
+            });
+
+            tbody.innerHTML = "";
+            rows.forEach(row => tbody.appendChild(row));
+        });
+    });
+});
+</script>
   
 {% endblock %}
