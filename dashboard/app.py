@@ -18,32 +18,16 @@ from typing import Optional
 BASE_DIR = Path(__file__).resolve().parent
 BASE_URL = os.getenv("API_URL", "http://127.0.0.1:10101")
 
-DASH_USER = os.getenv("DASH_USER", "dashboard_admin")
-DASH_PASS = os.getenv("DASH_PASS", "dashboard_admin_password")
+DASH_USER = os.getenv("DASH_USER", "testadmin")
+DASH_PASS = os.getenv("DASH_PASS", "adminpass")
 
 
 _cached_token: Optional[str] = None
-
-    
-def ensure_dashboard_admin_user() -> None:
-  
-    reg = requests.post(
-        f"{BASE_URL}/auth/register/",
-        json={"username": DASH_USER, "password": DASH_PASS},
-        timeout=5
-    )
-    promo = requests.post(
-        f"{BASE_URL}/auth/promote/{DASH_USER}",
-        timeout=5)
-
-    return
 
 def get_db_token() -> str:
     global _cached_token
     if _cached_token:
         return _cached_token
-
-    ensure_dashboard_admin_user()
 
     resp = requests.post(
         f"{BASE_URL}/auth/token",
@@ -208,6 +192,8 @@ async def dashboard(request: Request):
         if not isinstance(t, dict):
             raise HTTPException(status_code=500, detail=f"Expected dict row, got {type(t)}: {t}")
         raw_dt = t.get("dateTime")
+        if not raw_dt:
+            raise HTTPException(status_code=500, detail=f"Missing dateTime in telemetry entry: {t}")
         formatted_dt = datetime.fromisoformat(raw_dt).strftime("%d %b %Y, %H:%M:%S")
         
         telemetry_rows.append(
