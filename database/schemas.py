@@ -72,3 +72,15 @@ class TokenResponse(BaseModel):
     access_token: str
     token_type: str
     is_admin: int
+
+class AnomalyCreate(BaseModel):
+    telemetry_ids: list[int]
+    anomaly_type: str
+    resolution: str | None = None
+
+class AnomalyResponse(BaseModel):
+    id: int
+    telemetry_ids: list[int]
+    anomaly_type: str
+    resolution: str | None = None
+    model_config = {"from_attributes": True}
