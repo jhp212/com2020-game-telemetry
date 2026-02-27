@@ -1,7 +1,135 @@
 <!DOCTYPE html>
 <html >
     <head>
-        <link rel="stylesheet" href="CSS/loginStyle.css">
+        <style>
+                        body{
+                display: flex;
+                background-color: #3B3B3B;
+                height: 100vh;
+                margin: 0;
+                justify-content: center;
+                align-items: center;
+            }
+            .loginBox {
+                background-color: darkgray;
+                display: flex;
+                height: 60%;
+                width: 20%;
+                border: 3px solid black;
+                justify-content: center;
+                align-items: center;
+                flex-direction: column;
+                box-shadow: 5px 10px rgba(79, 29, 138, 0.863);
+                min-width: 350px;
+                min-height: 350px;
+
+            }
+            .loginBox h1 {
+                font-size: 60px;
+                font-style: italic;
+
+            }
+            .annoyingRow {
+                display: flex;
+                margin-top: 5%;
+                align-items: center;
+                width: 80%;
+                height: 8%;
+                justify-content: space-between;
+            }
+            .annoyingRow2 {
+                display: flex;
+                margin-top: 5%;
+                align-items: end;
+                width: 80%;
+                height: 8%;
+                justify-content: flex-end;
+
+            }
+            .wrapPls {
+                display: flex;
+                align-self: center;
+                flex-direction: row;
+            }
+            input[type=password] {
+                width: 80%;
+                height: 5%;
+                margin-top: 5%;
+                border: rgb(170, 170, 170);
+                border-radius: 30px;
+                background-color: rgb(224, 231, 236);
+                padding: 0 10px;
+            }
+            input[type=email] {
+                width: 80%;
+                height: 5%;
+                margin-top: 5%;
+                border: rgb(170, 170, 170);
+                border-radius: 30px;
+                background-color: rgb(224, 231, 236);
+                padding: 0 10px;
+            }
+            input[type=checkbox]{
+                align-self: start;
+                width: 20%;
+                height: 20%;
+            }
+            input[type=text]{
+                width: 80%;
+                height: 5%;
+                border: rgb(170, 170, 170);
+                border-radius: 30px;
+                background-color: rgb(224, 231, 236);
+                padding: 0 10px;
+            }
+            input[type=button]{
+                align-self: flex-end;
+                border-radius: 30px;
+                font-size: 90%;
+                margin-left: 10%;
+                width: 30%;
+                height: 60%;
+                background-color: rgba(79, 29, 138, 0.863);
+                font-weight: bold;
+                border-color: black;
+                box-shadow: 3px 5px black;
+                font-style: italic;
+                opacity: 1;
+            }
+            input[type=button]:hover{
+                opacity: 0.7;
+            }
+            .loginButton{
+                align-self: flex-end;
+                display: flex;
+                border-radius: 30px;
+                font-size: 90%;
+                margin-left: 10%;
+                width: 30%;
+                height: 60%;
+                background-color: rgba(79, 29, 138, 0.863);
+                font-weight: bold;
+                color: black;
+                border-color: black;
+                box-shadow: 3px 5px black;
+                font-style: italic;
+                opacity: 1;
+                text-decoration: none;
+                align-items: center;
+                justify-content: center;
+            }
+            .loginButton:hover{
+                opacity: 0.7;
+            }
+            .wrapPls h3 {
+                margin: 0;
+                margin-left: 5px;
+                font-size: 12px;
+                white-space: nowrap;
+            }
+        </style>
+
+
     </head>
 
     <body>
@@ -12,12 +140,18 @@
             <div class="annoyingRow">
                 <div class="wrapPls">
                     <input type="checkbox"></input>
-                    <h3>Remember me?</h3>
+                    <h3>Remeber me?</h3>
                 </div>
-            <input type="button" value="SIGN IN"></input>
+                <input type="button" id="loginButton" value="SIGN IN"></input>
             </div>
         </div>
     </body>
-
+    <script>
+        const loginButton = document.getElementById("loginButton");
+        loginButton.addEventListener("click", function() {
+            sessionStorage.setItem("isLoggedIn", "loggedIn");
+            window.location.href = "/dashboard";
+        });
+    </script>
 
 </html>
