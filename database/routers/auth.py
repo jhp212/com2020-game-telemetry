@@ -61,3 +61,19 @@ def promote_user_to_admin(username: str, db: Session = Depends(get_db), current_
     db.commit()
     db.refresh(user)
     return {"username": user.username, "is_admin": user.is_admin}
+
+# Admin endpoint to reject a user's admin request. Only accessible by existing admins.
+@router.post("/reject_admin/{username}")
+def reject_admin_request(username: str, db: Session = Depends(get_db), current_user: Users = Depends(get_current_admin_user)):
+    user = db.query(Users).filter(Users.username == username).first()
+    if not user:
+        raise HTTPException(status_code=404, detail="User not found")
+    if user.is_admin == 1: # type: ignore
+        raise HTTPException(status_code=400, detail="User is already an admin")
+    if user.is_requesting_admin == 0: # type: ignore
+        raise HTTPException(status_code=400, detail="User has not requested admin access")
+
+    user.is_requesting_admin = 0 # type: ignore
+    db.commit()
+    db.refresh(user)
+    return {"username": user.username, "is_requesting_admin": user.is_requesting_admin}
