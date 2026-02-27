@@ -574,3 +574,7 @@ async def runSimulation(payload: SimulationRequest):
             "suggestedAction": result["suggestedAction"]
         }
     ]
+@app.get("/login", response_class=HTMLResponse)
+async def login_page():
+    with open(BASE_DIR / "authentication/login.html", "r") as loginPage:
+        return HTMLResponse(content=loginPage.read())
