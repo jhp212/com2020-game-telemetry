@@ -108,7 +108,7 @@ templates = Jinja2Templates(directory=str(BASE_DIR / "templates"))
 @app.get("/", response_class=HTMLResponse)
 async def home(request: Request):
     
-    r = db_get("/telemetry/")
+    r = db_get("/telemetry")
     if not r.ok:
         raise HTTPException(status_code=r.status_code, detail=r.text)
 
@@ -168,7 +168,7 @@ async def home(request: Request):
 async def dashboard(request: Request):
     
    
-    response = db_get("/telemetry/")
+    response = db_get("/telemetry")
     if not response.ok:
         raise HTTPException(status_code=response.status_code, detail=response.text)
     
@@ -215,7 +215,7 @@ async def dashboard(request: Request):
 @app.get("/decisionLog", response_class=HTMLResponse)
 async def decisionLog(request: Request):
     
-    response = db_get("/decision_logs/")
+    response = db_get("/decision_logs")
     
     # simple error handling
     if not response.ok:
@@ -258,7 +258,7 @@ async def decisionLog(request: Request):
 @app.get("/parameters", response_class=HTMLResponse)
 async def parameters(request: Request):
         
-    response = db_get("/parameters/")
+    response = db_get("/parameters")
     
     # simple error handling
     if not response.ok:
@@ -304,7 +304,7 @@ class ParameterUpdate(BaseModel):
 async def proxy_update_parameter(data: ParameterUpdate):
     
     # after making a parameter change we want the change to be displayed on the parameters table by posting it to the DB
-    response = db_post("/parameters/", data.model_dump())
+    response = db_post("/parameters", data.model_dump())
 
     
      # simple error handling
@@ -333,7 +333,7 @@ async def proxy_create_decision_log(data: DecisionLogCreate):
     payload["dateTime"] = data.dateTime.isoformat()
 
     # post the parameter change we made as a json payload to the decision log
-    response = db_post("/decision_logs/", payload)
+    response = db_post("/decision_logs", payload)
 
     
     # simple error handling
@@ -350,9 +350,9 @@ async def proxy_create_decision_log(data: DecisionLogCreate):
 async def export_dashboard_csv():
     
     # request data from all datasets
-    telemetry_resp = requests.get(f"{BASE_URL}/telemetry/")
-    decision_resp = requests.get(f"{BASE_URL}/decision_logs/")
-    params_resp = requests.get(f"{BASE_URL}/parameters/")
+    telemetry_resp = requests.get(f"{BASE_URL}/telemetry")
+    decision_resp = requests.get(f"{BASE_URL}/decision_logs")
+    params_resp = requests.get(f"{BASE_URL}/parameters")
     
     
     if not telemetry_resp.ok:
@@ -437,7 +437,7 @@ async def export_dashboard_csv():
 @app.get("/balancing", response_class=HTMLResponse)
 async def dashboard_balancing(request: Request):
     
-    response = requests.get(f"{BASE_URL}/telemetry/")
+    response = db_get("/telemetry")
     if not response.ok:
         raise HTTPException(status_code=response.status_code, detail=response.text)
     

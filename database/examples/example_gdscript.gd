@@ -52,7 +52,7 @@ func run_example_flow():
 # --- API Call Functions ---
 
 func register(username: String, password: String) -> Dictionary:
-    var url = base_url + "/auth/register/"
+    var url = base_url + "/auth/register"
     var headers = ["Content-Type: application/json"]
     var body = JSON.stringify({"username": username, "password": password})
     
@@ -88,7 +88,7 @@ func authenticate(username: String, password: String) -> Dictionary:
         return {}
 
 func create_telemetry(token: String, telemetry_data: Dictionary) -> Dictionary:
-    var url = base_url + "/telemetry/"
+    var url = base_url + "/telemetry"
     # Attach our Bearer token to the headers
     var headers = [
         "Content-Type: application/json",

@@ -10,7 +10,7 @@ from security import get_password_hash, verify_password, create_access_token, ge
 router = APIRouter(prefix="/auth", tags=["Authentication"])
 
 # Registration endpoint - creates a new user with hashed password
-@router.post("/register/", response_model=schemas.UserResponse)
+@router.post("/register", response_model=schemas.UserResponse)
 def register_user(user: schemas.UserCreate, db: Session = Depends(get_db)):
     existing = db.query(Users).filter(Users.username == user.username).first()
     if existing:
@@ -34,7 +34,7 @@ def login(form_data: OAuth2PasswordRequestForm = Depends(), db: Session = Depend
     return {"user_id": db_user.id, "access_token": access_token, "token_type": "bearer", "is_admin": db_user.is_admin}
 
 # Endpoint for users to request admin access. Only that user can make this request
-@router.post("/request_admin/")
+@router.post("/request_admin")
 def request_admin_access(db: Session = Depends(get_db), current_user: Users = Depends(get_current_user)):
     user = db.query(Users).filter(Users.id == current_user.id).first()
     if user.is_admin == 1: # type: ignore

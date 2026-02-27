@@ -16,7 +16,7 @@ except (ModuleNotFoundError, ImportError):
 router = APIRouter(tags=["Game Data"])
 
 # Create a new telemetry entry (Access: Everyone)
-@router.post("/telemetry/", response_model=schemas.TelemetryResponse)
+@router.post("/telemetry", response_model=schemas.TelemetryResponse)
 def create_telemetry(telemetry: schemas.TelemetryCreate, db: Session = Depends(get_db), current_user: Users = Depends(get_current_user)):
     if telemetry.telemetry_type not in ALLOWED_TELEMETRY_TYPES:
         raise HTTPException(status_code=400, detail=f"Invalid telemetry_type. Allowed types: {ALLOWED_TELEMETRY_TYPES}")
@@ -27,7 +27,7 @@ def create_telemetry(telemetry: schemas.TelemetryCreate, db: Session = Depends(g
     return db_telemetry
 
 # Read telemetry entries with optional filters (Access: Admin)
-@router.get("/telemetry/", response_model=list[schemas.TelemetryResponse])
+@router.get("/telemetry", response_model=list[schemas.TelemetryResponse])
 def read_telemetry(telemetry_id: int | None = None, user_id: int | None = None, stage_id: int | None = None,
                    start_time: datetime | None = None, end_time: datetime | None = None, 
                    db: Session = Depends(get_db), current_user: Users = Depends(get_current_admin_user)):
@@ -47,7 +47,7 @@ def read_telemetry(telemetry_id: int | None = None, user_id: int | None = None, 
     return query.all()
 
 # Create or update a parameter (Access: Admin)
-@router.post("/parameters/", response_model=schemas.ParameterResponse)
+@router.post("/parameters", response_model=schemas.ParameterResponse)
 def create_parameter(parameter: schemas.ParameterCreate, db: Session = Depends(get_db), current_user: Users = Depends(get_current_admin_user)):
     existing = db.query(Parameters).filter(Parameters.name == parameter.name).first()
     if existing:
@@ -64,7 +64,7 @@ def create_parameter(parameter: schemas.ParameterCreate, db: Session = Depends(g
     return db_parameter
 
 # Read parameters with optional name filter (Access: Everyone)
-@router.get("/parameters/", response_model=list[schemas.ParameterResponse])
+@router.get("/parameters", response_model=list[schemas.ParameterResponse])
 def read_parameters(parameter_name: str | None = None, db: Session = Depends(get_db), current_user: Users = Depends(get_current_user)):
     query = db.query(Parameters)
     if parameter_name is not None:
@@ -72,7 +72,7 @@ def read_parameters(parameter_name: str | None = None, db: Session = Depends(get
     return query.all()
 
 # Create a new balancing rule (Access: Admin)
-@router.post("/balancing_rules/", response_model=schemas.BalancingRuleResponse)
+@router.post("/balancing_rules", response_model=schemas.BalancingRuleResponse)
 def create_balancing_rule(rule: schemas.BalancingRuleCreate, db: Session = Depends(get_db), current_user: Users = Depends(get_current_admin_user)):
     db_rule = BalancingRule(**rule.model_dump())
     db.add(db_rule)
@@ -81,7 +81,7 @@ def create_balancing_rule(rule: schemas.BalancingRuleCreate, db: Session = Depen
     return db_rule
 
 # Read balancing rules with optional id filter (Access: Admin)
-@router.get("/balancing_rules/", response_model=list[schemas.BalancingRuleResponse])
+@router.get("/balancing_rules", response_model=list[schemas.BalancingRuleResponse])
 def read_balancing_rules(rule_id: int | None = None, db: Session = Depends(get_db), current_user: Users = Depends(get_current_admin_user)):
     query = db.query(BalancingRule)
     if rule_id is not None:
@@ -89,7 +89,7 @@ def read_balancing_rules(rule_id: int | None = None, db: Session = Depends(get_d
     return query.all()
 
 # Create a new decision log entry (Access: Admin)
-@router.post("/decision_logs/", response_model=schemas.DecisionLogResponse)
+@router.post("/decision_logs", response_model=schemas.DecisionLogResponse)
 def create_decision_log(entry: schemas.DecisionLogCreate, db: Session = Depends(get_db), current_user: Users = Depends(get_current_admin_user)):
     db_entry = DecisionLog(**entry.model_dump())
     db.add(db_entry)
@@ -98,7 +98,7 @@ def create_decision_log(entry: schemas.DecisionLogCreate, db: Session = Depends(
     return db_entry
 
 # Read decision logs with optional filters (Access: Admin)
-@router.get("/decision_logs/", response_model=list[schemas.DecisionLogResponse])
+@router.get("/decision_logs", response_model=list[schemas.DecisionLogResponse])
 def read_decision_logs(decision_id: int | None = None, parameter_name: str | None = None, stage_id: int | None = None,
                            start_time: datetime | None = None, end_time: datetime | None = None, 
                            db: Session = Depends(get_db), current_user: Users = Depends(get_current_admin_user)):

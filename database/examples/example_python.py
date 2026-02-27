@@ -22,7 +22,7 @@ def authenticate(username: str, password: str):
 
 def create_telemetry(token: str, telemetry_data: dict):
     headers = {"Authorization": f"Bearer {token}"}
-    response = requests.post(f"{BASE_URL}/telemetry/", json=telemetry_data, headers=headers)
+    response = requests.post(f"{BASE_URL}/telemetry", json=telemetry_data, headers=headers)
     if response.status_code != 200:
         raise Exception(f"Failed to create telemetry: {response.text}")
     return response.json()

@@ -9,7 +9,7 @@ from security import get_current_admin_user
 router = APIRouter(prefix="/users", tags=["Users"])
 
 # Get all users (Admin only)
-@router.get("/", response_model=list[schemas.UserResponse])
+@router.get("", response_model=list[schemas.UserResponse])
 def get_all_users(db: Session = Depends(get_db), current_user: Users = Depends(get_current_admin_user)):
     return db.query(Users).all()
 
@@ -26,6 +26,6 @@ def delete_user(username: str, db: Session = Depends(get_db), current_user: User
     return {"detail": f"User '{username}' has been deleted."}
 
 # Get all users who have requested admin access (Admin only)
-@router.get("/admin_requests/", response_model=list[schemas.UserResponse])
+@router.get("/admin_requests", response_model=list[schemas.UserResponse])
 def get_admin_requests(db: Session = Depends(get_db), current_user: Users = Depends(get_current_admin_user)):
     return db.query(Users).filter(Users.is_requesting_admin == 1).all()

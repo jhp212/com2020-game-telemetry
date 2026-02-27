@@ -6,7 +6,7 @@ from fastapi.security import OAuth2PasswordBearer
 from passlib.context import CryptContext
 from sqlalchemy.orm import Session
 
-from database import get_db
+from database import get_db # type: ignore
 from models import Users
 
 SECRET_KEY = os.getenv("SECRET_KEY", "SUPER_SECRET_DEV_KEY_CHANGE_IN_PRODUCTION")
@@ -48,6 +48,6 @@ def get_current_user(token: str = Depends(oauth2_scheme), db: Session = Depends(
     return user
 
 def get_current_admin_user(current_user: Users = Depends(get_current_user)):
-    if current_user.is_admin != 1:
+    if current_user.is_admin != 1: # type: ignore
         raise HTTPException(status_code=403, detail="Not enough privileges. Admin access required.")
     return current_user

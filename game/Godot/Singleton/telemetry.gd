@@ -28,7 +28,7 @@ func create_telemetry(telemetry_data):
 	add_child(http_request)
 	var json_data = JSON.stringify(telemetry_data)
 	var headers = ["Content-Type: application/json"]
-	var url = get_full_url("/telemetry/")
+	var url = get_full_url("/telemetry")
 	var error = http_request.request(url, headers, HTTPClient.METHOD_POST, json_data)
 	if error != OK:
 		print("Error making request to: " + url)
@@ -45,7 +45,7 @@ func get_parameter(parameter_name):
 	var http_request = HTTPRequest.new()
 	add_child(http_request)
 	var headers = ["Content-Type: application/json"]
-	var url = get_full_url("/parameters/?parameter_name=" + parameter_name)
+	var url = get_full_url("/parameters?parameter_name=" + parameter_name)
 	var error = http_request.request(url, headers, HTTPClient.METHOD_GET)
 	if error != OK:
 		print("Error making request to: " + url)
