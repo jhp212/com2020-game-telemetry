@@ -1,7 +1,7 @@
 from datetime import datetime, timezone
 
 #this tests if the dashboard is successfully accessing and displaying the telemtry events  
-def test_telemetry_page(db_client, dashboard_client):
+def test_telemetry_page(auth_db_client, dashboard_client):
     #using api to create a telemetry event in the database
     #later tests test if it is accessible from the dashboard 
     payload = {
@@ -12,7 +12,7 @@ def test_telemetry_page(db_client, dashboard_client):
         "data": {"amount": 125, "total_remaining": 425},
     }
     #sending it to the db
-    r = db_client.post("/telemetry/", json=payload)
+    r = auth_db_client.post("/telemetry/", json=payload)
     assert r.status_code == 200, r.text #checking if it was successful 
 
     #load dashboard page which should load the telemntry page 
@@ -27,9 +27,9 @@ def test_telemetry_page(db_client, dashboard_client):
     assert "125" in page.text  # amount
 
 #this tests if the dashboard is successfully accessing and displaying the parameters
-def test_parameters_page(db_client, dashboard_client):
+def test_parameters_page(auth_db_client, dashboard_client):
     #creating parameter using db API again
-    r = db_client.post("/parameters/", json={"name": "enemy_damage_multiplier", "value": 1.5})
+    r = auth_db_client.post("/parameters/", json={"name": "enemy_damage_multiplier", "value": 1.5})
     assert r.status_code == 200, r.text #check if successful 
 
     #loading the parameters page on the dashboard 
@@ -40,13 +40,13 @@ def test_parameters_page(db_client, dashboard_client):
     assert "1.5" in page.text
 
 #this tests if the dashboard is successfully accessing and displaying the parameters
-def test_decisionlog_page(db_client, dashboard_client):
+def test_decisionlog_page(auth_db_client, dashboard_client):
     #creating a parameter since decision log requires one to exist first 
-    r = db_client.post("/parameters/", json={"name": "enemy1_health", "value": 5.0})
+    r = auth_db_client.post("/parameters/", json={"name": "enemy1_health", "value": 5.0})
     assert r.status_code == 200, r.text
     
     #creating the decision log entry 
-    r = db_client.post("/decision_logs/", json={
+    r = auth_db_client.post("/decision_logs/", json={
         "parameter_name": "enemy1_health",
         "stage_id": 1,
         "change": "-2",

@@ -1,4 +1,4 @@
-from database.main import Parameters, DecisionLog
+from database.models import Parameters, DecisionLog
 
 #tests that a parameter can be created and retreived by it's pk (name) 
 def test_parameter_PK(db_session):
