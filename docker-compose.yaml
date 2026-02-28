@@ -9,7 +9,7 @@ services:
     volumes:
       - ./database:/app
     environment:
-      - DATABASE_URL=sqlite:///./td.db
+      - DATABASE_URL=sqlite:///./app/td.db
   
   dashboard:
     build:

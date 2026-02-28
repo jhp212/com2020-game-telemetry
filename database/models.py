@@ -60,5 +60,5 @@ class TelemetryAnomaly(Base):
     __tablename__ = "TelemetryAnomaly"
     telemetry_id = Column(Integer, ForeignKey("Telemetry.id"), primary_key=True)
     anomaly_id = Column(Integer, ForeignKey("Anomalies.id"), primary_key=True)
-    telemetry = relationship("Telemetry")
-    anomaly = relationship("Anomalies")
+    telemetry = relationship("Telemetry", viewonly=True)
+    anomaly = relationship("Anomalies", viewonly=True)
