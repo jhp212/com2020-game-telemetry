@@ -2,11 +2,11 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from contextlib import asynccontextmanager
 
-from database import engine, SessionLocal # type: ignore
-from models import Base, Parameters, Users # type: ignore
-from security import get_password_hash
+from database.database import engine, SessionLocal # type: ignore
+from database.models import Base, Parameters, Users # type: ignore
+from database.security import get_password_hash
 
-from routers import auth, users, game_data
+from database.routers import auth, users, game_data
 
 # Create DB Tables
 Base.metadata.create_all(bind=engine)

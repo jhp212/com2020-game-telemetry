@@ -6,8 +6,8 @@ from fastapi.security import OAuth2PasswordBearer
 from passlib.context import CryptContext
 from sqlalchemy.orm import Session
 
-from database import get_db # type: ignore
-from models import Users
+from database.database import get_db # type: ignore
+from database.models import Users
 
 SECRET_KEY = os.getenv("SECRET_KEY", "SUPER_SECRET_DEV_KEY_CHANGE_IN_PRODUCTION")
 ALGORITHM = "HS256"

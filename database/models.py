@@ -1,7 +1,7 @@
 from sqlalchemy import Column, Integer, String, JSON, DateTime, Float, ForeignKey
 from sqlalchemy.orm import relationship
 from datetime import datetime
-from database import Base # type: ignore
+from database.database import Base # type: ignore
 
 class Telemetry(Base):
     __tablename__ = "Telemetry"

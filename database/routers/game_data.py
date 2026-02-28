@@ -3,10 +3,10 @@ from sqlalchemy.orm import Session
 from datetime import datetime
 from sqlalchemy.exc import IntegrityError
 
-from database import get_db # type: ignore
-from models import *
-import schemas
-from security import get_current_user, get_current_admin_user
+from database.database import get_db # type: ignore
+from database.models import *
+from database import schemas
+from database.security import get_current_user, get_current_admin_user
 
 # This try-except is needed to allow importing from the correct location whether running from main.py or directly from this file for testing
 try:
