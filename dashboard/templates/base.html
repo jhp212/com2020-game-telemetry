@@ -53,8 +53,8 @@
     document.getElementById("export-btn").addEventListener("click", function () {
         window.location.href = "/dashboard/export/csv";
     });
-    if (sessionStorage.getItem("isLoggedIn") !== "loggedIn") {
-    window.location.href = "/login";
-        }
+    if (sessionStorage.getItem("isLoggedIn") !== "loggedIn" && localStorage.getItem("isLoggedIn") !== "loggedIn") {
+        window.location.href = "/login";
+        };
 </script>
 </html>
