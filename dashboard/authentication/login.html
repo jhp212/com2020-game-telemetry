@@ -139,7 +139,7 @@
             <input type="password" placeholder="Password"></input>
             <div class="annoyingRow">
                 <div class="wrapPls">
-                    <input type="checkbox"></input>
+                    <input id="remember" type="checkbox"></input>
                     <h3>Remeber me?</h3>
                 </div>
                 <input type="button" id="loginButton" value="SIGN IN"></input>
@@ -147,9 +147,14 @@
         </div>
     </body>
     <script>
-        const loginButton = document.getElementById("loginButton");
+       const loginButton = document.getElementById("loginButton");
         loginButton.addEventListener("click", function() {
-            sessionStorage.setItem("isLoggedIn", "loggedIn");
+            const remember = document.getElementById("remember");
+            if (remember.checked) {
+            localStorage.setItem("isLoggedIn", "loggedIn");
+            } else {
+            sessionStorage.setItem("isLoggedIn", "loggedIn");}
+
             window.location.href = "/dashboard";
         });
     </script>
