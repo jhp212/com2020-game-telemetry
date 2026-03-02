@@ -37,11 +37,9 @@ def api_post_with_token(path: str, token: str, payload: dict) -> requests.Respon
 
 # checking any point that needs authentication in order to test the token
 def validate_token(token: str) -> bool:
-    r = api_get_with_token("/users/me", token)
-    if r.status_code == 404:
-        r = api_get_with_token("/telemetry", token)
+    r = api_get_with_token("/telemetry", token)
 
-    return r.ok
+    return r.status_code != 401
 
 def get_cookie_token(request: Request) -> str | None:
     return request.cookies.get("access_token")
