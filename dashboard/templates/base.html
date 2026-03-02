@@ -53,13 +53,5 @@
     document.getElementById("export-btn").addEventListener("click", function () {
         window.location.href = "/dashboard/export/csv";
     });
-    if (sessionStorage.getItem("isLoggedIn") !== "loggedIn" && localStorage.getItem("isLoggedIn") !== "loggedIn") {
-        window.location.href = "/login";
-        };
-    document.getElementById("logoutButton").addEventListener("click", function(){
-        sessionStorage.removeItem("isLoggedIn");
-        localStorage.removeItem("isLoggedIn");
-        window.location.reload()
-    })
 </script>
 </html>
