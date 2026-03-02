@@ -146,19 +146,4 @@
             </div>
         </div>
     </body>
-    <script>
-       const loginButton = document.getElementById("loginButton");
-        loginButton.addEventListener("click", function() {
-            const username = document.getElementById("user").value;
-            const password = document.getElementById("pass").value;
-            const remember = document.getElementById("remember");
-            if (remember.checked) {
-            localStorage.setItem("isLoggedIn", "loggedIn");
-            } else {
-            sessionStorage.setItem("isLoggedIn", "loggedIn");}
-
-            window.location.href = "/dashboard";
-        });
-    </script>
-
 </html>
