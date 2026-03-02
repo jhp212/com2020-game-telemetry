@@ -4,8 +4,8 @@ import io
 import zipfile
 from collections import Counter # Helpful for graphing
 from pathlib import Path
-from fastapi import FastAPI, Request, HTTPException
-from fastapi.responses import HTMLResponse, StreamingResponse
+from fastapi import FastAPI, Request, HTTPException, Depends, Response, Form
+from fastapi.responses import HTMLResponse, StreamingResponse, RedirectResponse, JSONResponse
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates # Jinja2 will be used for templates
 import requests, os
@@ -18,81 +18,44 @@ from typing import Optional
 BASE_DIR = Path(__file__).resolve().parent
 BASE_URL = os.getenv("API_URL", "http://127.0.0.1:10101")
 
-DASH_USER = os.getenv("DASH_USER", "testadmin")
-DASH_PASS = os.getenv("DASH_PASS", "adminpass")
 
-
-_cached_token: Optional[str] = None
-
-def get_db_token() -> str:
-    global _cached_token
-    if _cached_token:
-        return _cached_token
-
-    resp = requests.post(
-        f"{BASE_URL}/auth/token",
-        data={"username": DASH_USER, "password": DASH_PASS},
-        timeout=5
-    )
-
-    if not resp.ok:
-        raise Exception(f"DB auth failed: {resp.status_code} {resp.text}")
-
-    data = resp.json()
-    token = data.get("access_token")
-    if not token:
-        raise Exception(f"DB auth failed: no access_token returned: {data}")
-
-    _cached_token = token
-    return token
-
-
-def db_get(path: str) -> requests.Response:
-    global _cached_token
-    token = get_db_token()
-
-    resp = requests.get(
+def api_get_with_token(path: str, token: str) -> requests.Response:
+    return requests.get(
         f"{BASE_URL}{path}",
         headers={"Authorization": f"Bearer {token}"},
         timeout=10
     )
 
-    
-    if resp.status_code == 401:
-        _cached_token = None
-        token = get_db_token()
-        resp = requests.get(
-            f"{BASE_URL}{path}",
-            headers={"Authorization": f"Bearer {token}"},
-            timeout=10
-        )
 
-    return resp
-
-
-def db_post(path: str, payload: dict) -> requests.Response:
-    global _cached_token
-    token = get_db_token()
-
-    resp = requests.post(
+def api_post_with_token(path: str, token: str, payload: dict) -> requests.Response:
+    return requests.post(
         f"{BASE_URL}{path}",
         json=payload,
         headers={"Authorization": f"Bearer {token}"},
         timeout=10
     )
 
-    if resp.status_code == 401:
-        _cached_token = None
-        token = get_db_token()
-        resp = requests.post(
-            f"{BASE_URL}{path}",
-            json=payload,
-            headers={"Authorization": f"Bearer {token}"},
-            timeout=10
-        )
+# checking any point that needs authentication in order to test the token
+def validate_token(token: str) -> bool:
+    r = api_get_with_token("/users/me", token)
+    if r.status_code == 404:
+        r = api_get_with_token("/telemetry", token)
 
-    return resp
+    return r.ok
 
+def get_cookie_token(request: Request) -> str | None:
+    return request.cookies.get("access_token")
+
+# returning users should possess a cookie, authenticate the cookie
+def require_auth(request: Request) -> str:
+    token = get_cookie_token(request)
+    if not token:
+        raise HTTPException(status_code=401, detail="Not authenticated")
+
+    if not validate_token(token):
+        raise HTTPException(status_code=401, detail="Invalid/expired token")
+
+    return token
 
 # FastAPI app
 app = FastAPI()
@@ -107,8 +70,11 @@ templates = Jinja2Templates(directory=str(BASE_DIR / "templates"))
 # root page
 @app.get("/", response_class=HTMLResponse)
 async def home(request: Request):
-    
-    r = db_get("/telemetry")
+    try:
+        token = require_auth(request)
+    except HTTPException:
+        return RedirectResponse(url="/login", status_code=302)
+    r = api_get_with_token("/telemetry", token)
     if not r.ok:
         raise HTTPException(status_code=r.status_code, detail=r.text)
 
@@ -167,8 +133,13 @@ async def home(request: Request):
 @app.get("/dashboard", response_class=HTMLResponse)
 async def dashboard(request: Request):
     
+    try:
+        token = require_auth(request)
+    except HTTPException:
+        return RedirectResponse(url="/login", status_code=302)
+    
    
-    response = db_get("/telemetry")
+    response = api_get_with_token("/telemetry", token)
     if not response.ok:
         raise HTTPException(status_code=response.status_code, detail=response.text)
     
@@ -215,7 +186,12 @@ async def dashboard(request: Request):
 @app.get("/decisionLog", response_class=HTMLResponse)
 async def decisionLog(request: Request):
     
-    response = db_get("/decision_logs")
+    try:
+        token = require_auth(request)
+    except HTTPException:
+        return RedirectResponse(url="/login", status_code=302)
+    
+    response = api_get_with_token("/decision_logs", token)
     
     # simple error handling
     if not response.ok:
@@ -257,8 +233,12 @@ async def decisionLog(request: Request):
     
 @app.get("/parameters", response_class=HTMLResponse)
 async def parameters(request: Request):
+    try:
+        token = require_auth(request)
+    except HTTPException:
+        return RedirectResponse(url="/login", status_code=302)
         
-    response = db_get("/parameters")
+    response = api_get_with_token("/parameters", token)
     
     # simple error handling
     if not response.ok:
@@ -301,19 +281,17 @@ class ParameterUpdate(BaseModel):
       
       
 @app.post("/parameters/")
-async def proxy_update_parameter(data: ParameterUpdate):
-    
-    # after making a parameter change we want the change to be displayed on the parameters table by posting it to the DB
-    response = db_post("/parameters", data.model_dump())
+async def proxy_update_parameter(request: Request, data: ParameterUpdate):
+    try:
+        token = require_auth(request)
+    except HTTPException:
+        return RedirectResponse(url="/login", status_code=302)
 
-    
-     # simple error handling
+    response = api_post_with_token("/parameters", token, data.model_dump())
+
     if not response.ok:
-       
-        raise HTTPException(
-            status_code=response.status_code, 
-            detail=f"Database API error: {response.text}"
-        )
+        raise HTTPException(status_code=response.status_code, detail=f"Database API error: {response.text}")
+
     return response.json()
 
 class DecisionLogCreate(BaseModel):
@@ -326,33 +304,34 @@ class DecisionLogCreate(BaseModel):
 
     
 @app.post("/decision_logs/")
-async def proxy_create_decision_log(data: DecisionLogCreate):
-    payload = data.model_dump()
+async def proxy_create_decision_log(request: Request, data: DecisionLogCreate):
+    try:
+        token = require_auth(request)
+    except HTTPException:
+        return RedirectResponse(url="/login", status_code=302)
 
-    
+    payload = data.model_dump()
     payload["dateTime"] = data.dateTime.isoformat()
 
-    # post the parameter change we made as a json payload to the decision log
-    response = db_post("/decision_logs", payload)
+    response = api_post_with_token("/decision_logs", token, payload)
 
-    
-    # simple error handling
     if not response.ok:
-        raise HTTPException(
-            status_code=response.status_code,
-            detail=f"Database API error: {response.text}"
-        )
+        raise HTTPException(status_code=response.status_code, detail=f"Database API error: {response.text}")
 
     return response.json()
 
 
 @app.get("/dashboard/export/csv")
-async def export_dashboard_csv():
-    
-    # request data from all datasets
-    telemetry_resp = requests.get(f"{BASE_URL}/telemetry")
-    decision_resp = requests.get(f"{BASE_URL}/decision_logs")
-    params_resp = requests.get(f"{BASE_URL}/parameters")
+async def export_dashboard_csv(request: Request):
+ 
+    try:
+        token = require_auth(request)
+    except HTTPException:
+        return RedirectResponse(url="/login", status_code=302)
+
+    telemetry_resp = api_get_with_token("/telemetry", token)
+    decision_resp = api_get_with_token("/decision_logs", token)
+    params_resp = api_get_with_token("/parameters", token)
     
     
     if not telemetry_resp.ok:
@@ -437,7 +416,12 @@ async def export_dashboard_csv():
 @app.get("/balancing", response_class=HTMLResponse)
 async def dashboard_balancing(request: Request):
     
-    response = db_get("/telemetry")
+    try:
+        token = require_auth(request)
+    except HTTPException:
+        return RedirectResponse(url="/login", status_code=302)
+    
+    response = api_get_with_token("/telemetry", token)
     if not response.ok:
         raise HTTPException(status_code=response.status_code, detail=response.text)
     
@@ -574,7 +558,57 @@ async def runSimulation(payload: SimulationRequest):
             "suggestedAction": result["suggestedAction"]
         }
     ]
+    
+    
 @app.get("/login", response_class=HTMLResponse)
-async def login_page():
+async def login_page(request: Request):
+    token = get_cookie_token(request)
+    if token and validate_token(token):
+        return RedirectResponse(url="/", status_code=302)
+
     with open(BASE_DIR / "authentication/login.html", "r") as loginPage:
         return HTMLResponse(content=loginPage.read())
+
+
+@app.post("/login")
+async def login_action(
+    username: str = Form(...),
+    password: str = Form(...),
+    remember: bool = Form(False),
+):
+    r = requests.post(
+        f"{BASE_URL}/auth/token",
+        data={"username": username, "password": password},
+        timeout=5
+    )
+
+    if not r.ok:
+        raise HTTPException(status_code=401, detail="The username or password you have entered is incorrect")
+
+    token = r.json().get("access_token")
+    if not token:
+        raise HTTPException(status_code=500, detail="No token from API")
+
+    response = RedirectResponse(url="/", status_code=302)
+
+   
+    max_age = 60 * 60 * 24 if remember else None
+
+    response.set_cookie(
+        key="access_token",
+        value=token,
+        httponly=True,
+        secure=False,   # WE WILL SET THIS TO TRUE AT DEPLOYMENT ( HTTPS )
+        samesite="lax",
+        max_age=max_age,
+        path="/"
+    )
+    
+    return response
+
+
+@app.get("/logout")
+async def logout():
+    response = RedirectResponse(url="/login", status_code=302)
+    response.delete_cookie("access_token", path="/")
+    return response
