@@ -135,8 +135,8 @@
     <body>
         <div class="loginBox">
             <h1>LOGIN</h1>
-            <input type="text" placeholder="Username"></input>
-            <input type="password" placeholder="Password"></input>
+            <input id="user" type="text" placeholder="Username"></input>
+            <input id="pass" type="password" placeholder="Password"></input>
             <div class="annoyingRow">
                 <div class="wrapPls">
                     <input id="remember" type="checkbox"></input>
@@ -149,6 +149,8 @@
     <script>
        const loginButton = document.getElementById("loginButton");
         loginButton.addEventListener("click", function() {
+            const username = document.getElementById("user").value;
+            const password = document.getElementById("pass").value;
             const remember = document.getElementById("remember");
             if (remember.checked) {
             localStorage.setItem("isLoggedIn", "loggedIn");
