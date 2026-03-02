@@ -18,7 +18,7 @@
         <h1>Dashboard</h1>
         </div>
         <div class="header_rightside">
-            <a class="logout_card">Logout</a>
+            <a id="logoutButton" class="logout_card">Logout</a>
         </div>
     </header>
     <div class="layout">
@@ -56,5 +56,10 @@
     if (sessionStorage.getItem("isLoggedIn") !== "loggedIn" && localStorage.getItem("isLoggedIn") !== "loggedIn") {
         window.location.href = "/login";
         };
+    document.getElementById("logoutButton").addEventListener("click", function(){
+        sessionStorage.removeItem("isLoggedIn");
+        localStorage.removeItem("isLoggedIn");
+        window.location.reload()
+    })
 </script>
 </html>
