@@ -534,9 +534,7 @@ async def getSimulation(request: Request):
     except HTTPException:
         return RedirectResponse(url="/login", status_code=302)
     
-    response = api_get_with_token("/simulation", token)
-    if not response.ok:
-        raise HTTPException(status_code=response.status_code, detail=response.text)
+    
   
     return templates.TemplateResponse(
         "simulation.html",
