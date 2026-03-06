@@ -8,7 +8,6 @@ var lose = "lose"
 var win = "win"
 
 # Data for telemetry
-var user_id = randi_range(0, 1000)
 var current_stage
 
 # Damage multiplier
