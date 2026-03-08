@@ -156,16 +156,32 @@ def create_anomaly(anomaly: schemas.AnomalyCreate, db: Session = Depends(get_db)
 def read_anomalies(anomaly_id: int | None = None, telemetry_id: int | None = None, anomaly_type: str | None = None,
                    db: Session = Depends(get_db), current_user: Users = Depends(get_current_admin_user)):
     query = db.query(Anomalies)
+
     if anomaly_id is not None:
         query = query.filter(Anomalies.id == anomaly_id)
+
     if anomaly_type is not None:
         query = query.filter(Anomalies.anomaly_type == anomaly_type)
+
     anomalies = query.all()
 
-    if telemetry_id is not None:
-        anomalies = [anomaly for anomaly in anomalies if any(ta.telemetry_id == telemetry_id for ta in db.query(TelemetryAnomaly).filter(TelemetryAnomaly.anomaly_id == anomaly.id).all())]
+    result = []
+    for anomaly in anomalies:
+        telemetry_ids = [t.id for t in anomaly.telemetry]
 
-    return anomalies
+        if telemetry_id is not None and telemetry_id not in telemetry_ids:
+            continue
+
+        result.append(
+            schemas.AnomalyResponse(
+                id=anomaly.id,
+                telemetry_ids=telemetry_ids,
+                anomaly_type=anomaly.anomaly_type,
+                resolution=anomaly.resolution
+            )
+        )
+
+    return result
 
 # Admin endpoint to get all telemetry entries associated with a specific anomaly ID. Only accessible by existing admins.
 @router.get("/anomalies/{anomaly_id}/telemetry", response_model=list[schemas.TelemetryResponse])

@@ -1,0 +1,26 @@
+{% extends "base.html" %}
+{% block content %}
+
+
+<h2>Anomalies</h2>
+
+<table>
+    <thead>
+      <tr>
+        <th>Anomaly Category</th>
+        <th>Reasoning</th>
+        <th>Evidence</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for a in anomaly_response %}
+        <tr>
+          <td>{{ a.anomaly_category }}</td>
+          <td>{{ a.reasoning }}</td>
+          <td>{{ a.evidence }}</td>
+        </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+
+{% endblock %}

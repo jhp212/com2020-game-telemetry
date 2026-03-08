@@ -432,57 +432,97 @@ async def dashboard_balancing(request: Request):
             detail=f"Telemetry API did not return JSON. Content-Type={response.headers.get('content-type')} Body starts: {response.text[:200]}"
         )
         
-    data_dump = []
-    
+    extracted_data = []
+
     for t in telemetry:
         if not isinstance(t, dict):
             raise HTTPException(status_code=500, detail=f"Expected dict row, got {type(t)}: {t}")
-        data_dump.append(
+
+        extracted_data.append(
             {
-                "data": t.get("data")
+                "stage_start": t.get("stage_start"),
+                "stage_end": t.get("stage_end"),
+                "enemy_defeated": t.get("enemy_defeated"),
+                "damage_taken": t.get("damage_taken"),
+                "tower_spawn": t.get("tower_spawn"),
+                "tower_upgrade": t.get("tower_upgrade"),
+                "money_spent": t.get("money_spent"),
             }
         )
-    
-    extracted_data = []
-    for d in data_dump:
-           extracted_data.append(
-               {
-                   "stage_start": d.get("data", {}).get("stage_start"),
-                   "stage_end": d.get("data", {}).get("stage_end"),
-                   "enemy_defeated": d.get("data", {}).get("enemy_defeated"),
-                   "damage_taken": d.get("data", {}).get("damage_taken"),
-                   "tower_spawn": d.get("data", {}).get("tower_spawn"),
-                   "tower_upgrade": d.get("data", {}).get("tower_upgrade"),
-                   "money_spent": d.get("data", {}).get("money_spent"),
-                   
-               }
-           )
-           
-    # initialise total variables
+
     total_money_spent = 0
     total_enemies_defeated = 0
     total_tower_upgrades = 0
+    stage_count = 0
+    total_stage_ends = 0
+    total_stage_start = 0.1
     
-    
-    
-    for item in extracted_data:
-        total_money_spent += int(item.get("money_spent"))
-        total_enemies_defeated += int(item.get("enemy_defeated"))
-        total_tower_upgrades += int(item.get("tower_upgrade"))
+    for t in telemetry:
+        if not isinstance(t, dict):
+            continue
         
-    
-    # calculating the averages of each event 
-    n = len(extracted_data)
-    average_money_spent = total_money_spent / n
-    average_enemies_defeated = total_enemies_defeated / n
-    average_tower_upgrades = total_tower_upgrades / n
+        telemetry_type = t.get("telemetry_type")
+        data = t.get("data", {})
+
+        if telemetry_type == "stage_end":
+            total_stage_ends += 1
+            
+        if telemetry_type == "stage_start":
+            total_stage_start += 1
+        
+        if telemetry_type != "stage_end":
+            continue
+
+        if not isinstance(data, dict):
+            continue
+
+        total_money_spent += int(data.get("money_spent", 0) or 0)
+        total_enemies_defeated += int(data.get("enemy_defeated", 0) or 0)
+        total_tower_upgrades += int(data.get("tower_upgrade", 0) or 0)
+        stage_count += 1
+        win_ratio = (total_stage_ends / total_stage_start) * 100
+        
+    if stage_count == 0:
+        average_money_spent = 0
+        average_enemies_defeated = 0
+        average_tower_upgrades = 0
+    else:
+        average_money_spent = total_money_spent / stage_count
+        average_enemies_defeated = total_enemies_defeated / stage_count
+        average_tower_upgrades = total_tower_upgrades / stage_count
     
     # Expected value constants
-    MONEY_SPENT = 4000
-    ENEMIES_DEFEATED = 100
-    TOWER_UPGRADES = 10
+    MONEY_SPENT = 1
+    ENEMIES_DEFEATED = 1000
+    TOWER_UPGRADES = 1
     
     balancing_response= []
+    if win_ratio > 95:
+        balancing_response.append(
+            {
+                "balancing_area": "Win Rate",
+                "expected_value": "80-95%",
+                "actual_value": str(win_ratio),
+                "issue": "Stage is too easy to complete",
+                "balancing_suggestion": "Increase damage or health multiplier."
+            }
+        )
+        
+    if win_ratio < 80:
+        balancing_response.append(
+            {
+                "balancing_area": "Win Rate",
+                "expected_value": "80-95%",
+                "actual_value": str(win_ratio),
+                "issue": "Stage is too hard to complete",
+                "balancing_suggestion": "Decrease damage or health multiplier."
+            }
+        )
+        
+    
+    
+    
+    
     
     if(average_money_spent > MONEY_SPENT):
         balancing_response.append(
@@ -616,3 +656,71 @@ async def logout():
     response = RedirectResponse(url="/login", status_code=302)
     response.delete_cookie("access_token", path="/")
     return response
+
+
+
+
+@app.get("/anomalies", response_class=HTMLResponse)
+async def anomalies(request: Request):
+    
+    try:
+        token = require_auth(request)
+    except HTTPException:
+        return RedirectResponse(url="/login", status_code=302)
+    
+   
+    response = api_get_with_token("/anomalies", token)
+    if not response.ok:
+        raise HTTPException(status_code=response.status_code, detail=response.text)
+    
+    try:
+        anomalies = response.json()
+    except ValueError:
+        raise HTTPException(
+            status_code=500,
+            detail=f"Anomalies API did not return JSON. Content-Type={response.headers.get('content-type')} Body starts: {response.text[:200]}"
+        )
+
+    anomaly_response = []
+    
+    for a in anomalies:
+        if not isinstance(a, dict):
+            raise HTTPException(
+                status_code=500,
+                detail=f"Expected dict row, got {type(a)}: {a}"
+            )
+
+        evidence_text = "No evidence provided"
+
+        
+        telemetry_ids = a.get("telemetry_ids")
+        if isinstance(telemetry_ids, list):
+            evidence_text = ", ".join(str(tid) for tid in telemetry_ids) if telemetry_ids else "No linked telemetry"
+
+        
+        elif isinstance(a.get("telemetry"), list):
+            telemetry_list = a.get("telemetry", [])
+            ids = []
+
+            for t in telemetry_list:
+                if isinstance(t, dict) and t.get("id") is not None:
+                    ids.append(str(t.get("id")))
+
+            evidence_text = ", ".join(ids) if ids else "No linked telemetry"
+
+        anomaly_response.append(
+            {
+                "anomaly_category": a.get("anomaly_type"),
+                "reasoning": a.get("resolution"),
+                "evidence": evidence_text
+            }
+        )
+
+    return templates.TemplateResponse(
+        "anomalies.html",
+        {
+            "request": request,
+            "title": "Anomalies",
+            "anomaly_response": anomaly_response
+        }
+    )

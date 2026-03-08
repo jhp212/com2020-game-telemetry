@@ -17,6 +17,7 @@ def seed():
         # deleting child tables first to avoid errors during seeding
         db.query(DecisionLog).delete()
         db.query(Telemetry).delete()
+        db.query(Anomalies).delete()
         db.query(Parameters).delete()
         db.commit()
 
@@ -36,7 +37,7 @@ def seed():
         def generate_telemetry_data(telemetry_type):
             if telemetry_type == "stage_end":
                 return {
-                    "enemy_defeated": random.randint(1, 20),
+                    "enemy_defeated": random.randint(1, 50),
                     "damage_taken": random.randint(1, 200),
                     "tower_spawn": random.randint(1, 200),
                     "tower_upgrade": random.randint(9, 20),
@@ -97,6 +98,31 @@ def seed():
             db.add(t)
 
         db.commit()
+        
+        telemetry_rows = db.query(Telemetry).all()
+
+        if len(telemetry_rows) >= 9:
+            anomaly_1 = Anomalies(
+                anomaly_type="Economy Spike",
+                resolution="Players are spending unusually high amounts of money. Review enemy reward values and tower costs."
+            )
+            anomaly_1.telemetry = telemetry_rows[0:3]
+
+            anomaly_2 = Anomalies(
+                anomaly_type="Upgrade Frequency",
+                resolution="Tower upgrades are happening too often. Consider increasing upgrade cost or reducing upgrade efficiency."
+            )
+            anomaly_2.telemetry = telemetry_rows[3:6]
+
+            anomaly_3 = Anomalies(
+                anomaly_type="Damage Intake Outlier",
+                resolution="Players are taking unusually high damage. Review enemy damage values or stage pacing."
+            )
+            anomaly_3.telemetry = telemetry_rows[6:9]
+
+            db.add_all([anomaly_1, anomaly_2, anomaly_3])
+            db.commit()
+        
 
     finally:
         db.close()
