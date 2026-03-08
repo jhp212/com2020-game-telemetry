@@ -2,7 +2,7 @@
 <html >
     <head>
         <style>
-                        body{
+            body {
                 display: flex;
                 background-color: #3B3B3B;
                 height: 100vh;
@@ -10,128 +10,100 @@
                 justify-content: center;
                 align-items: center;
             }
+
             .loginBox {
                 background-color: darkgray;
                 display: flex;
-                height: 60%;
-                width: 20%;
-                border: 3px solid black;
-                justify-content: center;
-                align-items: center;
                 flex-direction: column;
+                justify-content: flex-start;
+                align-items: center;
+                width: 420px;
+                min-height: 520px;
+                border: 3px solid black;
                 box-shadow: 5px 10px rgba(79, 29, 138, 0.863);
-                min-width: 350px;
-                min-height: 350px;
-
+                padding: 40px 28px;
+                box-sizing: border-box;
             }
+
             .loginBox h1 {
                 font-size: 60px;
                 font-style: italic;
-
+                margin: 60px 0 40px 0;
             }
-            .annoyingRow {
+
+            form {
                 display: flex;
-                margin-top: 5%;
+                flex-direction: column;
+                width: 100%;
                 align-items: center;
-                width: 80%;
-                height: 8%;
-                justify-content: space-between;
             }
-            .annoyingRow2 {
-                display: flex;
-                margin-top: 5%;
-                align-items: end;
-                width: 80%;
-                height: 8%;
-                justify-content: flex-end;
 
+            input[type="text"],
+            input[type="password"],
+            input[type="email"] {
+                width: 100%;
+                height: 42px;
+                margin-bottom: 16px;
+                border: none;
+                border-radius: 30px;
+                background-color: rgb(224, 231, 236);
+                padding: 0 14px;
+                box-sizing: border-box;
             }
-            .wrapPls {
+
+            .bottomRow {
+                width: 100%;
                 display: flex;
-                align-self: center;
-                flex-direction: row;
+                flex-direction: column;
+                gap: 18px;
+                margin-top: 8px;
             }
-            input[type=password] {
-                width: 80%;
-                height: 5%;
-                margin-top: 5%;
-                border: rgb(170, 170, 170);
-                border-radius: 30px;
-                background-color: rgb(224, 231, 236);
-                padding: 0 10px;
-            }
-            input[type=email] {
-                width: 80%;
-                height: 5%;
-                margin-top: 5%;
-                border: rgb(170, 170, 170);
-                border-radius: 30px;
-                background-color: rgb(224, 231, 236);
-                padding: 0 10px;
-            }
-            input[type=checkbox]{
-                align-self: start;
-                width: 20%;
-                height: 20%;
-            }
-            input[type=text]{
-                width: 80%;
-                height: 5%;
-                border: rgb(170, 170, 170);
-                border-radius: 30px;
-                background-color: rgb(224, 231, 236);
-                padding: 0 10px;
-            }
-            input[type=submit]{
-                align-self: flex-end;
-                border-radius: 30px;
-                font-size: 90%;
-                margin-left: 10%;
-                width: 30%;
-                height: 60%;
-                background-color: rgba(79, 29, 138, 0.863);
-                font-weight: bold;
-                border-color: black;
-                box-shadow: 3px 5px black;
-                font-style: italic;
-                opacity: 1;
-            }
-            input[type=submit]:hover{
-                opacity: 0.7;
-            }
-            .loginButton{
-                align-self: flex-end;
+
+            .rememberWrap {
                 display: flex;
+                align-items: center;
+                gap: 8px;
+                font-size: 14px;
+                cursor: pointer;
+            }
+
+            input[type="checkbox"] {
+                width: 16px;
+                height: 16px;
+                margin: 0;
+            }
+
+            .buttonRow {
+                display: flex;
+                justify-content: center;
+                gap: 14px;
+                width: 100%;
+            }
+
+            input[type="submit"],
+            .loginButton {
+                width: 120px;
+                height: 42px;
                 border-radius: 30px;
-                font-size: 90%;
-                margin-left: 10%;
-                width: 30%;
-                height: 60%;
+                font-size: 15px;
                 background-color: rgba(79, 29, 138, 0.863);
                 font-weight: bold;
                 color: black;
-                border-color: black;
+                border: 2px solid black;
                 box-shadow: 3px 5px black;
                 font-style: italic;
-                opacity: 1;
                 text-decoration: none;
+                display: flex;
                 align-items: center;
                 justify-content: center;
+                box-sizing: border-box;
+                cursor: pointer;
+                padding: 0;
             }
-            .loginButton:hover{
+
+            input[type="submit"]:hover,
+            .loginButton:hover {
                 opacity: 0.7;
-            }
-            form{
-                display: contents;
-                flex-direction: column;
-                align-items: center;
-                width: 100%;
-            }
-            .wrapPls h3 {
-                margin: 0;
-                margin-left: 5px;
-                font-size: 12px;
-                white-space: nowrap;
             }
         </style>
 
@@ -141,15 +113,21 @@
     <body>
         <div class="loginBox">
             <h1>LOGIN</h1>
-            <form method="POST" action="/login" >
+
+            <form method="POST" action="/login">
                 <input id="user" name="username" type="text" placeholder="Username" required>
                 <input id="pass" name="password" type="password" placeholder="Password" required>
-                <div class="annoyingRow">
-                    <div class="wrapPls">
+
+                <div class="bottomRow">
+                    <label class="rememberWrap" for="remember">
                         <input id="remember" name="remember" type="checkbox">
-                        <h3>Remember me?</h3>
+                        <span>Remember me?</span>
+                    </label>
+
+                    <div class="buttonRow">
+                        <a href="/register" class="loginButton">REGISTER</a>
+                        <input type="submit" value="SIGN IN">
                     </div>
-                    <input type="submit" value="SIGN IN">
                 </div>
             </form>
         </div>

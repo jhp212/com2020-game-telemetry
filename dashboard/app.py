@@ -721,3 +721,30 @@ async def anomalies(request: Request):
             "anomaly_response": anomaly_response
         }
     )
+    
+@app.get("/register", response_class=HTMLResponse)
+async def register_page(request: Request):
+    
+    with open(BASE_DIR / "authentication/signup.html", "r") as signupPage:
+        return HTMLResponse(content=signupPage.read())
+    
+@app.post("/register")
+async def register_action(
+    username: str = Form(...),
+    password: str = Form(...),
+):
+    r = requests.post(
+        f"{BASE_URL}/auth/register",
+        json={
+            "username": username,
+            "password": password
+        },
+        timeout=5
+    )
+
+    if not r.ok:
+        if r.status_code == 400:
+            raise HTTPException(status_code=400, detail="Username already exists")
+        raise HTTPException(status_code=r.status_code, detail=r.text)
+
+    return RedirectResponse(url="/login", status_code=302)

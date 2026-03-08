@@ -1,0 +1,111 @@
+body {
+    display: flex;
+    background-color: #3B3B3B;
+    height: 100vh;
+    margin: 0;
+    justify-content: center;
+    align-items: center;
+}
+
+.loginBox {
+    background-color: darkgray;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    width: 420px;
+    min-height: 520px;
+    border: 3px solid black;
+    box-shadow: 5px 10px rgba(79, 29, 138, 0.863);
+    padding: 35px 28px;
+    box-sizing: border-box;
+}
+
+.loginBox h1 {
+    font-size: 60px;
+    font-style: italic;
+    margin: 0 0 35px 0;
+}
+
+form {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+}
+
+input[type="text"],
+input[type="password"],
+input[type="email"] {
+    width: 100%;
+    height: 42px;
+    margin-bottom: 16px;
+    border: none;
+    border-radius: 30px;
+    background-color: rgb(224, 231, 236);
+    padding: 0 14px;
+    box-sizing: border-box;
+}
+
+input[type="checkbox"] {
+    width: 16px;
+    height: 16px;
+    margin: 0;
+}
+
+.annoyingRow {
+    display: flex;
+    margin-top: 10px;
+    align-items: center;
+    justify-content: space-between;
+    width: 100%;
+    gap: 14px;
+}
+
+.annoyingRow2 {
+    display: flex;
+    margin-top: 12px;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    gap: 14px;
+}
+
+.wrapPls {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.wrapPls h3 {
+    margin: 0;
+    font-size: 14px;
+    white-space: nowrap;
+    font-weight: normal;
+}
+
+input[type="submit"],
+.loginButton {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 120px;
+    height: 42px;
+    border-radius: 30px;
+    font-size: 15px;
+    background-color: rgba(79, 29, 138, 0.863);
+    font-weight: bold;
+    color: black;
+    border: 2px solid black;
+    box-shadow: 3px 5px black;
+    font-style: italic;
+    text-decoration: none;
+    box-sizing: border-box;
+    cursor: pointer;
+    padding: 0;
+}
+
+input[type="submit"]:hover,
+.loginButton:hover {
+    opacity: 0.7;
+}
