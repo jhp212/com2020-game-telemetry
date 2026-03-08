@@ -607,12 +607,15 @@ async def login_page(request: Request):
     if token and validate_token(token):
         return RedirectResponse(url="/", status_code=302)
 
-    with open(BASE_DIR / "authentication/login.html", "r") as loginPage:
-        return HTMLResponse(content=loginPage.read())
+    return templates.TemplateResponse(
+        "login.html",
+        {"request": request, "error": None},
+    )
 
 
 @app.post("/login")
 async def login_action(
+    request: Request,
     username: str = Form(...),
     password: str = Form(...),
     remember: bool = Form(False),
@@ -624,7 +627,14 @@ async def login_action(
     )
 
     if not r.ok:
-        raise HTTPException(status_code=401, detail="The username or password you have entered is incorrect")
+        return templates.TemplateResponse(
+            "login.html",
+            {
+                "request": request,
+                "error": "Invalid username or password",
+            },
+            status_code=401,
+        )
 
     token = r.json().get("access_token")
     if not token:
@@ -632,19 +642,18 @@ async def login_action(
 
     response = RedirectResponse(url="/", status_code=302)
 
-   
     max_age = 60 * 60 * 24 if remember else None
 
     response.set_cookie(
         key="access_token",
         value=token,
         httponly=True,
-        secure=False,   # WE WILL SET THIS TO TRUE AT DEPLOYMENT ( HTTPS )
+        secure=False,
         samesite="lax",
         max_age=max_age,
-        path="/"
+        path="/",
     )
-    
+
     return response
 
 
@@ -725,11 +734,18 @@ async def anomalies(request: Request):
 @app.get("/register", response_class=HTMLResponse)
 async def register_page(request: Request):
     
-    with open(BASE_DIR / "authentication/signup.html", "r") as signupPage:
-        return HTMLResponse(content=signupPage.read())
+    token = get_cookie_token(request)
+    if token and validate_token(token):
+        return RedirectResponse(url="/", status_code=302)
+
+    return templates.TemplateResponse(
+        "signup.html",
+        {"request": request, "error": None},
+    )
     
 @app.post("/register")
 async def register_action(
+    request: Request,
     username: str = Form(...),
     password: str = Form(...),
 ):
@@ -744,7 +760,22 @@ async def register_action(
 
     if not r.ok:
         if r.status_code == 400:
-            raise HTTPException(status_code=400, detail="Username already exists")
-        raise HTTPException(status_code=r.status_code, detail=r.text)
+            return templates.TemplateResponse(
+                "signup.html",
+                {
+                    "request": request,
+                    "error": "Username already exists",
+                },
+                status_code=400,
+            )
+
+        return templates.TemplateResponse(
+            "signup.html",
+            {
+                "request": request,
+                "error": "Registration failed. Please try again.",
+            },
+            status_code=r.status_code,
+        )
 
     return RedirectResponse(url="/login", status_code=302)

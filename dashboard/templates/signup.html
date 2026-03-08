@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html>
     <head>
@@ -9,6 +10,10 @@
             <h1>SIGNUP</h1>
 
             <form method="POST" action="/register">
+
+                {% if error %}
+                <div class="loginError">{{ error }}</div>
+                {% endif %}
                 <input name="username" type="text" placeholder="Username" required>
                 <input name="email" type="email" placeholder="Email Address">
                 <input name="password" type="password" placeholder="Password" required>

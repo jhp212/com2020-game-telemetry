@@ -105,6 +105,13 @@
             .loginButton:hover {
                 opacity: 0.7;
             }
+
+            .loginError {
+                color: #b00020;
+                font-weight: 600;
+                margin-bottom: 12px;
+                text-align: center;
+            }
         </style>
 
 
@@ -115,6 +122,10 @@
             <h1>LOGIN</h1>
 
             <form method="POST" action="/login">
+                {% if error %}
+                <div class="loginError">{{ error }}</div>
+                {% endif %}
+
                 <input id="user" name="username" type="text" placeholder="Username" required>
                 <input id="pass" name="password" type="password" placeholder="Password" required>
 
