@@ -456,6 +456,7 @@ async def dashboard_balancing(request: Request):
     stage_count = 0
     total_stage_ends = 0
     total_stage_start = 0.1
+    win_ratio = 0
     
     for t in telemetry:
         if not isinstance(t, dict):
@@ -519,10 +520,6 @@ async def dashboard_balancing(request: Request):
             }
         )
         
-    
-    
-    
-    
     
     if(average_money_spent > MONEY_SPENT):
         balancing_response.append(
