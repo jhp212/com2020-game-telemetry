@@ -55,7 +55,7 @@ def simulation(test_count, level):
 	player_rof_mult = 1
 
 
-	timesamplerate = 0.01 #seconds / iteration: how many "seconds" are simulated every second
+	timesamplerate = 1 #seconds / iteration: how many "seconds" are simulated every second
 	tower_spread = 150 #pixels: average distance from the path the tower is placed.
 	tower_deviance = 50 #pixels: average deviation between distances from the path. 
 			
@@ -206,7 +206,7 @@ def simulation(test_count, level):
 if __name__ == "__main__":
 	import datetime
 	start = datetime.datetime.now() 
-	simulation(100,1)
+	simulation(1000,1)
 	end = datetime.datetime.now()
 
 	print(end-start)
