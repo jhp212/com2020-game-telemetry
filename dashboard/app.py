@@ -786,14 +786,13 @@ async def register_action(
 
 @app.post("/users/promote/{username}")
 async def promote_user(request: Request, username: str):
-
     try:
         token = require_auth(request)
     except HTTPException:
         return RedirectResponse(url="/login", status_code=302)
 
     response = requests.post(
-        f"{BASE_URL}/promote/{username}",
+        f"{BASE_URL}/auth/promote/{username}",
         headers={"Authorization": f"Bearer {token}"},
         timeout=10
     )
@@ -802,8 +801,6 @@ async def promote_user(request: Request, username: str):
         raise HTTPException(status_code=response.status_code, detail=response.text)
 
     return RedirectResponse(url="/admin_requests", status_code=302)
-
-
 @app.get("/users", response_class=HTMLResponse)
 async def users_page(request: Request):
 
@@ -854,29 +851,52 @@ async def admin_requests(request: Request):
     
 @app.post("/request_admin")
 async def request_admin(request: Request):
-
+    
     try:
         token = require_auth(request)
     except HTTPException:
         return RedirectResponse(url="/login", status_code=302)
 
     response = requests.post(
-        f"{BASE_URL}/users/request_admin",
+        f"{BASE_URL}/auth/request_admin",
         headers={"Authorization": f"Bearer {token}"},
         timeout=10
     )
 
     if not response.ok:
+        if response.status_code == 400:
+            return templates.TemplateResponse(
+                "request_admin.html",
+                {
+                    "request": request,
+                    "title": "Admin Access Required",
+                    "message": response.json().get("detail", "Admin request already submitted.")
+                },
+                status_code=400,
+            )
         raise HTTPException(status_code=response.status_code, detail=response.text)
 
-    return RedirectResponse(url="/", status_code=302)
-
-@app.get("/request_admin_page", response_class=HTMLResponse)
-async def request_admin_page(request: Request):
     return templates.TemplateResponse(
         "request_admin.html",
         {
             "request": request,
-            "title": "Admin Access Required"
+            "title": "Admin Access Required",
+            "message": "Your admin request has been submitted successfully."
+        }
+    )
+
+@app.get("/request_admin_page", response_class=HTMLResponse)
+async def request_admin_page(request: Request):
+    try:
+        require_auth(request)
+    except HTTPException:
+        return RedirectResponse(url="/login", status_code=302)
+
+    return templates.TemplateResponse(
+        "request_admin.html",
+        {
+            "request": request,
+            "title": "Admin Access Required",
+            "message": None
         }
     )
