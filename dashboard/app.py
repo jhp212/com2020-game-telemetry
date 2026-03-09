@@ -73,6 +73,10 @@ async def home(request: Request):
     except HTTPException:
         return RedirectResponse(url="/login", status_code=302)
     r = api_get_with_token("/telemetry", token)
+
+    if r.status_code == 403:
+        return RedirectResponse(url="/request_admin_page", status_code=302)
+
     if not r.ok:
         raise HTTPException(status_code=r.status_code, detail=r.text)
 
@@ -779,3 +783,120 @@ async def register_action(
         )
 
     return RedirectResponse(url="/login", status_code=302)
+
+@app.post("/users/promote/{username}")
+async def promote_user(request: Request, username: str):
+    try:
+        token = require_auth(request)
+    except HTTPException:
+        return RedirectResponse(url="/login", status_code=302)
+
+    response = requests.post(
+        f"{BASE_URL}/auth/promote/{username}",
+        headers={"Authorization": f"Bearer {token}"},
+        timeout=10
+    )
+
+    if not response.ok:
+        raise HTTPException(status_code=response.status_code, detail=response.text)
+
+    return RedirectResponse(url="/admin_requests", status_code=302)
+@app.get("/users", response_class=HTMLResponse)
+async def users_page(request: Request):
+
+    try:
+        token = require_auth(request)
+    except HTTPException:
+        return RedirectResponse(url="/login", status_code=302)
+
+    response = api_get_with_token("/users", token)
+
+    if not response.ok:
+        raise HTTPException(status_code=response.status_code, detail=response.text)
+
+    users = response.json()
+
+    return templates.TemplateResponse(
+        "users.html",
+        {
+            "request": request,
+            "title": "Users",
+            "users": users
+        }
+    )
+
+@app.get("/admin_requests", response_class=HTMLResponse)
+async def admin_requests(request: Request):
+
+    try:
+        token = require_auth(request)
+    except HTTPException:
+        return RedirectResponse(url="/login", status_code=302)
+
+    response = api_get_with_token("/users/admin_requests", token)
+
+    if not response.ok:
+        raise HTTPException(status_code=response.status_code, detail=response.text)
+
+    requests_list = response.json()
+
+    return templates.TemplateResponse(
+        "admin_requests.html",
+        {
+            "request": request,
+            "title": "Admin Requests",
+            "requests": requests_list
+        }
+    )    
+    
+@app.post("/request_admin")
+async def request_admin(request: Request):
+    
+    try:
+        token = require_auth(request)
+    except HTTPException:
+        return RedirectResponse(url="/login", status_code=302)
+
+    response = requests.post(
+        f"{BASE_URL}/auth/request_admin",
+        headers={"Authorization": f"Bearer {token}"},
+        timeout=10
+    )
+
+    if not response.ok:
+        if response.status_code == 400:
+            return templates.TemplateResponse(
+                "request_admin.html",
+                {
+                    "request": request,
+                    "title": "Admin Access Required",
+                    "message": response.json().get("detail", "Admin request already submitted.")
+                },
+                status_code=400,
+            )
+        raise HTTPException(status_code=response.status_code, detail=response.text)
+
+    return templates.TemplateResponse(
+        "request_admin.html",
+        {
+            "request": request,
+            "title": "Admin Access Required",
+            "message": "Your admin request has been submitted successfully."
+        }
+    )
+
+@app.get("/request_admin_page", response_class=HTMLResponse)
+async def request_admin_page(request: Request):
+    try:
+        require_auth(request)
+    except HTTPException:
+        return RedirectResponse(url="/login", status_code=302)
+
+    return templates.TemplateResponse(
+        "request_admin.html",
+        {
+            "request": request,
+            "title": "Admin Access Required",
+            "message": None
+        }
+    )

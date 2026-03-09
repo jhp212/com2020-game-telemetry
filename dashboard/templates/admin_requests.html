@@ -1,0 +1,24 @@
+{% extends "base.html" %}
+
+{%block content%}
+<table>
+    <tr>
+        <th>Username</th>
+        <th>Action</th>
+    </tr>
+
+    {% for user in requests %}
+    <tr>
+        <td>{{ user.username }}</td>
+
+        <td>
+            <form action="/users/promote/{{ user.username }}" method="post">
+                <button type="submit">Promote to Admin</button>
+             </form>
+        </td>
+
+    </tr>
+    {% endfor %}
+</table>
+
+{% endblock %}
