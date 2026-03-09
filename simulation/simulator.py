@@ -10,6 +10,7 @@ except ImportError:
 import random, os
 from copy import deepcopy
 from math import sin, cos
+from functools import lru_cache
 
 API_URL = os.getenv("API_URL", "http://127.0.0.1:10101")
 
@@ -33,6 +34,18 @@ def reset():
 		tower_queue = []
 		towers = []
 
+@lru_cache
+def within_bounds(tower_type: str, tower_location: tuple, path_location: tuple)  -> bool:
+	match tower_type:
+		case 'triangle_stock':
+			return abs(Vector(tower_location) - Vector(path_location)) < tower_data['triangle_stock']['range']
+		case 'square_stock':
+			return (abs(tower_location[1] - path_location[1]) < 30) or (abs(tower_location[1] - path_location[1]) < 30)
+		case 'star_stock':
+			return abs(Vector(tower_location) - Vector(path_location)) < tower_data['star_stock']['range']
+		case _:
+			return False
+
 def simulation(test_count, level):
 	global wavecount, base_health, base_money, enemies, waves, towers, tower_queue, lvlname
 
@@ -45,17 +58,6 @@ def simulation(test_count, level):
 	timesamplerate = 0.01 #seconds / iteration: how many "seconds" are simulated every second
 	tower_spread = 150 #pixels: average distance from the path the tower is placed.
 	tower_deviance = 50 #pixels: average deviation between distances from the path. 
-
-	def within_bounds(tower_type: str, tower_location: tuple, path_location: tuple)  -> bool:
-		match tower_type:
-			case 'triangle_stock':
-				return abs(Vector(tower_location) - Vector(path_location)) < tower_data['triangle_stock']['range']
-			case 'square_stock':
-				return (abs(tower_location[1] - path_location[1]) < 30) or (abs(tower_location[1] - path_location[1]) < 30)
-			case 'star_stock':
-				return abs(Vector(tower_location) - Vector(path_location)) < tower_data['star_stock']['range']
-			case _:
-				return False
 			
 
 	lvlname = 'Level' + str(level)
@@ -201,4 +203,10 @@ def simulation(test_count, level):
 		"suggestedAction": "Near expected, no action required" if successes*100/test_count > 80 else "Consider decreasing enemy damage"
 	}
 
-simulation(20,1)
+if __name__ == "__main__":
+	import datetime
+	start = datetime.datetime.now() 
+	simulation(100,1)
+	end = datetime.datetime.now()
+
+	print(end-start)
