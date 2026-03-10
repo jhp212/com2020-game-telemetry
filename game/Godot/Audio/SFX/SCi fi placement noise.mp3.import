@@ -1,0 +1,19 @@
+[remap]
+
+importer="mp3"
+type="AudioStreamMP3"
+uid="uid://chg547ffg2rms"
+path="res://.godot/imported/SCi fi placement noise.mp3-2365aa9114a204b71917e1935af7922f.mp3str"
+
+[deps]
+
+source_file="res://Audio/SFX/SCi fi placement noise.mp3"
+dest_files=["res://.godot/imported/SCi fi placement noise.mp3-2365aa9114a204b71917e1935af7922f.mp3str"]
+
+[params]
+
+loop=false
+loop_offset=0
+bpm=0
+beat_count=0
+bar_beats=4

@@ -1,0 +1,19 @@
+[remap]
+
+importer="mp3"
+type="AudioStreamMP3"
+uid="uid://cfu3bpxbufbcd"
+path="res://.godot/imported/radial zone damage.mp3-20ab3bc4a5d5b2763ac1da9d1092f4b7.mp3str"
+
+[deps]
+
+source_file="res://Audio/SFX/radial zone damage.mp3"
+dest_files=["res://.godot/imported/radial zone damage.mp3-20ab3bc4a5d5b2763ac1da9d1092f4b7.mp3str"]
+
+[params]
+
+loop=false
+loop_offset=0
+bpm=0
+beat_count=0
+bar_beats=4
