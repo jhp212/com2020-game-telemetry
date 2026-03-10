@@ -1,7 +1,7 @@
 [gd_scene load_steps=8 format=3 uid="uid://bjhr5hylsky8n"]
 
 [ext_resource type="Script" uid="uid://ctlr3y61hryy8" path="res://Scenes/Towers/Projectiles/projectile_square.gd" id="1_08ahb"]
-[ext_resource type="Texture2D" uid="uid://dr1dia6nyt4un" path="res://Assets/Towers/Square - Stock.png" id="1_q6kd5"]
+[ext_resource type="Texture2D" uid="uid://dr1dia6nyt4un" path="res://Assets/Towers/SquareStock.png" id="1_q6kd5"]
 
 [sub_resource type="Animation" id="Animation_o1am4"]
 length = 0.001

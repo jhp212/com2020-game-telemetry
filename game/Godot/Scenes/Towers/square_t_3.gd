@@ -12,13 +12,27 @@ var built = false
 var ready_to_shoot = true
 
 # Assign tower type
-var tower_type := "SquareStock"
+var tower_type := "SquareT3"
+
+var shoot_position
 
 # Connect nodes
 @onready var shoot_position_1: Marker2D = $Body/ShootPosition1
 @onready var shoot_position_2: Marker2D = $Body/ShootPosition2
 @onready var shoot_position_3: Marker2D = $Body/ShootPosition3
 @onready var shoot_position_4: Marker2D = $Body/ShootPosition4
+@onready var shoot_position_5: Marker2D = $Body/ShootPosition5
+@onready var shoot_position_6: Marker2D = $Body/ShootPosition6
+@onready var shoot_position_7: Marker2D = $Body/ShootPosition7
+@onready var shoot_position_8: Marker2D = $Body/ShootPosition8
+@onready var shoot_position_9: Marker2D = $Body/ShootPosition9
+@onready var shoot_position_10: Marker2D = $Body/ShootPosition10
+@onready var shoot_position_11: Marker2D = $Body/ShootPosition11
+@onready var shoot_position_12: Marker2D = $Body/ShootPosition12
+@onready var shoot_position_13: Marker2D = $Body/ShootPosition13
+@onready var shoot_position_14: Marker2D = $Body/ShootPosition14
+@onready var shoot_position_15: Marker2D = $Body/ShootPosition15
+@onready var shoot_position_16: Marker2D = $Body/ShootPosition16
 @onready var collision_shape: CollisionShape2D = $Range/CollisionShape2D
 @onready var shoot_sfx: AudioStreamPlayer = $ShootSfx
 @onready var placement_sfx: AudioStreamPlayer = $PlacementSfx
@@ -37,35 +51,14 @@ func _physics_process(delta):
 func fire():
 	ready_to_shoot = false
 	shoot_sfx.play()
-	
 	#instance a projectile
-	var new_projectile_1 = projectile_square_scene.instantiate()
-	new_projectile_1.global_position = shoot_position_1.global_position
-	new_projectile_1.global_rotation = shoot_position_1.global_rotation
-	get_parent().add_child(new_projectile_1)
+	for pos in shoot_position:
+		var new_projectile = projectile_square_scene.instantiate()
+		new_projectile.global_position = pos.global_position
+		new_projectile.global_rotation = pos.global_rotation
+		get_parent().add_child(new_projectile)
 	
-	
-	
-	var new_projectile_2 = projectile_square_scene.instantiate()
-	new_projectile_2.global_position = shoot_position_2.global_position
-	new_projectile_2.global_rotation = shoot_position_2.global_rotation
-	get_parent().add_child(new_projectile_2)
-	
-
-	
-	var new_projectile_3 = projectile_square_scene.instantiate()
-	new_projectile_3.global_position = shoot_position_3.global_position
-	new_projectile_3.global_rotation = shoot_position_3.global_rotation
-	get_parent().add_child(new_projectile_3)
-	
-	
-	
-	var new_projectile_4 = projectile_square_scene.instantiate()
-	new_projectile_4.global_position = shoot_position_4.global_position
-	new_projectile_4.global_rotation = shoot_position_4.global_rotation
-	get_parent().add_child(new_projectile_4)
-	
-	await get_tree().create_timer(GameData.tower_data["square_stock"]["rof"]).timeout
+	await get_tree().create_timer(GameData.tower_data["square_t_3"]["rof"]).timeout
 	ready_to_shoot = true
 
 func _ready():
@@ -74,8 +67,25 @@ func _ready():
 	# Set size of the range and log telemetry event
 	if built:
 		placement_sfx.play()
-		collision_shape.shape.radius = GameData.tower_data["square_stock"]["range"]
-		Telemetry.log_event("tower_spawn", {"tower_id": 2})
+		collision_shape.shape.radius = GameData.tower_data["square_t_3"]["range"]
+		Telemetry.log_event("tower_upgraded", {"tower_id": 2})
+		shoot_position = [shoot_position_1,
+shoot_position_2,
+shoot_position_3,
+shoot_position_4,
+shoot_position_5,
+shoot_position_6,
+shoot_position_7,
+shoot_position_8,
+shoot_position_9,
+shoot_position_10,
+shoot_position_11,
+shoot_position_12,
+shoot_position_13,
+shoot_position_14,
+shoot_position_15,
+shoot_position_16,
+]
 
 func _on_range_body_entered(body: Node2D) -> void:
 	# Add enemy when it enters the range
@@ -90,17 +100,3 @@ func _on_click_area_input_event(viewport,event, shape_idx):
 	if event is InputEventMouseButton and event.pressed and event.button_index == MOUSE_BUTTON_LEFT:
 		tower_clicked.emit(self)
 		print("square clicvked")
-
-func upgrade(tower):
-	print("upgraded")
-	if tower == self:
-		var upgraded_tower = load("res://Scenes/Towers/square_t_2.tscn")
-		var upgraded = upgraded_tower.instantiate()
-		
-		upgraded.position = position
-		upgraded.built = true
-		
-		get_parent().add_child(upgraded)
-		queue_free()
-		
-		return upgraded

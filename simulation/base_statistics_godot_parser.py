@@ -2,6 +2,7 @@ with open("game/Godot/Singleton/game_data.gd") as game_data:
     data = list(map(lambda line: line.removesuffix("\n"), game_data.readlines()))
     game_data.close()
 
+<<<<<<< Updated upstream
 for item in data[data.index("func reset():"):]:
     if item[0:15] == '\tbase_health = ':
         healthind = data.index(item)
@@ -10,6 +11,16 @@ for item in data[data.index("func reset():"):]:
 
 player_base_health = eval(data[healthind].lstrip('\tbase_health = '))
 player_base_money = eval(data[moneyind].lstrip('\tmoney ='))
+=======
+for item in data:
+    if item[0:18] == 'var base_health = ':
+        healthind = data.index(item)
+    elif item[0:12] == 'var money :=':
+        moneyind = data.index(item)
+
+player_base_health = eval(data[healthind].lstrip('var base_health = '))
+player_base_money = eval(data[moneyind].lstrip('var money :='))
+>>>>>>> Stashed changes
 
 tower_data_start: int = data.index("var tower_data = {")
 potentialtowerdict = ''.join(map(lambda line: line.lstrip("\t"),data[tower_data_start+1:]))

@@ -11,6 +11,8 @@ extends CanvasLayer
 var current_tween: Tween
 var lose
 
+var selected_tower
+
 # Signal for when the game ends
 signal game_finished(result)
 
@@ -91,3 +93,6 @@ func _on_pause_play_pressed() -> void:
 		# Pause game
 		get_tree().paused = true
 		$HUD/PausePlay/AnimationPlayer.play("pulse")
+
+
+	

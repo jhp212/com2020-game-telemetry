@@ -1,7 +1,7 @@
 [gd_scene load_steps=8 format=3 uid="uid://ba6774m4f16v8"]
 
 [ext_resource type="Script" uid="uid://d325b8agpmbos" path="res://Scenes/Towers/Projectiles/projectile_star.gd" id="1_58mtq"]
-[ext_resource type="Texture2D" uid="uid://brx5cmnunc36u" path="res://Assets/Towers/Star - Stock.png" id="2_wjs0p"]
+[ext_resource type="Texture2D" uid="uid://brx5cmnunc36u" path="res://Assets/Towers/StarStock.png" id="2_wjs0p"]
 
 [sub_resource type="Animation" id="Animation_o1am4"]
 length = 0.001

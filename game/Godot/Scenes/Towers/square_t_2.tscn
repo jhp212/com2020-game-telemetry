@@ -1,0 +1,67 @@
+[gd_scene load_steps=7 format=3 uid="uid://ci62r8md5uits"]
+
+[ext_resource type="Script" uid="uid://ckdohxadxjrtw" path="res://Scenes/Towers/square_t_2.gd" id="1_3jcko"]
+[ext_resource type="Texture2D" uid="uid://cy5tl5youcaxt" path="res://Assets/Towers/SquareT2.png" id="1_2312i"]
+[ext_resource type="AudioStream" uid="uid://ipboigju4ipr" path="res://Audio/SFX/Sci fi shoot.mp3" id="2_3jcko"]
+[ext_resource type="AudioStream" uid="uid://chg547ffg2rms" path="res://Audio/SFX/SCi fi placement noise.mp3" id="3_jbl5y"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_3gyto"]
+size = Vector2(64, 64)
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_3nfo7"]
+
+[node name="SquareT2" type="Node2D"]
+script = ExtResource("1_3jcko")
+
+[node name="Body" type="Sprite2D" parent="."]
+texture = ExtResource("1_2312i")
+
+[node name="ShootPosition1" type="Marker2D" parent="Body"]
+position = Vector2(25, 0)
+
+[node name="ShootPosition2" type="Marker2D" parent="Body"]
+position = Vector2(0, 25)
+rotation = 1.5708
+
+[node name="ShootPosition3" type="Marker2D" parent="Body"]
+position = Vector2(-25, 0)
+rotation = 3.14159
+
+[node name="ShootPosition4" type="Marker2D" parent="Body"]
+position = Vector2(0, -25)
+rotation = 4.71239
+
+[node name="ShootPosition5" type="Marker2D" parent="Body"]
+position = Vector2(22, 22)
+rotation = 0.785398
+
+[node name="ShootPosition6" type="Marker2D" parent="Body"]
+position = Vector2(-22, 22)
+rotation = 2.35619
+
+[node name="ShootPosition7" type="Marker2D" parent="Body"]
+position = Vector2(-22, -22)
+rotation = 3.92699
+
+[node name="ShootPosition8" type="Marker2D" parent="Body"]
+position = Vector2(22, -22)
+rotation = 5.49779
+
+[node name="ShootSfx" type="AudioStreamPlayer" parent="."]
+stream = ExtResource("2_3jcko")
+
+[node name="PlacementSfx" type="AudioStreamPlayer" parent="."]
+stream = ExtResource("3_jbl5y")
+
+[node name="ClickArea" type="Area2D" parent="."]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="ClickArea"]
+shape = SubResource("RectangleShape2D_3gyto")
+
+[node name="Range" type="Area2D" parent="."]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Range"]
+shape = SubResource("CircleShape2D_3nfo7")
+
+[connection signal="body_entered" from="Range" to="." method="_on_range_body_entered"]
+[connection signal="body_exited" from="Range" to="." method="_on_range_body_exited"]

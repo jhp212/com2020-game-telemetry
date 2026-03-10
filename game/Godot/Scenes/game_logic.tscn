@@ -1,13 +1,14 @@
-[gd_scene load_steps=14 format=3 uid="uid://bw36ka3wx3gww"]
+[gd_scene load_steps=18 format=3 uid="uid://bw36ka3wx3gww"]
 
 [ext_resource type="Script" uid="uid://s0xabfgj4tei" path="res://Scenes/game_logic.gd" id="1_qxrlw"]
 [ext_resource type="Script" uid="uid://dkaot6l8a7grx" path="res://Scenes/ui.gd" id="3_3dryh"]
-[ext_resource type="Texture2D" uid="uid://bg4cy6fcpqckt" path="res://Assets/Towers/Triangle - Stock.png" id="3_wrm1d"]
-[ext_resource type="Texture2D" uid="uid://dr1dia6nyt4un" path="res://Assets/Towers/Square - Stock.png" id="5_i6g32"]
-[ext_resource type="Texture2D" uid="uid://brx5cmnunc36u" path="res://Assets/Towers/Star - Stock.png" id="6_i6g32"]
+[ext_resource type="Texture2D" uid="uid://bg4cy6fcpqckt" path="res://Assets/Towers/TriangleStock.png" id="3_wrm1d"]
+[ext_resource type="Texture2D" uid="uid://dr1dia6nyt4un" path="res://Assets/Towers/SquareStock.png" id="5_i6g32"]
+[ext_resource type="Texture2D" uid="uid://brx5cmnunc36u" path="res://Assets/Towers/StarStock.png" id="6_i6g32"]
 [ext_resource type="Texture2D" uid="uid://52mjc60fym5w" path="res://Assets/UI/Health Bar.png" id="6_q556h"]
 [ext_resource type="Texture2D" uid="uid://cpc3vvvimuyld" path="res://Assets/UI/play_button.png" id="7_q556h"]
 [ext_resource type="Texture2D" uid="uid://cuu1dauurthu4" path="res://Assets/UI/pause_button.png" id="8_3jyqh"]
+[ext_resource type="Script" uid="uid://bfsr4j3mx585x" path="res://Scenes/tower_panel.gd" id="9_3jyqh"]
 
 [sub_resource type="Gradient" id="Gradient_xsymc"]
 offsets = PackedFloat32Array(0)
@@ -54,6 +55,31 @@ _data = {
 &"RESET": SubResource("Animation_xsymc"),
 &"pulse": SubResource("Animation_aoada")
 }
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_q556h"]
+bg_color = Color(0.118581, 0.118581, 0.118581, 0.588235)
+border_width_left = 1
+border_width_top = 1
+border_width_right = 1
+border_width_bottom = 1
+corner_radius_top_left = 2
+corner_radius_top_right = 2
+corner_radius_bottom_right = 2
+corner_radius_bottom_left = 2
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_3jyqh"]
+bg_color = Color(0.6, 0.6, 0.6, 0.12549)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_rduqs"]
+bg_color = Color(0.6, 0.6, 0.6, 0)
+border_width_left = 1
+border_width_top = 1
+border_width_right = 1
+border_width_bottom = 1
+corner_radius_top_left = 5
+corner_radius_top_right = 5
+corner_radius_bottom_right = 5
+corner_radius_bottom_left = 5
 
 [node name="GameLogic" type="Node2D"]
 script = ExtResource("1_qxrlw")
@@ -207,4 +233,125 @@ libraries = {
 &"": SubResource("AnimationLibrary_q556h")
 }
 
+[node name="TowerPanel" type="Panel" parent="UI"]
+visible = false
+custom_minimum_size = Vector2(500, 300)
+anchors_preset = 2
+anchor_top = 1.0
+anchor_bottom = 1.0
+offset_left = 50.0
+offset_top = -299.0
+offset_right = 550.0
+offset_bottom = 1.0
+grow_vertical = 0
+theme_override_styles/panel = SubResource("StyleBoxFlat_q556h")
+script = ExtResource("9_3jyqh")
+
+[node name="VBoxContainer" type="VBoxContainer" parent="UI/TowerPanel"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/separation = 20
+
+[node name="Padding" type="Control" parent="UI/TowerPanel/VBoxContainer"]
+layout_mode = 2
+
+[node name="TowerName" type="Label" parent="UI/TowerPanel/VBoxContainer"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 24
+theme_override_styles/normal = SubResource("StyleBoxFlat_3jyqh")
+text = "Tower"
+horizontal_alignment = 1
+
+[node name="HBoxContainer" type="HBoxContainer" parent="UI/TowerPanel/VBoxContainer"]
+custom_minimum_size = Vector2(0, 175)
+layout_mode = 2
+theme_override_constants/separation = 40
+
+[node name="Control" type="Control" parent="UI/TowerPanel/VBoxContainer/HBoxContainer"]
+layout_mode = 2
+
+[node name="TowerImage" type="TextureRect" parent="UI/TowerPanel/VBoxContainer/HBoxContainer"]
+custom_minimum_size = Vector2(96, 96)
+layout_mode = 2
+expand_mode = 1
+stretch_mode = 5
+
+[node name="Panel" type="Panel" parent="UI/TowerPanel/VBoxContainer/HBoxContainer"]
+custom_minimum_size = Vector2(310, 200)
+layout_mode = 2
+size_flags_horizontal = 8
+theme_override_styles/panel = SubResource("StyleBoxFlat_rduqs")
+
+[node name="MarginContainer" type="MarginContainer" parent="UI/TowerPanel/VBoxContainer/HBoxContainer/Panel"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/margin_left = 5
+theme_override_constants/margin_top = 5
+theme_override_constants/margin_right = 5
+theme_override_constants/margin_bottom = 5
+
+[node name="VBoxContainer" type="VBoxContainer" parent="UI/TowerPanel/VBoxContainer/HBoxContainer/Panel/MarginContainer"]
+custom_minimum_size = Vector2(300, 0)
+layout_mode = 2
+theme_override_constants/separation = 5
+
+[node name="Label" type="Label" parent="UI/TowerPanel/VBoxContainer/HBoxContainer/Panel/MarginContainer/VBoxContainer"]
+layout_mode = 2
+text = "UPGRADES"
+
+[node name="Control" type="Control" parent="UI/TowerPanel/VBoxContainer/HBoxContainer/Panel/MarginContainer/VBoxContainer"]
+layout_mode = 2
+
+[node name="HBoxContainer" type="HBoxContainer" parent="UI/TowerPanel/VBoxContainer/HBoxContainer/Panel/MarginContainer/VBoxContainer"]
+layout_mode = 2
+
+[node name="Upgrade1" type="Button" parent="UI/TowerPanel/VBoxContainer/HBoxContainer/Panel/MarginContainer/VBoxContainer/HBoxContainer"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 16
+text = "Pew Pew"
+
+[node name="Description1" type="Label" parent="UI/TowerPanel/VBoxContainer/HBoxContainer/Panel/MarginContainer/VBoxContainer/HBoxContainer"]
+layout_mode = 2
+text = "+1 shot"
+
+[node name="HBoxContainer2" type="HBoxContainer" parent="UI/TowerPanel/VBoxContainer/HBoxContainer/Panel/MarginContainer/VBoxContainer"]
+layout_mode = 2
+
+[node name="Upgrade2" type="Button" parent="UI/TowerPanel/VBoxContainer/HBoxContainer/Panel/MarginContainer/VBoxContainer/HBoxContainer2"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 16
+text = "NO"
+
+[node name="Description2" type="Label" parent="UI/TowerPanel/VBoxContainer/HBoxContainer/Panel/MarginContainer/VBoxContainer/HBoxContainer2"]
+layout_mode = 2
+text = "----------"
+
+[node name="HBoxContainer3" type="HBoxContainer" parent="UI/TowerPanel/VBoxContainer/HBoxContainer/Panel/MarginContainer/VBoxContainer"]
+layout_mode = 2
+
+[node name="Upgrade3" type="Button" parent="UI/TowerPanel/VBoxContainer/HBoxContainer/Panel/MarginContainer/VBoxContainer/HBoxContainer3"]
+layout_mode = 2
+text = "NO"
+
+[node name="Description3" type="Label" parent="UI/TowerPanel/VBoxContainer/HBoxContainer/Panel/MarginContainer/VBoxContainer/HBoxContainer3"]
+layout_mode = 2
+text = "-------"
+
+[node name="Control2" type="Control" parent="UI/TowerPanel/VBoxContainer/HBoxContainer/Panel/MarginContainer/VBoxContainer"]
+custom_minimum_size = Vector2(0, 13)
+layout_mode = 2
+
+[node name="SellButton2" type="Button" parent="UI/TowerPanel/VBoxContainer/HBoxContainer/Panel/MarginContainer/VBoxContainer"]
+layout_mode = 2
+text = "Sell (for 50%)"
+
 [connection signal="pressed" from="UI/HUD/PausePlay" to="UI" method="_on_pause_play_pressed"]
+[connection signal="pressed" from="UI/TowerPanel/VBoxContainer/HBoxContainer/Panel/MarginContainer/VBoxContainer/HBoxContainer/Upgrade1" to="UI/TowerPanel" method="_on_upgrade_1_pressed"]

@@ -7,6 +7,7 @@ signal number_of_enemies(amount)
 # Connect nodes
 @export var level: int
 @onready var grace_period: Timer = $GracePeriod
+@onready var upgrade_1: Button = $UI/TowerPanel/VBoxContainer/HBoxContainer/Panel/MarginContainer/VBoxContainer/HBoxContainer/Upgrade1
 
 # Map reference
 var map_node
@@ -22,6 +23,7 @@ var build_type
 var current_wave = 0
 var enemies_in_wave = 0
 
+var selected_tower
 
 func _ready():
 	# Connect signals for enemy count and game over
@@ -58,8 +60,7 @@ func start_next_wave():
 		var wave_data = retrieve_wave_data()
 		current_wave += 1
 		spawn_enemies(wave_data)
-		
-	
+
 func retrieve_wave_data():
 	# Get wave data from GameData
 	var wave_data = GameData.level_data[get_parent().name]["wave_" + str(current_wave)]
@@ -68,7 +69,7 @@ func retrieve_wave_data():
 	# Notify GameData how many enemies will spawn
 	number_of_enemies.emit(enemies_in_wave)
 	return wave_data
-	
+
 func spawn_enemies(wave_data):
 	# Spawn enemies one by one with predetermined delays
 	map_node = get_tree().get_first_node_in_group("maps")
@@ -94,8 +95,9 @@ func _unhandled_input(event):
 	if event.is_action_released("ui_accept") and build_mode == true:
 		verify_and_build()
 		cancel_build_mode()
-	
+
 func initiate_build_mode(tower_type):
+	print(tower_type)
 	# Start building a tower
 	if build_mode:
 		cancel_build_mode()
@@ -103,7 +105,7 @@ func initiate_build_mode(tower_type):
 	build_mode = true
 	# Create preview at position of mouse
 	get_node("UI").set_tower_preview(build_type, get_global_mouse_position())
-	
+
 func update_tower_preview():
 	# Update preview position and color based on tile validity
 	map_node = get_tree().get_first_node_in_group("maps")
@@ -142,6 +144,7 @@ func verify_and_build():
 	if build_valid and GameData.spend(cost):
 		# Create tower
 		var new_tower = load("res://Scenes/Towers/" + build_type + ".tscn").instantiate()
+		new_tower.tower_clicked.connect(on_tower_clicked)
 		new_tower.position = build_location
 		new_tower.built = true
 		map_node.get_node("Towers").add_child(new_tower, true)
@@ -160,3 +163,25 @@ func on_game_over(result):
 	#	Telemetry.log_event("stage_end", {})
 	#	GameData.reset()
 	#	get_tree().change_scene_to_file("res://Scenes/win_screen.tscn")
+
+
+func on_tower_clicked(tower):
+	selected_tower = tower
+	$UI/TowerPanel.show()
+	$UI/TowerPanel.set_tower(tower)
+
+	# Connect the panel's upgrade signal to a handler
+	$UI/TowerPanel.upgrade.connect(request_upgrade, CONNECT_ONE_SHOT)
+
+func request_upgrade(tower):
+	var upgrade_cost = GameData.tower_upgrades[tower.tower_type]["1cost"]
+	if GameData.spend(upgrade_cost):
+		
+		var new_tower = tower.upgrade(tower)
+	
+		new_tower.tower_clicked.connect(on_tower_clicked)
+		
+		on_tower_clicked(new_tower)
+		
+		
+	

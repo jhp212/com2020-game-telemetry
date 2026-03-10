@@ -1,0 +1,99 @@
+[gd_scene load_steps=7 format=3 uid="uid://c3fic15hdhyj2"]
+
+[ext_resource type="Script" uid="uid://bru26rqmcbymf" path="res://Scenes/Towers/square_t_3.gd" id="1_ybicv"]
+[ext_resource type="Texture2D" uid="uid://byam68olowhl4" path="res://Assets/Towers/SquareT3.png" id="2_vw3rm"]
+[ext_resource type="AudioStream" uid="uid://ipboigju4ipr" path="res://Audio/SFX/Sci fi shoot.mp3" id="2_ybicv"]
+[ext_resource type="AudioStream" uid="uid://chg547ffg2rms" path="res://Audio/SFX/SCi fi placement noise.mp3" id="3_vw3rm"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_xbbgw"]
+size = Vector2(64, 64)
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_clhtd"]
+
+[node name="SquareT3" type="Node2D"]
+script = ExtResource("1_ybicv")
+
+[node name="Body" type="Sprite2D" parent="."]
+texture = ExtResource("2_vw3rm")
+
+[node name="ShootPosition1" type="Marker2D" parent="Body"]
+position = Vector2(25, 0)
+
+[node name="ShootPosition2" type="Marker2D" parent="Body"]
+position = Vector2(0, 25)
+rotation = 1.5708
+
+[node name="ShootPosition3" type="Marker2D" parent="Body"]
+position = Vector2(-25, 0)
+rotation = 3.14159
+
+[node name="ShootPosition4" type="Marker2D" parent="Body"]
+position = Vector2(0, -25)
+rotation = 4.71239
+
+[node name="ShootPosition5" type="Marker2D" parent="Body"]
+position = Vector2(20, 20)
+rotation = 0.785398
+
+[node name="ShootPosition6" type="Marker2D" parent="Body"]
+position = Vector2(-20, 20)
+rotation = 2.35619
+
+[node name="ShootPosition7" type="Marker2D" parent="Body"]
+position = Vector2(-20, -20)
+rotation = 3.92699
+
+[node name="ShootPosition8" type="Marker2D" parent="Body"]
+position = Vector2(20, -20)
+rotation = 5.49779
+
+[node name="ShootPosition9" type="Marker2D" parent="Body"]
+position = Vector2(23, 10)
+rotation = 0.392699
+
+[node name="ShootPosition10" type="Marker2D" parent="Body"]
+position = Vector2(10, 23)
+rotation = 1.1781
+
+[node name="ShootPosition11" type="Marker2D" parent="Body"]
+position = Vector2(-10, 23)
+rotation = 1.9635
+
+[node name="ShootPosition12" type="Marker2D" parent="Body"]
+position = Vector2(-23, 10)
+rotation = 2.74889
+
+[node name="ShootPosition13" type="Marker2D" parent="Body"]
+position = Vector2(-23, -10)
+rotation = 3.53429
+
+[node name="ShootPosition14" type="Marker2D" parent="Body"]
+position = Vector2(-10, -23)
+rotation = 4.31969
+
+[node name="ShootPosition15" type="Marker2D" parent="Body"]
+position = Vector2(10, -23)
+rotation = 5.10509
+
+[node name="ShootPosition16" type="Marker2D" parent="Body"]
+position = Vector2(23, -10)
+rotation = 5.89049
+
+[node name="ShootSfx" type="AudioStreamPlayer" parent="."]
+stream = ExtResource("2_ybicv")
+
+[node name="PlacementSfx" type="AudioStreamPlayer" parent="."]
+stream = ExtResource("3_vw3rm")
+
+[node name="ClickArea" type="Area2D" parent="."]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="ClickArea"]
+shape = SubResource("RectangleShape2D_xbbgw")
+
+[node name="Range" type="Area2D" parent="."]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Range"]
+shape = SubResource("CircleShape2D_clhtd")
+
+[connection signal="body_entered" from="Range" to="." method="_on_range_body_entered"]
+[connection signal="body_exited" from="Range" to="." method="_on_range_body_exited"]

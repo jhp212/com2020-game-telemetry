@@ -1,0 +1,37 @@
+[gd_scene load_steps=7 format=3 uid="uid://dfmmnroj1t3w8"]
+
+[ext_resource type="Script" uid="uid://b8plsjq6yjmwm" path="res://Scenes/Towers/star_t_2.gd" id="1_la7i3"]
+[ext_resource type="AudioStream" uid="uid://b5m58wq52rtsx" path="res://Audio/SFX/warble.mp3" id="2_la7i3"]
+[ext_resource type="Texture2D" uid="uid://brht316m5olck" path="res://Assets/Towers/StarT2.png" id="2_o3ohs"]
+[ext_resource type="AudioStream" uid="uid://bcn05s66pvkol" path="res://Audio/SFX/SCi fi placement noise 2.mp3" id="3_o3ohs"]
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_iqybr"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_o3ohs"]
+size = Vector2(64, 64)
+
+[node name="StarT2" type="Node2D"]
+script = ExtResource("1_la7i3")
+
+[node name="Body" type="Sprite2D" parent="."]
+position = Vector2(0, -2)
+texture = ExtResource("2_o3ohs")
+
+[node name="ShootSfx" type="AudioStreamPlayer" parent="."]
+stream = ExtResource("2_la7i3")
+
+[node name="PlacementSfx" type="AudioStreamPlayer" parent="."]
+stream = ExtResource("3_o3ohs")
+
+[node name="Range" type="Area2D" parent="."]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Range"]
+shape = SubResource("CircleShape2D_iqybr")
+
+[node name="ClickArea" type="Area2D" parent="."]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="ClickArea"]
+shape = SubResource("RectangleShape2D_o3ohs")
+
+[connection signal="body_entered" from="Range" to="." method="_on_range_body_entered"]
+[connection signal="body_exited" from="Range" to="." method="_on_range_body_exited"]

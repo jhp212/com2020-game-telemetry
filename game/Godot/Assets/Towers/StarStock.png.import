@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://bg4cy6fcpqckt"
-path="res://.godot/imported/Triangle - Stock.png-81cb00446df26ffdd83b6d8c5044bb5f.ctex"
+uid="uid://brx5cmnunc36u"
+path="res://.godot/imported/StarStock.png-cbc06f872993376bfa701fdad9a61c01.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://Assets/Towers/Triangle - Stock.png"
-dest_files=["res://.godot/imported/Triangle - Stock.png-81cb00446df26ffdd83b6d8c5044bb5f.ctex"]
+source_file="res://Assets/Towers/StarStock.png"
+dest_files=["res://.godot/imported/StarStock.png-cbc06f872993376bfa701fdad9a61c01.ctex"]
 
 [params]
 

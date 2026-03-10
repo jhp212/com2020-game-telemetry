@@ -43,6 +43,7 @@ func _ready() -> void:
 	enemy_data = {
 		"medium_circle": {
 			"health": 50,
+<<<<<<< Updated upstream
 			"speed": 500 * enemy_speed_multiplier,
 			"cash": 100 * money_earned_multiplier,
 			"damage": 10 * enemy_damage_multiplier
@@ -52,6 +53,17 @@ func _ready() -> void:
 			"speed": 30 * enemy_speed_multiplier,
 			"cash": 250 * money_earned_multiplier,
 			"damage": 20 * enemy_damage_multiplier
+=======
+			"speed": 60,
+			"cash": 100,
+			"damage": 5 * enemy_damage_multiplier
+		},
+		"large_circle": {
+			"health": 170,
+			"speed": 200,
+			"cash": 250,
+			"damage": 70 * enemy_damage_multiplier
+>>>>>>> Stashed changes
 		},
 		"small_circle": {
 			"health": 40,
@@ -135,29 +147,119 @@ func add_money(amount):
 	money_changed.emit(money)
 	print(money)
 
+<<<<<<< Updated upstream
 ### Tower Data ####
 var tower_data = {
 	"triangle_stock": {
 		"damage": 20,
 		"rof": 3,
 		"range": 350 * triangle_radius_multiplier,
+=======
+#### Tower Data ####
+# Parameters
+var tower_data = {
+	"triangle_stock": {
+		"damage": 20,
+		"rof": 1,
+		"range": 350,
+>>>>>>> Stashed changes
 		"cost": 250},
+	"triangle_t_2": {
+		"damage": 40,
+		"rof": 1,
+		"range": 350},
+	"triangle_t_3": {
+		"damage": 60,
+		"rof": 1,
+		"range": 350},
 	"square_stock": {
 		"damage": 35,
 		"rof": 1,
 		"range": 10000,
 		"cost": 550},
+	"square_t_2": {
+		"damage": 35,
+		"rof": 1,
+		"range": 10000},
+	"square_t_3": {
+		"damage": 35,
+		"rof": 1,
+		"range": 10000},
 	"star_stock": {
 		"damage": 5,
 		"rof": 1.5,
+<<<<<<< Updated upstream
 		"range": 400 * star_radius_multiplier,
 		"cost": 550}
+=======
+		"range": 400,
+		"cost": 550},
+	"star_t_2": {
+		"damage": 10,
+		"rof": 1.5,
+		"range": 500},
+	"star_t_3": {
+		"damage": 15,
+		"rof": 1.5,
+		"range": 600}
+>>>>>>> Stashed changes
 	}
+
+# Tower Upgrade Panel Info
+var tower_upgrades = {
+	"TriangleStock": {
+		"stage": 1,
+		"1": "Pew Pew",
+		"1desc": "+1 shot",
+		"1cost": 400
+	},
+	"TriangleT2": {
+		"stage": 2,
+		"1": "Pew Pew Pew",
+		"1desc": "+1 shot",
+		"1cost": 700
+	},
+	"TriangleT3": {
+		"stage": 3,
+	},
+	"SquareStock": {
+		"stage": 1,
+		"1": "Radial Sweep",
+		"1desc": "Double projectiles",
+		"1cost": 300
+	},
+	"SquareT2": {
+		"stage": 2,
+		"1": "Radial Sweep 2.0",
+		"1desc": "Double Projectiles",
+		"1cost": 800
+	},
+	"SquareT3": {
+		"stage": 3
+	},
+	"StarStock": {
+		"stage": 1,
+		"1": "Supernova",
+		"1desc": "+ damage & range",
+		"1cost": 550
+	},
+	"StarT2": {
+		"stage": 2,
+		"1": "Blackhole",
+		"1desc": "++ damage & range",
+		"1cost": 1000
+	},
+	"StarT3": {
+		"stage": 3
+	}
+	
+}
 
 #### Enemy Data ####
 var enemy_data = {
 	"medium_circle": {
 		"health": 50,
+<<<<<<< Updated upstream
 		"speed": 60 * enemy_speed_multiplier,
 		"cash": 100 * money_earned_multiplier,
 		"damage": 10 * enemy_damage_multiplier
@@ -167,6 +269,17 @@ var enemy_data = {
 		"speed": 30 * enemy_speed_multiplier,
 		"cash": 250 * money_earned_multiplier,
 		"damage": 20 * enemy_damage_multiplier
+=======
+		"speed": 60,
+		"cash": 100,
+		"damage": 5 * enemy_damage_multiplier
+	},
+	"large_circle": {
+		"health": 170,
+		"speed": 200,
+		"cash": 250,
+		"damage": 70 * enemy_damage_multiplier
+>>>>>>> Stashed changes
 	},
 	"small_circle": {
 		"health": 40,
@@ -180,10 +293,58 @@ var enemy_data = {
 var level_data = {
 	"Level1": {
 		"number_of_waves": 2,
-		"wave_1": [["medium_circle", 1], ["medium_circle", 1], ["medium_circle", 1], ["medium_circle", 1], ["medium_circle", 1], ["medium_circle", 1]],
-		"wave_2": [["medium_circle", 1], ["medium_circle", 1]]
+		"wave_1": [["medium_circle", 1], ["medium_circle", 1]],
+		"wave_2": [["large_circle", 1], ["large_circle", 1], ["large_circle", 1], ["large_circle", 1]]
 	},
 	"Level2": {
+		"number_of_waves": 3,
+		"wave_1": [["medium_circle", 1], ["medium_circle", 1]],
+		"wave_2": [["large_circle", 1], ["large_circle", 1]],
+		"wave_3": [["small_circle", 1], ["small_circle", 1]]
+	},
+	"Level3": {
+		"number_of_waves": 3,
+		"wave_1": [["medium_circle", 1], ["medium_circle", 1]],
+		"wave_2": [["large_circle", 1], ["large_circle", 1]],
+		"wave_3": [["small_circle", 1], ["small_circle", 1]]
+	},
+	"Level4": {
+		"number_of_waves": 3,
+		"wave_1": [["medium_circle", 1], ["medium_circle", 1]],
+		"wave_2": [["large_circle", 1], ["large_circle", 1]],
+		"wave_3": [["small_circle", 1], ["small_circle", 1]]
+	},
+	"Level5": {
+		"number_of_waves": 3,
+		"wave_1": [["medium_circle", 1], ["medium_circle", 1]],
+		"wave_2": [["large_circle", 1], ["large_circle", 1]],
+		"wave_3": [["small_circle", 1], ["small_circle", 1]]
+	},
+	"Level6": {
+		"number_of_waves": 3,
+		"wave_1": [["medium_circle", 1], ["medium_circle", 1]],
+		"wave_2": [["large_circle", 1], ["large_circle", 1]],
+		"wave_3": [["small_circle", 1], ["small_circle", 1]]
+	},
+	"Level7": {
+		"number_of_waves": 3,
+		"wave_1": [["medium_circle", 1], ["medium_circle", 1]],
+		"wave_2": [["large_circle", 1], ["large_circle", 1]],
+		"wave_3": [["small_circle", 1], ["small_circle", 1]]
+	},
+	"Level8": {
+		"number_of_waves": 3,
+		"wave_1": [["medium_circle", 1], ["medium_circle", 1]],
+		"wave_2": [["large_circle", 1], ["large_circle", 1]],
+		"wave_3": [["small_circle", 1], ["small_circle", 1]]
+	},
+	"Level9": {
+		"number_of_waves": 3,
+		"wave_1": [["medium_circle", 1], ["medium_circle", 1]],
+		"wave_2": [["large_circle", 1], ["large_circle", 1]],
+		"wave_3": [["small_circle", 1], ["small_circle", 1]]
+	},
+	"Level10": {
 		"number_of_waves": 3,
 		"wave_1": [["medium_circle", 1], ["medium_circle", 1]],
 		"wave_2": [["large_circle", 1], ["large_circle", 1]],

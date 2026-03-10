@@ -1,11 +1,11 @@
-[gd_scene load_steps=10 format=3 uid="uid://6k8oc4r4w8ho"]
+[gd_scene load_steps=10 format=3 uid="uid://k4q4p3yn6n4b"]
 
-[ext_resource type="Script" uid="uid://dviqfftby2xeh" path="res://Scenes/Towers/triangle_stock.gd" id="1_e7kqv"]
-[ext_resource type="Texture2D" uid="uid://bg4cy6fcpqckt" path="res://Assets/Towers/TriangleStock.png" id="1_skvv2"]
-[ext_resource type="AudioStream" uid="uid://lrlmun0rexja" path="res://Audio/SFX/gun shoot 1 shot.mp3" id="3_82ld0"]
-[ext_resource type="AudioStream" uid="uid://chg547ffg2rms" path="res://Audio/SFX/SCi fi placement noise.mp3" id="4_gsnjh"]
+[ext_resource type="Script" uid="uid://bwi43po4i3i1c" path="res://Scenes/Towers/triangle_t_3.gd" id="1_m2xff"]
+[ext_resource type="Texture2D" uid="uid://cfsihhn7grlg0" path="res://Assets/Towers/TriangleT3.png" id="2_m2xff"]
+[ext_resource type="AudioStream" uid="uid://hixqij3m6st5" path="res://Audio/SFX/gun shoot 3 shot.mp3" id="3_5ghfv"]
+[ext_resource type="AudioStream" uid="uid://chg547ffg2rms" path="res://Audio/SFX/SCi fi placement noise.mp3" id="4_gxibx"]
 
-[sub_resource type="CircleShape2D" id="CircleShape2D_h1k1e"]
+[sub_resource type="CircleShape2D" id="CircleShape2D_fnorl"]
 
 [sub_resource type="Animation" id="Animation_82ld0"]
 length = 0.001
@@ -44,28 +44,25 @@ _data = {
 &"shoot": SubResource("Animation_h1k1e")
 }
 
-[sub_resource type="RectangleShape2D" id="RectangleShape2D_gsnjh"]
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_bd7yu"]
 size = Vector2(64, 64)
 
-[node name="TriangleStock" type="Node2D"]
-z_index = 1
-position = Vector2(1, 0)
-script = ExtResource("1_e7kqv")
+[node name="TriangleT3" type="Node2D"]
+script = ExtResource("1_m2xff")
 
 [node name="Body" type="Sprite2D" parent="."]
 modulate = Color(0.779291, 0.779291, 0.779291, 1)
 position = Vector2(-10, 0)
-texture = ExtResource("1_skvv2")
+texture = ExtResource("2_m2xff")
 offset = Vector2(25, 0)
 
 [node name="ShootPosition" type="Marker2D" parent="Body"]
 position = Vector2(30, 0)
 
 [node name="Range" type="Area2D" parent="."]
-position = Vector2(1, 0)
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="Range"]
-shape = SubResource("CircleShape2D_h1k1e")
+shape = SubResource("CircleShape2D_fnorl")
 
 [node name="ShootAnimation" type="AnimationPlayer" parent="."]
 libraries = {
@@ -73,15 +70,15 @@ libraries = {
 }
 
 [node name="ShootSfx" type="AudioStreamPlayer" parent="."]
-stream = ExtResource("3_82ld0")
+stream = ExtResource("3_5ghfv")
 
 [node name="PlacementSfx" type="AudioStreamPlayer" parent="."]
-stream = ExtResource("4_gsnjh")
+stream = ExtResource("4_gxibx")
 
 [node name="ClickArea" type="Area2D" parent="."]
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="ClickArea"]
-shape = SubResource("RectangleShape2D_gsnjh")
+shape = SubResource("RectangleShape2D_bd7yu")
 
 [connection signal="body_entered" from="Range" to="." method="_on_range_body_entered"]
 [connection signal="body_exited" from="Range" to="." method="_on_range_body_exited"]

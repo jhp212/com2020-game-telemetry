@@ -1,7 +1,7 @@
 [gd_scene load_steps=4 format=3 uid="uid://dxmnb02ph8crn"]
 
 [ext_resource type="Script" uid="uid://mlfds1nhxord" path="res://Scenes/Towers/star_stock(conecpt).gd" id="1_dkcnk"]
-[ext_resource type="Texture2D" uid="uid://brx5cmnunc36u" path="res://Assets/Towers/Star - Stock.png" id="2_cusn2"]
+[ext_resource type="Texture2D" uid="uid://brx5cmnunc36u" path="res://Assets/Towers/StarStock.png" id="2_cusn2"]
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_m6j6g"]
 

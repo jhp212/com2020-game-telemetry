@@ -1,0 +1,37 @@
+[gd_scene load_steps=7 format=3 uid="uid://v80vq8080exd"]
+
+[ext_resource type="Script" uid="uid://bvh258vqvf57k" path="res://Scenes/Towers/star_t_3.gd" id="1_yfbyd"]
+[ext_resource type="Texture2D" uid="uid://b4vwraufpvmd1" path="res://Assets/Towers/StarT3.png" id="2_6krar"]
+[ext_resource type="AudioStream" uid="uid://b5m58wq52rtsx" path="res://Audio/SFX/warble.mp3" id="2_yfbyd"]
+[ext_resource type="AudioStream" uid="uid://bcn05s66pvkol" path="res://Audio/SFX/SCi fi placement noise 2.mp3" id="3_6krar"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_nqn6f"]
+size = Vector2(64, 64)
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_yfbyd"]
+
+[node name="StarT3" type="Node2D"]
+script = ExtResource("1_yfbyd")
+
+[node name="Body" type="Sprite2D" parent="."]
+position = Vector2(0, -2)
+texture = ExtResource("2_6krar")
+
+[node name="ShootSfx" type="AudioStreamPlayer" parent="."]
+stream = ExtResource("2_yfbyd")
+
+[node name="PlacementSfx" type="AudioStreamPlayer" parent="."]
+stream = ExtResource("3_6krar")
+
+[node name="ClickArea" type="Area2D" parent="."]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="ClickArea"]
+shape = SubResource("RectangleShape2D_nqn6f")
+
+[node name="Range" type="Area2D" parent="."]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Range"]
+shape = SubResource("CircleShape2D_yfbyd")
+
+[connection signal="body_entered" from="Range" to="." method="_on_range_body_entered"]
+[connection signal="body_exited" from="Range" to="." method="_on_range_body_exited"]

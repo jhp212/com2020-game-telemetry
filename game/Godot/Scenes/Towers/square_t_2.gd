@@ -12,13 +12,17 @@ var built = false
 var ready_to_shoot = true
 
 # Assign tower type
-var tower_type := "SquareStock"
+var tower_type := "SquareT2"
 
 # Connect nodes
 @onready var shoot_position_1: Marker2D = $Body/ShootPosition1
 @onready var shoot_position_2: Marker2D = $Body/ShootPosition2
 @onready var shoot_position_3: Marker2D = $Body/ShootPosition3
 @onready var shoot_position_4: Marker2D = $Body/ShootPosition4
+@onready var shoot_position_5: Marker2D = $Body/ShootPosition5
+@onready var shoot_position_6: Marker2D = $Body/ShootPosition6
+@onready var shoot_position_7: Marker2D = $Body/ShootPosition7
+@onready var shoot_position_8: Marker2D = $Body/ShootPosition8
 @onready var collision_shape: CollisionShape2D = $Range/CollisionShape2D
 @onready var shoot_sfx: AudioStreamPlayer = $ShootSfx
 @onready var placement_sfx: AudioStreamPlayer = $PlacementSfx
@@ -44,28 +48,42 @@ func fire():
 	new_projectile_1.global_rotation = shoot_position_1.global_rotation
 	get_parent().add_child(new_projectile_1)
 	
-	
-	
 	var new_projectile_2 = projectile_square_scene.instantiate()
 	new_projectile_2.global_position = shoot_position_2.global_position
 	new_projectile_2.global_rotation = shoot_position_2.global_rotation
 	get_parent().add_child(new_projectile_2)
-	
-
 	
 	var new_projectile_3 = projectile_square_scene.instantiate()
 	new_projectile_3.global_position = shoot_position_3.global_position
 	new_projectile_3.global_rotation = shoot_position_3.global_rotation
 	get_parent().add_child(new_projectile_3)
 	
-	
-	
 	var new_projectile_4 = projectile_square_scene.instantiate()
 	new_projectile_4.global_position = shoot_position_4.global_position
 	new_projectile_4.global_rotation = shoot_position_4.global_rotation
 	get_parent().add_child(new_projectile_4)
 	
-	await get_tree().create_timer(GameData.tower_data["square_stock"]["rof"]).timeout
+	var new_projectile_5 = projectile_square_scene.instantiate()
+	new_projectile_5.global_position = shoot_position_5.global_position
+	new_projectile_5.global_rotation = shoot_position_5.global_rotation
+	get_parent().add_child(new_projectile_5)
+	
+	var new_projectile_6 = projectile_square_scene.instantiate()
+	new_projectile_6.global_position = shoot_position_6.global_position
+	new_projectile_6.global_rotation = shoot_position_6.global_rotation
+	get_parent().add_child(new_projectile_6)
+	
+	var new_projectile_7 = projectile_square_scene.instantiate()
+	new_projectile_7.global_position = shoot_position_7.global_position
+	new_projectile_7.global_rotation = shoot_position_7.global_rotation
+	get_parent().add_child(new_projectile_7)
+	
+	var new_projectile_8 = projectile_square_scene.instantiate()
+	new_projectile_8.global_position = shoot_position_8.global_position
+	new_projectile_8.global_rotation = shoot_position_8.global_rotation
+	get_parent().add_child(new_projectile_8)
+	
+	await get_tree().create_timer(GameData.tower_data["square_t_2"]["rof"]).timeout
 	ready_to_shoot = true
 
 func _ready():
@@ -74,8 +92,8 @@ func _ready():
 	# Set size of the range and log telemetry event
 	if built:
 		placement_sfx.play()
-		collision_shape.shape.radius = GameData.tower_data["square_stock"]["range"]
-		Telemetry.log_event("tower_spawn", {"tower_id": 2})
+		collision_shape.shape.radius = GameData.tower_data["square_t_2"]["range"]
+		Telemetry.log_event("tower_upgraded", {"tower_id": 2})
 
 func _on_range_body_entered(body: Node2D) -> void:
 	# Add enemy when it enters the range
@@ -94,7 +112,7 @@ func _on_click_area_input_event(viewport,event, shape_idx):
 func upgrade(tower):
 	print("upgraded")
 	if tower == self:
-		var upgraded_tower = load("res://Scenes/Towers/square_t_2.tscn")
+		var upgraded_tower = load("res://Scenes/Towers/square_t_3.tscn")
 		var upgraded = upgraded_tower.instantiate()
 		
 		upgraded.position = position

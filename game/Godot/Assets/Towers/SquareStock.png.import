@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://brx5cmnunc36u"
-path="res://.godot/imported/Star - Stock.png-191953fe7acb50812570c3ba412a7372.ctex"
+uid="uid://dr1dia6nyt4un"
+path="res://.godot/imported/SquareStock.png-b9962e191e21688d90d1e219375a3725.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://Assets/Towers/Star - Stock.png"
-dest_files=["res://.godot/imported/Star - Stock.png-191953fe7acb50812570c3ba412a7372.ctex"]
+source_file="res://Assets/Towers/SquareStock.png"
+dest_files=["res://.godot/imported/SquareStock.png-b9962e191e21688d90d1e219375a3725.ctex"]
 
 [params]
 
