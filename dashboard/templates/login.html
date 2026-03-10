@@ -15,7 +15,6 @@
                 background-color: darkgray;
                 display: flex;
                 flex-direction: column;
-                justify-content: flex-start;
                 align-items: center;
                 width: 420px;
                 min-height: 520px;
@@ -39,50 +38,38 @@
             }
 
             input[type="text"],
-            input[type="password"],
-            input[type="email"] {
+            input[type="password"] {
                 width: 100%;
                 height: 42px;
-                margin-bottom: 16px;
+                margin-top: 16px;
                 border: none;
                 border-radius: 30px;
                 background-color: rgb(224, 231, 236);
-                padding: 0 14px;
+                padding: 0 10px;
                 box-sizing: border-box;
             }
 
-            .bottomRow {
-                width: 100%;
-                display: flex;
-                flex-direction: column;
-                gap: 18px;
-                margin-top: 8px;
-            }
+             .annoyingRow {
+            display: flex;
+            margin-top: 20px; 
+            align-items: center;
+            width: calc(100% - 20px);
+            justify-content: space-between;
+        }
 
-            .rememberWrap {
-                display: flex;
-                align-items: center;
-                gap: 8px;
-                font-size: 14px;
-                cursor: pointer;
-            }
-
+        .wrapPls {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
             input[type="checkbox"] {
                 width: 16px;
                 height: 16px;
-                margin: 0;
-            }
-
-            .buttonRow {
-                display: flex;
-                justify-content: center;
-                gap: 14px;
-                width: 100%;
             }
 
             input[type="submit"],
             .loginButton {
-                width: 120px;
+                min-width: 120px;
                 height: 42px;
                 border-radius: 30px;
                 font-size: 15px;
@@ -96,13 +83,11 @@
                 display: flex;
                 align-items: center;
                 justify-content: center;
-                box-sizing: border-box;
                 cursor: pointer;
-                padding: 0;
+                padding: 0 10px;
             }
 
-            input[type="submit"]:hover,
-            .loginButton:hover {
+            input[type="submit"]:hover{
                 opacity: 0.7;
             }
 
@@ -112,6 +97,41 @@
                 margin-bottom: 12px;
                 text-align: center;
             }
+        .signupRow {
+            display: flex;
+            align-items: center;
+            width: calc(100% - 20px);
+            margin-top: 25px;
+            padding-top: 30px;
+            padding-bottom: 20px;
+        }
+
+        .lines {
+            flex: 1;
+            border-bottom: 2px solid #000;
+        }
+
+        .signupContainer {
+            display: flex;
+            align-items: center;
+            margin: 0 10px;
+            cursor: pointer;
+        }
+
+        .signupText {
+            font-weight: bold;
+            color: black;
+            margin-right: 6px;
+        }
+
+        .triangle {
+            width: 0;
+            height: 0;
+            border-left: 6px solid transparent;
+            border-right: 6px solid transparent;
+            border-top: 8px solid black;
+            display: inline-block;
+        }
         </style>
 
 
@@ -129,18 +149,23 @@
                 <input id="user" name="username" type="text" placeholder="Username" required>
                 <input id="pass" name="password" type="password" placeholder="Password" required>
 
-                <div class="bottomRow">
-                    <label class="rememberWrap" for="remember">
-                        <input id="remember" name="remember" type="checkbox">
-                        <span>Remember me?</span>
-                    </label>
-
-                    <div class="buttonRow">
-                        <a href="/register" class="loginButton">REGISTER</a>
-                        <input type="submit" value="SIGN IN">
-                    </div>
+                <div class="annoyingRow">
+                <div class="wrapPls">
+                    <input id="remember" name="remember" type="checkbox">
+                    <span>Remember me?</span>
                 </div>
-            </form>
-        </div>
+                <input type="submit" value="SIGN IN">
+            </div>
+
+            <div class="signupRow">
+                <div class="lines"></div>
+                <div class="signupContainer" id="signupButton">
+                    <span class="signupText">Sign Up</span>
+                    <span class="triangle"></span>
+                </div>
+                <div class="lines"></div>
+            </div>
+        </form>
+    </div>
     </body>
 </html>
