@@ -1,0 +1,142 @@
+[gd_scene load_steps=7 format=3 uid="uid://cmffkw8gl5q1u"]
+
+[ext_resource type="Script" uid="uid://cmfyfurw2sb3y" path="res://Scenes/login.gd" id="1_5cd0j"]
+
+[sub_resource type="Gradient" id="Gradient_erv1k"]
+offsets = PackedFloat32Array(0.142857, 0.55, 0.728571, 1)
+colors = PackedColorArray(1, 0, 0, 1, 0.648577, 0, 0, 1, 0.241667, 0, 0, 1, 0, 0, 0, 1)
+
+[sub_resource type="GradientTexture2D" id="GradientTexture2D_7d012"]
+gradient = SubResource("Gradient_erv1k")
+width = 720
+height = 720
+fill = 1
+fill_from = Vector2(2, 0.5)
+fill_to = Vector2(0.3, 0.5)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_5cd0j"]
+bg_color = Color(0.325441, 0.325441, 0.325441, 0.392157)
+border_width_left = 1
+border_width_top = 1
+border_width_right = 1
+border_width_bottom = 1
+corner_radius_top_left = 2
+corner_radius_top_right = 2
+corner_radius_bottom_right = 2
+corner_radius_bottom_left = 2
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_hbxdl"]
+bg_color = Color(0.470588, 0, 0.137255, 1)
+border_width_left = 1
+border_width_top = 1
+border_width_right = 1
+border_width_bottom = 1
+corner_radius_top_left = 2
+corner_radius_top_right = 2
+corner_radius_bottom_right = 2
+corner_radius_bottom_left = 2
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_fxa43"]
+bg_color = Color(0.546725, 0, 0.136274, 1)
+corner_radius_top_left = 2
+corner_radius_top_right = 2
+corner_radius_bottom_right = 2
+corner_radius_bottom_left = 2
+
+[node name="Login" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_5cd0j")
+
+[node name="Background" type="TextureRect" parent="."]
+modulate = Color(1, 0, 0, 1)
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+texture = SubResource("GradientTexture2D_7d012")
+
+[node name="Border" type="MarginContainer" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/margin_left = 70
+theme_override_constants/margin_top = 70
+theme_override_constants/margin_right = 70
+theme_override_constants/margin_bottom = 70
+
+[node name="VBoxContainer" type="VBoxContainer" parent="Border"]
+custom_minimum_size = Vector2(500, 0)
+layout_mode = 2
+size_flags_horizontal = 0
+theme_override_constants/separation = 5
+
+[node name="MainMenuText" type="Label" parent="Border/VBoxContainer"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 64
+text = "Login"
+horizontal_alignment = 1
+
+[node name="Spacing" type="Control" parent="Border/VBoxContainer"]
+custom_minimum_size = Vector2(0, 25)
+layout_mode = 2
+
+[node name="UsernameLabel" type="Label" parent="Border/VBoxContainer"]
+layout_mode = 2
+text = "Username:"
+
+[node name="UsernameLine" type="LineEdit" parent="Border/VBoxContainer"]
+layout_mode = 2
+theme_override_constants/outline_size = 1
+theme_override_styles/normal = SubResource("StyleBoxFlat_5cd0j")
+
+[node name="Spacing3" type="Control" parent="Border/VBoxContainer"]
+custom_minimum_size = Vector2(0, 20)
+layout_mode = 2
+
+[node name="PasswordLabel" type="Label" parent="Border/VBoxContainer"]
+layout_mode = 2
+text = "Password:"
+
+[node name="PasswordLine" type="LineEdit" parent="Border/VBoxContainer"]
+layout_mode = 2
+theme_override_constants/outline_size = 1
+theme_override_styles/normal = SubResource("StyleBoxFlat_5cd0j")
+
+[node name="Spacing2" type="Control" parent="Border/VBoxContainer"]
+custom_minimum_size = Vector2(0, 20)
+layout_mode = 2
+
+[node name="MarginContainer" type="MarginContainer" parent="Border/VBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 0
+theme_override_constants/margin_left = 30
+
+[node name="LoginButton" type="Button" parent="Border/VBoxContainer/MarginContainer"]
+custom_minimum_size = Vector2(200, 40)
+layout_mode = 2
+size_flags_horizontal = 4
+size_flags_vertical = 4
+theme_override_styles/hover = SubResource("StyleBoxFlat_hbxdl")
+theme_override_styles/normal = SubResource("StyleBoxFlat_fxa43")
+text = "Login"
+
+[node name="MarginContainer2" type="MarginContainer" parent="Border/VBoxContainer"]
+layout_mode = 2
+theme_override_constants/margin_left = 30
+
+[node name="Message" type="Label" parent="Border/VBoxContainer/MarginContainer2"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.545098, 0, 0.137255, 1)
+theme_override_font_sizes/font_size = 12
+
+[connection signal="pressed" from="Border/VBoxContainer/MarginContainer/LoginButton" to="." method="_on_login_button_pressed"]
