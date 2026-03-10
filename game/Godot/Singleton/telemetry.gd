@@ -2,7 +2,6 @@ extends Node
 
 var base_url: String = ""
 
-<<<<<<< Updated upstream
 var username: String = "testplayer"
 var password: String = "playerpass"
 
@@ -14,8 +13,6 @@ func get_http_request() -> HTTPRequest:
 	add_child(http_request)
 	return http_request
 
-=======
->>>>>>> Stashed changes
 func _initialize_url():
 	# Get the full URL from the browser's current location
 	# This works in web exports by using JavaScript interop
@@ -36,7 +33,6 @@ func get_full_url(path: String) -> String:
 		return ""
 	return base_url + "/api" + path
 
-<<<<<<< Updated upstream
 func register(username_input: String, password_input: String) -> Dictionary:
 	var url = get_full_url("/auth/register")
 	var headers = ["Content-Type: application/json"]
@@ -79,10 +75,6 @@ func authenticate(username_input: String, password_input: String):
 		user_id = parsed_response.get("user_id")
 	else:
 		print("Auth Error ", response_code, ": ", response_body)
-=======
-const BASE_URL = "http://172.0.0.1:10101"
-
->>>>>>> Stashed changes
 
 func create_telemetry(telemetry_data):
 	# Send telemetry data to the database
@@ -92,7 +84,6 @@ func create_telemetry(telemetry_data):
 			await authenticate(username, password)
 			
 	var json_data = JSON.stringify(telemetry_data)
-<<<<<<< Updated upstream
 	var headers = [
 		"Content-Type: application/json",
 		"Authorization: Bearer " + JWT
@@ -104,13 +95,6 @@ func create_telemetry(telemetry_data):
 	if error != OK:
 		print("Error making request to: " + url)
 		http_request.queue_free() # Clean up early exit
-=======
-	var headers = ["Content-Type: application/json"]
-	var url = get_full_url("/telemetry/")
-	var error = http_request.request(url, headers, HTTPClient.METHOD_POST, json_data)
-	if error != OK:
-		print("Error making request to: " + url)
->>>>>>> Stashed changes
 		return null
 		
 	var result = await http_request.request_completed
@@ -133,7 +117,6 @@ func create_telemetry(telemetry_data):
 		return null
 
 func get_parameter(parameter_name):
-<<<<<<< Updated upstream
 	# Acquire parameter from the database
 	if not JWT:
 		print("Not Logged In")
@@ -151,16 +134,6 @@ func get_parameter(parameter_name):
 	if error != OK:
 		print("Error making request to: " + url)
 		http_request.queue_free() # Clean up early exit
-=======
-	# Aquire parameter from the database
-	var http_request = HTTPRequest.new()
-	add_child(http_request)
-	var headers = ["Content-Type: application/json"]
-	var url = get_full_url("/parameters/?parameter_name=" + parameter_name)
-	var error = http_request.request(url, headers, HTTPClient.METHOD_GET)
-	if error != OK:
-		print("Error making request to: " + url)
->>>>>>> Stashed changes
 		return null
 		
 	var result = await http_request.request_completed

@@ -43,7 +43,6 @@ func _ready() -> void:
 	enemy_data = {
 		"medium_circle": {
 			"health": 50,
-<<<<<<< Updated upstream
 			"speed": 500 * enemy_speed_multiplier,
 			"cash": 100 * money_earned_multiplier,
 			"damage": 10 * enemy_damage_multiplier
@@ -53,17 +52,6 @@ func _ready() -> void:
 			"speed": 30 * enemy_speed_multiplier,
 			"cash": 250 * money_earned_multiplier,
 			"damage": 20 * enemy_damage_multiplier
-=======
-			"speed": 60,
-			"cash": 100,
-			"damage": 5 * enemy_damage_multiplier
-		},
-		"large_circle": {
-			"health": 170,
-			"speed": 200,
-			"cash": 250,
-			"damage": 70 * enemy_damage_multiplier
->>>>>>> Stashed changes
 		},
 		"small_circle": {
 			"health": 40,
@@ -147,22 +135,12 @@ func add_money(amount):
 	money_changed.emit(money)
 	print(money)
 
-<<<<<<< Updated upstream
 ### Tower Data ####
 var tower_data = {
 	"triangle_stock": {
 		"damage": 20,
 		"rof": 3,
 		"range": 350 * triangle_radius_multiplier,
-=======
-#### Tower Data ####
-# Parameters
-var tower_data = {
-	"triangle_stock": {
-		"damage": 20,
-		"rof": 1,
-		"range": 350,
->>>>>>> Stashed changes
 		"cost": 250},
 	"triangle_t_2": {
 		"damage": 40,
@@ -188,11 +166,7 @@ var tower_data = {
 	"star_stock": {
 		"damage": 5,
 		"rof": 1.5,
-<<<<<<< Updated upstream
 		"range": 400 * star_radius_multiplier,
-		"cost": 550}
-=======
-		"range": 400,
 		"cost": 550},
 	"star_t_2": {
 		"damage": 10,
@@ -202,7 +176,6 @@ var tower_data = {
 		"damage": 15,
 		"rof": 1.5,
 		"range": 600}
->>>>>>> Stashed changes
 	}
 
 # Tower Upgrade Panel Info
@@ -259,7 +232,6 @@ var tower_upgrades = {
 var enemy_data = {
 	"medium_circle": {
 		"health": 50,
-<<<<<<< Updated upstream
 		"speed": 60 * enemy_speed_multiplier,
 		"cash": 100 * money_earned_multiplier,
 		"damage": 10 * enemy_damage_multiplier
@@ -269,17 +241,6 @@ var enemy_data = {
 		"speed": 30 * enemy_speed_multiplier,
 		"cash": 250 * money_earned_multiplier,
 		"damage": 20 * enemy_damage_multiplier
-=======
-		"speed": 60,
-		"cash": 100,
-		"damage": 5 * enemy_damage_multiplier
-	},
-	"large_circle": {
-		"health": 170,
-		"speed": 200,
-		"cash": 250,
-		"damage": 70 * enemy_damage_multiplier
->>>>>>> Stashed changes
 	},
 	"small_circle": {
 		"health": 40,
