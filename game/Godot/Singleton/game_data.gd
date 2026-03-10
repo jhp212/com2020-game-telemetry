@@ -10,36 +10,74 @@ var win = "win"
 # Data for telemetry
 var current_stage
 
-# Damage multiplier
+# Multipliers
 var enemy_damage_multiplier := 1.0
+var enemy_speed_multiplier := 1.0
+var money_earned_multiplier := 1.0
 
+var triangle_radius_multiplier := 1.0
+var star_radius_multiplier := 1.0
 
 
 func _ready() -> void:
 	# Get damage multiplier from database
 	var json = await Telemetry.get_parameter("enemy_damage_multiplier")
 	enemy_damage_multiplier = json[0]["value"]
+
+	# Get speed multiplier from database
+	json = await Telemetry.get_parameter("enemy_speed_multiplier")
+	enemy_speed_multiplier = json[0]["value"]
+
+	# Get money earned multiplier from database
+	json = await Telemetry.get_parameter("money_earned_multiplier")
+	money_earned_multiplier = json[0]["value"]
+
+	# Get triangle radius multiplier from database
+	json = await Telemetry.get_parameter("triangle_radius_multiplier")
+	triangle_radius_multiplier = json[0]["value"]
+
+	# Get star radius multiplier from database
+	json = await Telemetry.get_parameter("star_radius_multiplier")
+	star_radius_multiplier = json[0]["value"]
+
 	enemy_data = {
 		"medium_circle": {
 			"health": 50,
-			"speed": 500,
-			"cash": 100,
-			"damage": 70 * enemy_damage_multiplier
+			"speed": 500 * enemy_speed_multiplier,
+			"cash": 100 * money_earned_multiplier,
+			"damage": 10 * enemy_damage_multiplier
 		},
 		"large_circle": {
 			"health": 170,
-			"speed": 30,
-			"cash": 250,
-			"damage": 5 * enemy_damage_multiplier
+			"speed": 30 * enemy_speed_multiplier,
+			"cash": 250 * money_earned_multiplier,
+			"damage": 20 * enemy_damage_multiplier
 		},
 		"small_circle": {
 			"health": 40,
-			"speed": 80,
-			"cash": 80,
-			"damage": 1 * enemy_damage_multiplier
+			"speed": 80 * enemy_speed_multiplier,
+			"cash": 80 * money_earned_multiplier,
+			"damage": 5 * enemy_damage_multiplier
 		}
 	}
 
+	tower_data = {
+		"triangle_stock": {
+			"damage": 20,
+			"rof": 3,
+			"range": 350 * triangle_radius_multiplier,
+			"cost": 250},
+		"square_stock": {
+			"damage": 35,
+			"rof": 1,
+			"range": 10000,
+			"cost": 550},
+		"star_stock": {
+			"damage": 5,
+			"rof": 1.5,
+			"range": 400 * star_radius_multiplier,
+			"cost": 550}
+	}
 #### tracking number of enemies ####
 # Number of enemies currently in game
 var enemy_amount = 0
@@ -97,12 +135,12 @@ func add_money(amount):
 	money_changed.emit(money)
 	print(money)
 
-#### Tower Data ####
+### Tower Data ####
 var tower_data = {
 	"triangle_stock": {
 		"damage": 20,
 		"rof": 3,
-		"range": 350,
+		"range": 350 * triangle_radius_multiplier,
 		"cost": 250},
 	"square_stock": {
 		"damage": 35,
@@ -112,7 +150,7 @@ var tower_data = {
 	"star_stock": {
 		"damage": 5,
 		"rof": 1.5,
-		"range": 400,
+		"range": 400 * star_radius_multiplier,
 		"cost": 550}
 	}
 
@@ -120,21 +158,21 @@ var tower_data = {
 var enemy_data = {
 	"medium_circle": {
 		"health": 50,
-		"speed": 60,
-		"cash": 100,
-		"damage": 70 * enemy_damage_multiplier
+		"speed": 60 * enemy_speed_multiplier,
+		"cash": 100 * money_earned_multiplier,
+		"damage": 10 * enemy_damage_multiplier
 	},
 	"large_circle": {
 		"health": 170,
-		"speed": 30,
-		"cash": 250,
-		"damage": 5 * enemy_damage_multiplier
+		"speed": 30 * enemy_speed_multiplier,
+		"cash": 250 * money_earned_multiplier,
+		"damage": 20 * enemy_damage_multiplier
 	},
 	"small_circle": {
 		"health": 40,
-		"speed": 80,
-		"cash": 80,
-		"damage": 1 * enemy_damage_multiplier
+		"speed": 80 * enemy_speed_multiplier,
+		"cash": 80 * money_earned_multiplier,
+		"damage": 5 * enemy_damage_multiplier
 	}
 }
 
