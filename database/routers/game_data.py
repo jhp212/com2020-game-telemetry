@@ -2,6 +2,7 @@ from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 from datetime import datetime
 from sqlalchemy.exc import IntegrityError
+from sqlalchemy.orm import joinedload
 
 from database.database import get_db # type: ignore
 from database.models import *
@@ -137,11 +138,10 @@ def create_anomaly(anomaly: schemas.AnomalyCreate, db: Session = Depends(get_db)
             db.add(db_anomaly)
             db.flush()
 
-            for telemetry_id in anomaly.telemetry_ids:
-                telemetry_entry = db.query(Telemetry).filter(Telemetry.id == telemetry_id).first()
-                if not telemetry_entry:
-                    raise HTTPException(status_code=404, detail=f"Telemetry entry with ID {telemetry_id} not found")
-                association = TelemetryAnomaly(telemetry_id=telemetry_id, anomaly_id=db_anomaly.id)
+            telemetry_entries = db.query(Telemetry).filter(Telemetry.id.in_(anomaly.telemetry_ids)).all()
+
+            for telemetry_entry in telemetry_entries:
+                association = TelemetryAnomaly(telemetry_id=telemetry_entry.id, anomaly_id=db_anomaly.id)
                 db.add(association)
 
         db.refresh(db_anomaly)
@@ -155,7 +155,7 @@ def create_anomaly(anomaly: schemas.AnomalyCreate, db: Session = Depends(get_db)
 @router.get("/anomalies", response_model=list[schemas.AnomalyResponse])
 def read_anomalies(anomaly_id: int | None = None, telemetry_id: int | None = None, anomaly_type: str | None = None,
                    db: Session = Depends(get_db), current_user: Users = Depends(get_current_admin_user)):
-    query = db.query(Anomalies)
+    query = db.query(Anomalies).options(joinedload(Anomalies.telemetry))
 
     if anomaly_id is not None:
         query = query.filter(Anomalies.id == anomaly_id)
