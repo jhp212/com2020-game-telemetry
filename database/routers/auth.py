@@ -77,3 +77,10 @@ def reject_admin_request(username: str, db: Session = Depends(get_db), current_u
     db.commit()
     db.refresh(user)
     return {"username": user.username, "is_requesting_admin": user.is_requesting_admin}
+
+# Endpoint to delete the current user's account and all associated data. Only that user can make this request
+@router.delete("/delete_account")
+def delete_user_account(db: Session = Depends(get_db), current_user: Users = Depends(get_current_user)):
+    db.delete(current_user)
+    db.commit()
+    return {"detail": f"User '{current_user.username}' and all associated data have been deleted."}

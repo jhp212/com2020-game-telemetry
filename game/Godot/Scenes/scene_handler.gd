@@ -2,8 +2,8 @@ extends Node
 
 func _ready():
 	# Connect Main Menu buttons
-	get_node("MainMenu/Border/VBoxContainer/PlayButton").pressed.connect(Callable(self, "on_play_pressed"))
-	get_node("MainMenu/Border/VBoxContainer/LevelsButton").pressed.connect(Callable(self, "on_levels_pressed"))
+	get_node("MainMenu/LevelSelect/VBoxContainer/PlayButton").pressed.connect(Callable(self, "on_play_pressed"))
+	get_node("MainMenu/LevelSelect/VBoxContainer/LevelsButton").pressed.connect(Callable(self, "on_levels_pressed"))
 	
 	# Connect Level Selection buttons
 	get_node("LevelSelection/Border/VBoxContainer/Row1/Level1").pressed.connect(Callable(self, "on_levels_1_pressed"))

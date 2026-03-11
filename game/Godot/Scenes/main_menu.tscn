@@ -1,7 +1,8 @@
-[gd_scene load_steps=5 format=3 uid="uid://ceqwvifw0ojeu"]
+[gd_scene load_steps=6 format=3 uid="uid://ceqwvifw0ojeu"]
 
 [ext_resource type="Script" uid="uid://dc61sudfhqrl6" path="res://Scenes/main_menu.gd" id="1_28flt"]
 [ext_resource type="Texture2D" uid="uid://cirl1dvpj7d11" path="res://Assets/UI/cog.png" id="2_48xlc"]
+[ext_resource type="Script" uid="uid://c76i4eqv47igq" path="res://Scenes/cog.gd" id="3_1ehe0"]
 
 [sub_resource type="Gradient" id="Gradient_erv1k"]
 offsets = PackedFloat32Array(0.142857, 0.55, 0.728571, 1)
@@ -34,7 +35,7 @@ grow_horizontal = 2
 grow_vertical = 2
 texture = SubResource("GradientTexture2D_28flt")
 
-[node name="Border" type="MarginContainer" parent="."]
+[node name="LevelSelect" type="MarginContainer" parent="."]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -46,24 +47,23 @@ theme_override_constants/margin_top = 70
 theme_override_constants/margin_right = 70
 theme_override_constants/margin_bottom = 70
 
-[node name="VBoxContainer" type="VBoxContainer" parent="Border"]
+[node name="VBoxContainer" type="VBoxContainer" parent="LevelSelect"]
 custom_minimum_size = Vector2(400, 0)
 layout_mode = 2
 size_flags_horizontal = 0
 theme_override_constants/separation = 10
 
-[node name="MainMenuText" type="Label" parent="Border/VBoxContainer"]
+[node name="MainMenuText" type="Label" parent="LevelSelect/VBoxContainer"]
 layout_mode = 2
 theme_override_font_sizes/font_size = 64
 text = "Shapes TD 26"
 horizontal_alignment = 1
 
-[node name="Spacing" type="Control" parent="Border/VBoxContainer"]
+[node name="Spacing" type="Control" parent="LevelSelect/VBoxContainer"]
 custom_minimum_size = Vector2(0, 20)
 layout_mode = 2
 
-[node name="PlayButton" type="Button" parent="Border/VBoxContainer"]
-visible = false
+[node name="PlayButton" type="Button" parent="LevelSelect/VBoxContainer"]
 custom_minimum_size = Vector2(300, 70)
 layout_mode = 2
 size_flags_horizontal = 4
@@ -71,7 +71,7 @@ theme_override_colors/font_color = Color(1, 1, 1, 1)
 theme_override_font_sizes/font_size = 24
 text = "Play"
 
-[node name="LevelsButton" type="Button" parent="Border/VBoxContainer"]
+[node name="LevelsButton" type="Button" parent="LevelSelect/VBoxContainer"]
 custom_minimum_size = Vector2(300, 70)
 layout_mode = 2
 size_flags_horizontal = 4
@@ -81,6 +81,7 @@ text = "Levels"
 
 [node name="LogoutButton" type="Button" parent="."]
 custom_minimum_size = Vector2(300, 70)
+layout_mode = 0
 offset_left = 960.0
 offset_top = 626.0
 offset_right = 1260.0
@@ -91,6 +92,7 @@ theme_override_font_sizes/font_size = 24
 text = "Logout"
 
 [node name="Username" type="Label" parent="."]
+layout_mode = 0
 offset_left = 11.0
 offset_top = 568.0
 offset_right = 1260.0
@@ -105,5 +107,24 @@ autowrap_mode = 2
 position = Vector2(1206, 63)
 scale = Vector2(0.42, 0.42)
 texture = ExtResource("2_48xlc")
+script = ExtResource("3_1ehe0")
 
-[connection signal="pressed" from="Border/VBoxContainer/PlayButton" to="." method="_on_play_button_pressed"]
+[node name="SettingsMenu" type="Control" parent="."]
+visible = false
+anchors_preset = 0
+offset_right = 40.0
+offset_bottom = 40.0
+
+[node name="DeleteDataButton" type="Button" parent="SettingsMenu"]
+custom_minimum_size = Vector2(300, 70)
+offset_left = 390.0
+offset_top = 200.0
+offset_right = 890.0
+offset_bottom = 300.0
+size_flags_horizontal = 4
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_font_sizes/font_size = 24
+text = "Delete Data"
+autowrap_mode = 3
+
+[connection signal="pressed" from="LevelSelect/VBoxContainer/PlayButton" to="." method="_on_play_button_pressed"]

@@ -29,7 +29,6 @@ def get_db():
     try:
         yield db
     finally:
-        db.expunge_all()  # Clear identity map to release references
         db.close()
 
 # Helper function to expunge objects from session to free memory

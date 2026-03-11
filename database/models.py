@@ -41,7 +41,7 @@ class DecisionLog(Base):
 class Users(Base):
     __tablename__ = "Users"
     id = Column(Integer, primary_key=True, index=True)
-    username = Column(String(50), nullable=False)
+    username = Column(String(50), nullable=False, unique=True, index=True)
     password_hash = Column(String(128), nullable=False)
     is_admin = Column(Integer, default=0)
     created_at = Column(DateTime, default=datetime.now, nullable=False)

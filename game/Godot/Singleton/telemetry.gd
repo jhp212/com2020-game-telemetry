@@ -33,6 +33,9 @@ func get_full_url(path: String) -> String:
 		return ""
 	return base_url + "/api" + path
 
+func _ready() -> void:
+	_initialize_url()
+	
 func register(username_input: String, password_input: String):
 	var url = get_full_url("/auth/register")
 	var headers = ["Content-Type: application/json"]
@@ -87,7 +90,45 @@ func logout():
 	password = ""
 	JWT = ""
 	user_id = -1
+
+func delete_account():
+	if not JWT:
+		print("Not Logged In")
+		if username and password:
+			await authenticate(username, password)
 	
+	var url = get_full_url("/auth/delete_account")
+	var headers = [
+		"Content-Type: application/json",
+		"Authorization: Bearer " + JWT
+	]
+	var http_request = get_http_request()
+	var error = http_request.request(url, headers, HTTPClient.METHOD_DELETE)
+
+	if error != OK:
+		print("Error making request to: " + url)
+		http_request.queue_free() # Clean up early exit
+		return null
+	
+	var result = await http_request.request_completed
+	http_request.queue_free()
+
+	var response_code = result[1]
+	var response_body = result[3].get_string_from_utf8()
+
+	if response_code == 200:
+		logout() # Clear local credentials on successful deletion
+		return "OK"
+	elif response_code == 401:
+		print("Unauthorized. Refreshing token and retrying...")
+		if username and password:
+			await authenticate(username, password)
+			return await delete_account()
+		return null
+	else:
+		print("Delete Account Error ", response_code, ": ", response_body)
+		return "ERR"
+		
 func create_telemetry(telemetry_data):
 	# Send telemetry data to the database
 	if not JWT:
