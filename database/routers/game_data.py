@@ -133,19 +133,21 @@ def read_decision_logs(decision_id: int | None = None, parameter_name: str | Non
 @router.post("/anomalies", response_model=schemas.AnomalyResponse)
 def create_anomaly(anomaly: schemas.AnomalyCreate, db: Session = Depends(get_db), current_user: Users = Depends(get_current_admin_user)):
     try:
-        with db.begin():
-            db_anomaly = Anomalies(anomaly_type=anomaly.anomaly_type, resolution=anomaly.resolution)
-            db.add(db_anomaly)
-            db.flush()
+        db_anomaly = Anomalies(anomaly_type=anomaly.anomaly_type, resolution=anomaly.resolution)
+        db.add(db_anomaly)
+        db.flush()
 
-            telemetry_entries = db.query(Telemetry).filter(Telemetry.id.in_(anomaly.telemetry_ids)).all()
+        telemetry_entries = db.query(Telemetry).filter(Telemetry.id.in_(anomaly.telemetry_ids)).all()
 
-            for telemetry_entry in telemetry_entries:
-                association = TelemetryAnomaly(telemetry_id=telemetry_entry.id, anomaly_id=db_anomaly.id)
-                db.add(association)
+        for telemetry_entry in telemetry_entries:
+            association = TelemetryAnomaly(telemetry_id=telemetry_entry.id, anomaly_id=db_anomaly.id)
+            db.add(association)
 
+        db.commit()
         db.refresh(db_anomaly)
+        
     except IntegrityError:
+        db.rollback()
         raise HTTPException(status_code=400, detail="Anomaly association failed due to database integrity error (possible duplicate)")
 
     telemetry_ids = [ta.telemetry_id for ta in db.query(TelemetryAnomaly).filter(TelemetryAnomaly.anomaly_id == db_anomaly.id).all()]
@@ -205,3 +207,37 @@ def resolve_anomaly(anomaly_id: int, resolution: str, db: Session = Depends(get_
     db.commit()
     db.refresh(anomaly)
     return anomaly
+
+# Admin endpoint to delete all anomalies and all telemetry linked to those anomalies.
+@router.delete("/anomalies/clear-all")
+def clear_all_anomalies(db: Session = Depends(get_db), current_user: Users = Depends(get_current_admin_user)):
+    
+    try:
+        anomaly_links = db.query(TelemetryAnomaly).all()
+        telemetry_ids = list({link.telemetry_id for link in anomaly_links})
+        anomaly_ids = list({link.anomaly_id for link in anomaly_links})
+
+        deleted_telemetry_count = 0
+        deleted_anomaly_count = 0
+        deleted_link_count = len(anomaly_links)
+
+        if telemetry_ids:
+            deleted_telemetry_count = db.query(Telemetry).filter(Telemetry.id.in_(telemetry_ids)).delete(synchronize_session=False)
+
+        if anomaly_ids:
+            deleted_anomaly_count = db.query(Anomalies).filter(Anomalies.id.in_(anomaly_ids)).delete(synchronize_session=False)
+
+        db.query(TelemetryAnomaly).delete(synchronize_session=False)
+
+        db.commit()
+
+        return {
+            "message": "All anomalies and linked telemetry deleted successfully",
+            "deleted_links": deleted_link_count,
+            "deleted_telemetry": deleted_telemetry_count,
+            "deleted_anomalies": deleted_anomaly_count
+        }
+
+    except Exception as e:
+        db.rollback()
+        raise HTTPException(status_code=500, detail=f"Failed to clear anomalies: {str(e)}")

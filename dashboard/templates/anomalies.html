@@ -1,8 +1,17 @@
 {% extends "base.html" %}
 {% block content %}
 
-
 <h2>Anomalies</h2>
+
+<div style="display: flex; gap: 12px; margin-bottom: 20px;">
+    <form action="/anomalies/run" method="post">
+        <button type="submit">Run Anomaly Detection</button>
+    </form>
+
+    <form action="/anomalies/clear" method="post" onsubmit="return confirm('Are you sure you want to delete all anomalies and their linked telemetry records?');">
+        <button type="submit">Clear All Anomalies</button>
+    </form>
+</div>
 
 <table>
     <thead>
@@ -21,6 +30,6 @@
         </tr>
       {% endfor %}
     </tbody>
-  </table>
+</table>
 
 {% endblock %}

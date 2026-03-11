@@ -34,7 +34,13 @@ def api_post_with_token(path: str, token: str, payload: dict) -> requests.Respon
         headers={"Authorization": f"Bearer {token}"},
         timeout=10
     )
-
+    
+def api_delete_with_token(path: str, token: str) -> requests.Response:
+    return requests.delete(
+        f"{BASE_URL}{path}",
+        headers={"Authorization": f"Bearer {token}"},
+        timeout=10
+    )
 # checking any point that needs authentication in order to test the token
 def validate_token(token: str) -> bool:
     r = api_get_with_token("/telemetry", token)
@@ -672,17 +678,15 @@ async def logout():
 
 @app.get("/anomalies", response_class=HTMLResponse)
 async def anomalies(request: Request):
-    
     try:
         token = require_auth(request)
     except HTTPException:
         return RedirectResponse(url="/login", status_code=302)
-    
-   
+
     response = api_get_with_token("/anomalies", token)
     if not response.ok:
         raise HTTPException(status_code=response.status_code, detail=response.text)
-    
+
     try:
         anomalies = response.json()
     except ValueError:
@@ -692,36 +696,18 @@ async def anomalies(request: Request):
         )
 
     anomaly_response = []
-    
+
     for a in anomalies:
         if not isinstance(a, dict):
-            raise HTTPException(
-                status_code=500,
-                detail=f"Expected dict row, got {type(a)}: {a}"
-            )
+            raise HTTPException(status_code=500, detail=f"Expected dict row, got {type(a)}: {a}")
 
-        evidence_text = "No evidence provided"
-
-        
-        telemetry_ids = a.get("telemetry_ids")
-        if isinstance(telemetry_ids, list):
-            evidence_text = ", ".join(str(tid) for tid in telemetry_ids) if telemetry_ids else "No linked telemetry"
-
-        
-        elif isinstance(a.get("telemetry"), list):
-            telemetry_list = a.get("telemetry", [])
-            ids = []
-
-            for t in telemetry_list:
-                if isinstance(t, dict) and t.get("id") is not None:
-                    ids.append(str(t.get("id")))
-
-            evidence_text = ", ".join(ids) if ids else "No linked telemetry"
+        telemetry_ids = a.get("telemetry_ids", [])
+        evidence_text = ", ".join(str(tid) for tid in telemetry_ids) if telemetry_ids else "No linked telemetry"
 
         anomaly_response.append(
             {
-                "anomaly_category": a.get("anomaly_type"),
-                "reasoning": a.get("resolution"),
+                "anomaly_category": a.get("anomaly_type", "Unknown"),
+                "reasoning": a.get("resolution", "No resolution provided"),
                 "evidence": evidence_text
             }
         )
@@ -734,6 +720,8 @@ async def anomalies(request: Request):
             "anomaly_response": anomaly_response
         }
     )
+    
+    
     
 @app.get("/register", response_class=HTMLResponse)
 async def register_page(request: Request):
@@ -801,6 +789,8 @@ async def promote_user(request: Request, username: str):
         raise HTTPException(status_code=response.status_code, detail=response.text)
 
     return RedirectResponse(url="/admin_requests", status_code=302)
+
+
 @app.get("/users", response_class=HTMLResponse)
 async def users_page(request: Request):
 
@@ -900,3 +890,247 @@ async def request_admin_page(request: Request):
             "message": None
         }
     )
+    
+def detect_anomalies_from_telemetry(telemetry: list[dict]) -> list[dict]:
+    
+    anomalies = []
+
+    tower_upgrade_counts = {}
+    stage_started = set()
+    stage_ended = set()
+    tower_spawned_by_stage = {}
+
+    for t in telemetry:
+        if not isinstance(t, dict):
+            continue
+
+        telemetry_id = t.get("id")
+        telemetry_type = t.get("telemetry_type")
+        stage_id = t.get("stage_id")
+        data = t.get("data", {})
+
+        if not isinstance(data, dict):
+            data = {}
+
+        if telemetry_type == "stage_start" and stage_id is not None:
+            stage_started.add(stage_id)
+
+        if telemetry_type == "stage_end" and stage_id is not None:
+            stage_ended.add(stage_id)
+
+        if telemetry_type == "tower_spawn":
+            tower_type = data.get("tower_type", "unknown")
+            key = (stage_id, tower_type)
+            tower_spawned_by_stage.setdefault(key, 0)
+            tower_spawned_by_stage[key] += 1
+
+            x = int(data.get("xPos", -1) or -1)
+            y = int(data.get("yPos", -1) or -1)
+
+            if x < 0 or y < 0 or x > 15 or y > 15:
+                anomalies.append(
+                    {
+                        "telemetry_ids": [telemetry_id],
+                        "anomaly_type": "Invalid Tower Position",
+                        "resolution": f"Tower spawned at invalid position ({x}, {y}). Check map boundary validation."
+                    }
+                )
+
+        if telemetry_type == "tower_upgrade":
+            tower_type = data.get("tower_type", "unknown")
+            key = (stage_id, tower_type)
+
+            tower_upgrade_counts.setdefault(key, [])
+            tower_upgrade_counts[key].append(telemetry_id)
+
+            upgrade_level = int(data.get("upgrade_level", 0) or 0)
+
+            if upgrade_level > 5:
+                anomalies.append(
+                    {
+                        "telemetry_ids": [telemetry_id],
+                        "anomaly_type": "Impossible Tower Upgrade Level",
+                        "resolution": f"Tower upgrade level {upgrade_level} exceeds the allowed maximum. Check upgrade cap validation."
+                    }
+                )
+
+            if tower_spawned_by_stage.get(key, 0) == 0:
+                anomalies.append(
+                    {
+                        "telemetry_ids": [telemetry_id],
+                        "anomaly_type": "Tower Upgraded Before Spawn",
+                        "resolution": f"Tower type '{tower_type}' was upgraded in stage {stage_id} before any spawn event was recorded."
+                    }
+                )
+
+        if telemetry_type == "damage_taken":
+            amount = int(data.get("amount", 0) or 0)
+
+            if amount < 0:
+                anomalies.append(
+                    {
+                        "telemetry_ids": [telemetry_id],
+                        "anomaly_type": "Negative Damage Value",
+                        "resolution": f"Damage value {amount} is invalid. Check telemetry logging and combat calculations."
+                    }
+                )
+
+            if amount > 100:
+                anomalies.append(
+                    {
+                        "telemetry_ids": [telemetry_id],
+                        "anomaly_type": "Excessive Damage Taken",
+                        "resolution": f"Damage value {amount} exceeds the expected upper limit. Check enemy damage balancing."
+                    }
+                )
+
+        if telemetry_type == "money_spent":
+            amount = int(data.get("amount", 0) or 0)
+
+            if amount < 0:
+                anomalies.append(
+                    {
+                        "telemetry_ids": [telemetry_id],
+                        "anomaly_type": "Negative Spend Value",
+                        "resolution": f"Money spent value {amount} is invalid. Check economy transaction logging."
+                    }
+                )
+
+            if amount > 10000:
+                anomalies.append(
+                    {
+                        "telemetry_ids": [telemetry_id],
+                        "anomaly_type": "Impossible Money Spend",
+                        "resolution": f"Money spent value {amount} exceeds the allowed threshold. Check economy validation."
+                    }
+                )
+
+        if telemetry_type == "enemy_defeated":
+            enemy_health = int(data.get("enemy_health", 0) or 0)
+
+            if enemy_health <= 0:
+                anomalies.append(
+                    {
+                        "telemetry_ids": [telemetry_id],
+                        "anomaly_type": "Invalid Enemy Health",
+                        "resolution": f"Enemy defeated event recorded with health {enemy_health}. Check enemy state logging."
+                    }
+                )
+
+    for (stage_id, tower_type), telemetry_ids in tower_upgrade_counts.items():
+        if len(telemetry_ids) > 5:
+            anomalies.append(
+                {
+                    "telemetry_ids": telemetry_ids,
+                    "anomaly_type": "Impossible Tower Upgrade Count",
+                    "resolution": f"Tower type '{tower_type}' was upgraded {len(telemetry_ids)} times in stage {stage_id}. Check duplicate upgrade logging or cap enforcement."
+                }
+            )
+
+    for stage_id in stage_ended:
+        if stage_id not in stage_started:
+            linked_ids = [
+                t.get("id")
+                for t in telemetry
+                if isinstance(t, dict)
+                and t.get("stage_id") == stage_id
+                and t.get("telemetry_type") == "stage_end"
+                and t.get("id") is not None
+            ]
+
+            if linked_ids:
+                anomalies.append(
+                    {
+                        "telemetry_ids": linked_ids,
+                        "anomaly_type": "Stage End Without Start",
+                        "resolution": f"Stage {stage_id} has a stage_end event without a matching stage_start."
+                    }
+                )
+
+    results = []
+    seen = set()
+
+    for anomaly in anomalies:
+        key = (
+            anomaly["anomaly_type"],
+            tuple(sorted(anomaly["telemetry_ids"]))
+        )
+        if key not in seen:
+            seen.add(key)
+            results.append(anomaly)
+
+    return results   
+
+
+@app.post("/anomalies/run")
+async def run_anomaly_detection(request: Request):
+    
+    try:
+        token = require_auth(request)
+    except HTTPException:
+        return RedirectResponse(url="/login", status_code=302)
+
+    telemetry_response = api_get_with_token("/telemetry", token)
+    if not telemetry_response.ok:
+        raise HTTPException(status_code=telemetry_response.status_code, detail=telemetry_response.text)
+
+    existing_anomalies_response = api_get_with_token("/anomalies", token)
+   
+    if not existing_anomalies_response.ok:
+        raise HTTPException(status_code=existing_anomalies_response.status_code, detail=existing_anomalies_response.text)
+
+    try:
+        telemetry = telemetry_response.json()
+        existing_anomalies = existing_anomalies_response.json()
+    except ValueError:
+        raise HTTPException(status_code=500, detail="API did not return valid JSON")
+
+
+    if not isinstance(telemetry, list):
+        raise HTTPException(status_code=500, detail="Expected telemetry list from API")
+
+    detected_anomalies = detect_anomalies_from_telemetry(telemetry)
+    existing_keys = set()
+    
+    
+    for a in existing_anomalies:
+        if not isinstance(a, dict):
+            continue
+
+        anomaly_type = a.get("anomaly_type")
+        telemetry_ids = a.get("telemetry_ids", [])
+
+        if isinstance(telemetry_ids, list):
+            existing_keys.add((anomaly_type, tuple(sorted(telemetry_ids))))
+
+    for anomaly in detected_anomalies:
+        key = (anomaly["anomaly_type"], tuple(sorted(anomaly["telemetry_ids"])))
+
+        if key in existing_keys:
+            continue
+
+        post_response = api_post_with_token("/anomalies", token, anomaly)
+
+
+        if not post_response.ok:
+            raise HTTPException(
+                status_code=post_response.status_code,
+                detail=f"Failed to create anomaly: {post_response.text}"
+            )
+
+
+    return RedirectResponse(url="/anomalies", status_code=302) 
+
+@app.post("/anomalies/clear")
+async def clear_anomalies(request: Request):
+    try:
+        token = require_auth(request)
+    except HTTPException:
+        return RedirectResponse(url="/login", status_code=302)
+
+    response = api_delete_with_token("/anomalies/clear-all", token)
+
+    if not response.ok:
+        raise HTTPException(status_code=response.status_code, detail=response.text)
+
+    return RedirectResponse(url="/anomalies", status_code=302)
