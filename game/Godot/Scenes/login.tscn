@@ -62,7 +62,7 @@ grow_horizontal = 2
 grow_vertical = 2
 texture = SubResource("GradientTexture2D_7d012")
 
-[node name="Border" type="MarginContainer" parent="."]
+[node name="LoginScreen" type="MarginContainer" parent="."]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -74,54 +74,58 @@ theme_override_constants/margin_top = 70
 theme_override_constants/margin_right = 70
 theme_override_constants/margin_bottom = 70
 
-[node name="VBoxContainer" type="VBoxContainer" parent="Border"]
+[node name="VBoxContainer" type="VBoxContainer" parent="LoginScreen"]
 custom_minimum_size = Vector2(500, 0)
 layout_mode = 2
 size_flags_horizontal = 0
 theme_override_constants/separation = 5
 
-[node name="MainMenuText" type="Label" parent="Border/VBoxContainer"]
+[node name="MainMenuText" type="Label" parent="LoginScreen/VBoxContainer"]
 layout_mode = 2
 theme_override_font_sizes/font_size = 64
 text = "Login"
 horizontal_alignment = 1
 
-[node name="Spacing" type="Control" parent="Border/VBoxContainer"]
+[node name="Spacing" type="Control" parent="LoginScreen/VBoxContainer"]
 custom_minimum_size = Vector2(0, 25)
 layout_mode = 2
 
-[node name="UsernameLabel" type="Label" parent="Border/VBoxContainer"]
+[node name="UsernameLabel" type="Label" parent="LoginScreen/VBoxContainer"]
 layout_mode = 2
 text = "Username:"
 
-[node name="UsernameLine" type="LineEdit" parent="Border/VBoxContainer"]
+[node name="UsernameLine" type="LineEdit" parent="LoginScreen/VBoxContainer"]
 layout_mode = 2
 theme_override_constants/outline_size = 1
 theme_override_styles/normal = SubResource("StyleBoxFlat_5cd0j")
 
-[node name="Spacing3" type="Control" parent="Border/VBoxContainer"]
+[node name="Spacing3" type="Control" parent="LoginScreen/VBoxContainer"]
 custom_minimum_size = Vector2(0, 20)
 layout_mode = 2
 
-[node name="PasswordLabel" type="Label" parent="Border/VBoxContainer"]
+[node name="PasswordLabel" type="Label" parent="LoginScreen/VBoxContainer"]
 layout_mode = 2
 text = "Password:"
 
-[node name="PasswordLine" type="LineEdit" parent="Border/VBoxContainer"]
+[node name="PasswordLine" type="LineEdit" parent="LoginScreen/VBoxContainer"]
 layout_mode = 2
 theme_override_constants/outline_size = 1
 theme_override_styles/normal = SubResource("StyleBoxFlat_5cd0j")
+secret = true
 
-[node name="Spacing2" type="Control" parent="Border/VBoxContainer"]
+[node name="Spacing2" type="Control" parent="LoginScreen/VBoxContainer"]
 custom_minimum_size = Vector2(0, 20)
 layout_mode = 2
 
-[node name="MarginContainer" type="MarginContainer" parent="Border/VBoxContainer"]
+[node name="Buttons" type="HBoxContainer" parent="LoginScreen/VBoxContainer"]
+layout_mode = 2
+
+[node name="MarginContainer" type="MarginContainer" parent="LoginScreen/VBoxContainer/Buttons"]
 layout_mode = 2
 size_flags_horizontal = 0
 theme_override_constants/margin_left = 30
 
-[node name="LoginButton" type="Button" parent="Border/VBoxContainer/MarginContainer"]
+[node name="LoginButton" type="Button" parent="LoginScreen/VBoxContainer/Buttons/MarginContainer"]
 custom_minimum_size = Vector2(200, 40)
 layout_mode = 2
 size_flags_horizontal = 4
@@ -130,13 +134,54 @@ theme_override_styles/hover = SubResource("StyleBoxFlat_hbxdl")
 theme_override_styles/normal = SubResource("StyleBoxFlat_fxa43")
 text = "Login"
 
-[node name="MarginContainer2" type="MarginContainer" parent="Border/VBoxContainer"]
+[node name="MarginContainer2" type="MarginContainer" parent="LoginScreen/VBoxContainer/Buttons"]
+layout_mode = 2
+size_flags_horizontal = 0
+theme_override_constants/margin_left = 30
+
+[node name="RegisterButton" type="Button" parent="LoginScreen/VBoxContainer/Buttons/MarginContainer2"]
+custom_minimum_size = Vector2(200, 40)
+layout_mode = 2
+size_flags_horizontal = 4
+size_flags_vertical = 4
+theme_override_styles/hover = SubResource("StyleBoxFlat_hbxdl")
+theme_override_styles/normal = SubResource("StyleBoxFlat_fxa43")
+text = "Register"
+
+[node name="MarginContainer2" type="MarginContainer" parent="LoginScreen/VBoxContainer"]
 layout_mode = 2
 theme_override_constants/margin_left = 30
 
-[node name="Message" type="Label" parent="Border/VBoxContainer/MarginContainer2"]
+[node name="Message" type="Label" parent="LoginScreen/VBoxContainer/MarginContainer2"]
 layout_mode = 2
-theme_override_colors/font_color = Color(0.545098, 0, 0.137255, 1)
+theme_override_colors/font_color = Color(1, 1, 1, 1)
 theme_override_font_sizes/font_size = 12
 
-[connection signal="pressed" from="Border/VBoxContainer/MarginContainer/LoginButton" to="." method="_on_login_button_pressed"]
+[node name="WelcomeText" type="Label" parent="."]
+offset_left = 767.0
+offset_top = 4.0
+offset_right = 1249.0
+offset_bottom = 183.0
+theme_override_font_sizes/font_size = 64
+text = "Welcome to Shapes TD 26!"
+horizontal_alignment = 1
+autowrap_mode = 2
+
+[node name="DisclaimerText" type="Label" parent="."]
+offset_left = 769.0
+offset_top = 195.0
+offset_right = 1251.0
+offset_bottom = 672.0
+theme_override_font_sizes/font_size = 18
+text = "DISCLAIMER:
+
+This game collects telemetry data related to the actions that you take in the game, such as placing towers and defeating enemies, in order to facilitate the balancing of the game. This data is linked to your username. None of this data is sold to any outside parties and none of it is used for tracking purposes.
+
+Telemetry collection is enabled by default. You can disable any future collection in settings found in the main menu once logged in. You can also delete all data related to you and your account in this menu too.
+
+Sincerely - UpLift Inc."
+horizontal_alignment = 1
+autowrap_mode = 2
+
+[connection signal="pressed" from="LoginScreen/VBoxContainer/Buttons/MarginContainer/LoginButton" to="." method="_on_login_button_pressed"]
+[connection signal="pressed" from="LoginScreen/VBoxContainer/Buttons/MarginContainer2/RegisterButton" to="." method="_on_register_button_pressed"]

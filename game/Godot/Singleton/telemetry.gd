@@ -2,8 +2,8 @@ extends Node
 
 var base_url: String = ""
 
-var username: String = "testplayer"
-var password: String = "playerpass"
+var username: String
+var password: String
 
 var JWT: String
 var user_id: int
@@ -33,7 +33,7 @@ func get_full_url(path: String) -> String:
 		return ""
 	return base_url + "/api" + path
 
-func register(username_input: String, password_input: String) -> Dictionary:
+func register(username_input: String, password_input: String):
 	var url = get_full_url("/auth/register")
 	var headers = ["Content-Type: application/json"]
 	var body = JSON.stringify({"username": username_input, "password": password_input})
@@ -49,10 +49,11 @@ func register(username_input: String, password_input: String) -> Dictionary:
 	var response_body = result[3].get_string_from_utf8()
 	
 	if response_code == 200 or response_code == 201:
-		return JSON.parse_string(response_body)
+		return "OK"
+	elif response_code == 400:
+		return "EXISTS"
 	else:
-		print("Register Error ", response_code, ": ", response_body)
-		return {}
+		return "ERR"
 
 func authenticate(username_input: String, password_input: String):
 	var url = get_full_url("/auth/token")
@@ -73,9 +74,20 @@ func authenticate(username_input: String, password_input: String):
 		var parsed_response = JSON.parse_string(response_body)
 		JWT = parsed_response.get("access_token")
 		user_id = parsed_response.get("user_id")
+		username = username_input
+		password = password_input
+		return "OK"
+	elif response_code == 401:
+		return "WRONG"
 	else:
-		print("Auth Error ", response_code, ": ", response_body)
+		return "ERR"
 
+func logout():
+	username = ""
+	password = ""
+	JWT = ""
+	user_id = -1
+	
 func create_telemetry(telemetry_data):
 	# Send telemetry data to the database
 	if not JWT:

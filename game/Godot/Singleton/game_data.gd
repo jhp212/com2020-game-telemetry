@@ -19,7 +19,7 @@ var triangle_radius_multiplier := 1.0
 var star_radius_multiplier := 1.0
 
 
-func _ready() -> void:
+func update_data() -> void:
 	# Get damage multiplier from database
 	var json = await Telemetry.get_parameter("enemy_damage_multiplier")
 	enemy_damage_multiplier = json[0]["value"]
@@ -61,23 +61,13 @@ func _ready() -> void:
 		}
 	}
 
-	tower_data = {
-		"triangle_stock": {
-			"damage": 20,
-			"rof": 3,
-			"range": 350 * triangle_radius_multiplier,
-			"cost": 250},
-		"square_stock": {
-			"damage": 35,
-			"rof": 1,
-			"range": 10000,
-			"cost": 550},
-		"star_stock": {
-			"damage": 5,
-			"rof": 1.5,
-			"range": 400 * star_radius_multiplier,
-			"cost": 550}
-	}
+	tower_data["triangle_stock"]["range"] = 350 * triangle_radius_multiplier
+	tower_data["triangle_t_2"]["range"] = 350 * triangle_radius_multiplier
+	tower_data["triangle_t_3"]["range"] = 350 * triangle_radius_multiplier
+	tower_data["star_stock"]["range"] = 400 * star_radius_multiplier
+	tower_data["star_t_2"]["range"] = 500 * star_radius_multiplier
+	tower_data["star_t_3"]["range"] = 600 * star_radius_multiplier
+	
 #### tracking number of enemies ####
 # Number of enemies currently in game
 var enemy_amount = 0
@@ -140,7 +130,7 @@ var tower_data = {
 	"triangle_stock": {
 		"damage": 20,
 		"rof": 3,
-		"range": 350 * triangle_radius_multiplier,
+		"range": 350,
 		"cost": 250},
 	"triangle_t_2": {
 		"damage": 40,
@@ -166,7 +156,7 @@ var tower_data = {
 	"star_stock": {
 		"damage": 5,
 		"rof": 1.5,
-		"range": 400 * star_radius_multiplier,
+		"range": 400,
 		"cost": 550},
 	"star_t_2": {
 		"damage": 10,
@@ -232,21 +222,21 @@ var tower_upgrades = {
 var enemy_data = {
 	"medium_circle": {
 		"health": 50,
-		"speed": 60 * enemy_speed_multiplier,
-		"cash": 100 * money_earned_multiplier,
-		"damage": 10 * enemy_damage_multiplier
+		"speed": 60,
+		"cash": 100,
+		"damage": 10
 	},
 	"large_circle": {
 		"health": 170,
-		"speed": 30 * enemy_speed_multiplier,
-		"cash": 250 * money_earned_multiplier,
-		"damage": 20 * enemy_damage_multiplier
+		"speed": 30,
+		"cash": 250,
+		"damage": 20
 	},
 	"small_circle": {
 		"health": 40,
-		"speed": 80 * enemy_speed_multiplier,
-		"cash": 80 * money_earned_multiplier,
-		"damage": 5 * enemy_damage_multiplier
+		"speed": 80,
+		"cash": 80,
+		"damage": 5
 	}
 }
 

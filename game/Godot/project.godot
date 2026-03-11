@@ -11,7 +11,7 @@ config_version=5
 [application]
 
 config/name="tower_defense_project"
-run/main_scene="uid://djepx4o8k18vd"
+run/main_scene="uid://cmffkw8gl5q1u"
 config/features=PackedStringArray("4.4", "Mobile")
 config/icon="res://icon.svg"
 

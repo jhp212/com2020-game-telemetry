@@ -3,7 +3,7 @@ try:
 	from simulation.path_godot_parser import path_interpreter
 	from simulation.base_statistics_godot_parser import player_base_health, player_base_money, enemy_data, tower_data,level_data
 	from simulation.vector import Vector
-except ImportError:
+except (ModuleNotFoundError, ImportError):
 	from path_godot_parser import path_interpreter
 	from base_statistics_godot_parser import player_base_health, player_base_money, enemy_data, tower_data,level_data
 	from vector import Vector

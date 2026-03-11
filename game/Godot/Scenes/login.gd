@@ -1,29 +1,48 @@
 extends Control
 
-@onready var username_line: LineEdit = $Border/VBoxContainer/UsernameLine
-@onready var password_line: LineEdit = $Border/VBoxContainer/PasswordLine
-@onready var message: Label = $Border/VBoxContainer/MarginContainer2/Message
+@onready var username_line: LineEdit = $LoginScreen/VBoxContainer/UsernameLine
+@onready var password_line: LineEdit = $LoginScreen/VBoxContainer/PasswordLine
+@onready var message: Label = $LoginScreen/VBoxContainer/MarginContainer2/Message
 
 
 func _on_login_button_pressed() -> void:
 	var username = username_line.text
 	var password = password_line.text
 	
-	var data = {"username": username, "password": password}
+	if username.length() < 1:
+		message.text = "Please enter a username!"
+		return
+	if password.length() < 1:
+		message.text = "Please enter a password!"
+		return
+		
+	var result = await Telemetry.authenticate(username, password)
 	
-	## Send Post request
+	if result == "OK":
+		GameData.update_data()
+		get_tree().change_scene_to_file("res://Scenes/scene_handler.tscn")
+	elif result == "WRONG":
+		message.text = "Username or Password is incorrect"
+		password_line.text = ""
+	elif result == "ERR":
+		message.text = "Server Error, please try again later"
 
-func on_post_request_complete(result):
-	pass
+func _on_register_button_pressed() -> void:
+	var username = username_line.text
+	var password = password_line.text
 	
-	# Login ok, switch to main menu
-	#if result["status"] == "success":
-		#get_trree().change_scene_to_file("res://Scenes/scene_handler.tscn")
+	if username.length() < 1:
+		message.text = "Please enter a username!"
+		return
+	if password.length() < 1:
+		message.text = "Please enter a password!"
+		return
+		
+	var result = await Telemetry.register(username, password)
 	
-	# No result
-	#if result == null:
-		# message_label.text = "Server error. Try again."
-	
-	# Login failed
-	#else:
-		# message_label.text = "Invalid username or password! Try again."
+	if result == "OK":
+		message.text = "Registered Successfully! Please log in"
+	elif result == "EXISTS":
+		message.text = "Username already taken."
+	elif result == "ERR":
+		message.text = "Server Error, please try again later"
