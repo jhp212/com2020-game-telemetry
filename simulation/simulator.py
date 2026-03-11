@@ -104,7 +104,7 @@ def simulation(test_count, level):
 		# Third: this constant rate of fire will deal an average amount of damage for the duration the enemy is within line of fire.
 		# Fourth: if you can place a tower, you will place a tower.
 		while base_money + earnable > 0:
-			tower = random.choice(list(tower_data.keys()))
+			tower = random.choice(["triangle_stock","square_stock","star_stock"])
 			#tower = 'triangle_stock'
 			tower_queue.append(tower)
 			base_money -= tower_data[tower]['cost']
