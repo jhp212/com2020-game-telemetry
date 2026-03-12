@@ -111,3 +111,6 @@ func upgrade(tower):
 		queue_free()
 		
 		return upgraded
+
+func sold():
+	self.queue_free()

@@ -58,7 +58,7 @@ func apply_recoil():
 	# Small movement backwards when it shoots
 	var body := $Body
 	var recoil_distance := 8.0
-	var recoil_time := 0.04
+	var recoil_time := 0.03
 
 	var recoil_dir = -body.transform.x
 	var start_pos = body.position
@@ -71,6 +71,10 @@ func apply_recoil():
 	tween.tween_property(body, "position", start_pos, recoil_time)
 	
 	# Second jolt
+	tween.tween_property(body, "position", recoil_pos, recoil_time)
+	tween.tween_property(body, "position", start_pos, recoil_time)
+	
+	# Third jolt
 	tween.tween_property(body, "position", recoil_pos, recoil_time)
 	tween.tween_property(body, "position", start_pos, recoil_time)
 
@@ -97,3 +101,6 @@ func _on_click_area_input_event(viewport,event, shape_idx):
 	# Check if the tower has been clicked and send signal
 	if event is InputEventMouseButton and event.pressed and event.button_index == MOUSE_BUTTON_LEFT:
 		tower_clicked.emit(self)
+
+func sold():
+	self.queue_free()
