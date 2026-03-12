@@ -1,0 +1,54 @@
+[gd_scene load_steps=8 format=3 uid="uid://cq3vhj2v3dody"]
+
+[ext_resource type="Script" uid="uid://kqnou7l743sb" path="res://Scenes/Enemies/big_boss_circle.gd" id="1_c503f"]
+[ext_resource type="Texture2D" uid="uid://cv4rseut85n1" path="res://Assets/Animations/EnemyDeathLarge.png" id="2_c503f"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_dd648"]
+atlas = ExtResource("2_c503f")
+region = Rect2(0, 0, 160, 160)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_eloe0"]
+atlas = ExtResource("2_c503f")
+region = Rect2(160, 0, 160, 160)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_ugmj2"]
+atlas = ExtResource("2_c503f")
+region = Rect2(320, 0, 160, 160)
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_d7ivg"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_dd648")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_eloe0")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_ugmj2")
+}],
+"loop": false,
+"name": &"death",
+"speed": 12.0
+}, {
+"frames": [],
+"loop": true,
+"name": &"default",
+"speed": 5.0
+}]
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_c503f"]
+radius = 79.0
+
+[node name="BigBossCircle" type="PathFollow2D" groups=["enemies"]]
+script = ExtResource("1_c503f")
+
+[node name="Body" type="CharacterBody2D" parent="."]
+
+[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="Body"]
+sprite_frames = SubResource("SpriteFrames_d7ivg")
+animation = &"death"
+autoplay = "default"
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Body"]
+shape = SubResource("CircleShape2D_c503f")
