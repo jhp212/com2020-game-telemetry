@@ -117,6 +117,73 @@ async def home(request: Request):
     stage_finished_values = [min(stage_start_counts[s], stage_end_counts.get(s, 0)) for s in stage_ids]
     
     
+    
+    # Enemy difficulty heatmap graph
+    
+    stage_metrics = {}
+
+    for t in telemetry:
+        if not isinstance(t, dict):
+            continue
+
+        if t.get("telemetry_type") != "stage_end":
+            continue
+
+        stage_id = t.get("stage_id")
+        data = t.get("data", {})
+
+        if stage_id is None or not isinstance(data, dict):
+            continue
+
+        if stage_id not in stage_metrics:
+            stage_metrics[stage_id] = {
+                "damage_taken": [],
+                "enemy_defeated": [],
+                "tower_upgrade": [],
+                "money_spent": []
+            }
+
+        stage_metrics[stage_id]["damage_taken"].append(int(data.get("damage_taken", 0) or 0))
+        stage_metrics[stage_id]["enemy_defeated"].append(int(data.get("enemy_defeated", 0) or 0))
+        stage_metrics[stage_id]["tower_upgrade"].append(int(data.get("tower_upgrade", 0) or 0))
+        stage_metrics[stage_id]["money_spent"].append(int(data.get("money_spent", 0) or 0))
+
+    heatmap_stage_labels = sorted(stage_metrics.keys())
+    heatmap_metric_labels = ["Damage Taken", "Enemies Defeated", "Tower Upgrades"]
+
+    heatmap_data = []
+
+    for x_index, stage_id in enumerate(heatmap_stage_labels):
+        metrics = stage_metrics[stage_id]
+
+        avg_damage = sum(metrics["damage_taken"]) / len(metrics["damage_taken"]) if metrics["damage_taken"] else 0
+        avg_enemies = sum(metrics["enemy_defeated"]) / len(metrics["enemy_defeated"]) if metrics["enemy_defeated"] else 0
+        avg_upgrades = sum(metrics["tower_upgrade"]) / len(metrics["tower_upgrade"]) if metrics["tower_upgrade"] else 0
+
+        heatmap_data.append({"x": stage_id, "y": "Damage Taken", "v": round(avg_damage, 2)})
+        heatmap_data.append({"x": stage_id, "y": "Enemies Defeated", "v": round(avg_enemies, 2)})
+        heatmap_data.append({"x": stage_id, "y": "Tower Upgrades", "v": round(avg_upgrades, 2)})
+
+   
+    # Economy chart 
+   
+    ENEMY_REWARD = 200  
+
+    economy_labels = []
+    avg_money_spent_values = []
+    est_money_earned_values = []
+
+    for stage_id in heatmap_stage_labels:
+        metrics = stage_metrics[stage_id]
+
+        avg_spent = sum(metrics["money_spent"]) / len(metrics["money_spent"]) if metrics["money_spent"] else 0
+        avg_enemies = sum(metrics["enemy_defeated"]) / len(metrics["enemy_defeated"]) if metrics["enemy_defeated"] else 0
+        est_earned = avg_enemies * ENEMY_REWARD
+
+        economy_labels.append(stage_id)
+        avg_money_spent_values.append(round(avg_spent, 2))
+        est_money_earned_values.append(round(est_earned, 2))
+    
     return templates.TemplateResponse(
         "home.html",
         {
@@ -133,7 +200,15 @@ async def home(request: Request):
             
             "stage_id_labels_json": json.dumps(stage_ids),
             "stage_started_json": json.dumps(stage_started_values),
-            "stage_finished_json": json.dumps(stage_finished_values)
+            "stage_finished_json": json.dumps(stage_finished_values),
+            
+            "heatmap_stage_labels_json": json.dumps(heatmap_stage_labels),
+            "heatmap_metric_labels_json": json.dumps(heatmap_metric_labels),
+            "heatmap_data_json": json.dumps(heatmap_data),
+
+            "economy_labels_json": json.dumps(economy_labels),
+            "avg_money_spent_json": json.dumps(avg_money_spent_values),
+            "est_money_earned_json": json.dumps(est_money_earned_values)
         }
     )
 
