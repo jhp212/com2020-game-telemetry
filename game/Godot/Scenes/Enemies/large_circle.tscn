@@ -1,7 +1,72 @@
-[gd_scene load_steps=4 format=3 uid="uid://cnm86pw3lbxqn"]
+[gd_scene load_steps=12 format=3 uid="uid://cnm86pw3lbxqn"]
 
 [ext_resource type="Script" uid="uid://cuj5w1rffpwss" path="res://Scenes/Enemies/large_circle.gd" id="1_chxm6"]
-[ext_resource type="Texture2D" uid="uid://weftcg2aqtbe" path="res://Assets/Towers/Circle - Large.png" id="2_63i74"]
+[ext_resource type="Texture2D" uid="uid://dv4mbtofvn8ko" path="res://Assets/Enemies/25%CircleLarge.png" id="2_ntr0v"]
+[ext_resource type="Texture2D" uid="uid://67o7qcia62lo" path="res://Assets/Enemies/50%CircleLarge.png" id="3_otd83"]
+[ext_resource type="Texture2D" uid="uid://b7smdmeb408vr" path="res://Assets/Enemies/75%CircleLarge.png" id="4_t4woj"]
+[ext_resource type="Texture2D" uid="uid://cv4rseut85n1" path="res://Assets/Animations/EnemyDeathLarge.png" id="5_crmqf"]
+[ext_resource type="Texture2D" uid="uid://dxw64gsrqt1ho" path="res://Assets/Enemies/CircleLarge.png" id="6_q1gu5"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_j2p31"]
+atlas = ExtResource("5_crmqf")
+region = Rect2(0, 0, 160, 160)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_2ila4"]
+atlas = ExtResource("5_crmqf")
+region = Rect2(160, 0, 160, 160)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_8gk3f"]
+atlas = ExtResource("5_crmqf")
+region = Rect2(320, 0, 160, 160)
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_aw1fj"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("2_ntr0v")
+}],
+"loop": true,
+"name": &"25%health",
+"speed": 5.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("3_otd83")
+}],
+"loop": true,
+"name": &"50%health",
+"speed": 5.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("4_t4woj")
+}],
+"loop": true,
+"name": &"75%health",
+"speed": 5.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_j2p31")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_2ila4")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_8gk3f")
+}],
+"loop": false,
+"name": &"death",
+"speed": 12.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("6_q1gu5")
+}],
+"loop": true,
+"name": &"default",
+"speed": 5.0
+}]
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_c5et0"]
 radius = 40.0125
@@ -12,8 +77,10 @@ script = ExtResource("1_chxm6")
 
 [node name="Body" type="CharacterBody2D" parent="."]
 
-[node name="Sprite2D" type="Sprite2D" parent="Body"]
-texture = ExtResource("2_63i74")
+[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="Body"]
+sprite_frames = SubResource("SpriteFrames_aw1fj")
+animation = &"75%health"
+autoplay = "default"
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="Body"]
 shape = SubResource("CircleShape2D_c5et0")

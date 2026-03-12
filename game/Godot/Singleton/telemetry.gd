@@ -169,7 +169,7 @@ func create_telemetry(telemetry_data):
 		print("Telemetry Error ", response_code, ": ", response_body)
 		return null
 
-func get_parameter(parameter_name):
+func get_parameter(parameter_name, default_value := 1.0):
 	# Acquire parameter from the database
 	if not JWT:
 		print("Not Logged In")
@@ -187,7 +187,7 @@ func get_parameter(parameter_name):
 	if error != OK:
 		print("Error making request to: " + url)
 		http_request.queue_free() # Clean up early exit
-		return null
+		return default_value
 		
 	var result = await http_request.request_completed
 	http_request.queue_free()
@@ -200,13 +200,13 @@ func get_parameter(parameter_name):
 		if username and password:
 			await authenticate(username, password)
 			return await get_parameter(parameter_name)
-		return null
+		return default_value
 		
 	if response_code == 200:
 		return JSON.parse_string(response_body)
 	else:
 		print("Parameter Error ", response_code, ": ", response_body)
-		return null
+		return default_value
 	
 func log_event(event_type: String, payload := {}):
 	# Create a telemetry event

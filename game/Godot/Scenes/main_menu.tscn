@@ -1,4 +1,4 @@
-[gd_scene load_steps=6 format=3 uid="uid://ceqwvifw0ojeu"]
+[gd_scene load_steps=8 format=3 uid="uid://ceqwvifw0ojeu"]
 
 [ext_resource type="Script" uid="uid://dc61sudfhqrl6" path="res://Scenes/main_menu.gd" id="1_28flt"]
 [ext_resource type="Texture2D" uid="uid://cirl1dvpj7d11" path="res://Assets/UI/cog.png" id="2_48xlc"]
@@ -15,6 +15,19 @@ height = 720
 fill = 1
 fill_from = Vector2(2, 0.5)
 fill_to = Vector2(0.3, 0.5)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_erv1k"]
+bg_color = Color(0.6, 0.6, 0.6, 0)
+border_width_left = 1
+border_width_top = 1
+border_width_right = 1
+border_width_bottom = 1
+corner_radius_top_left = 2
+corner_radius_top_right = 2
+corner_radius_bottom_right = 2
+corner_radius_bottom_left = 2
+
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_erv1k"]
 
 [node name="MainMenu" type="Control"]
 layout_mode = 3
@@ -69,6 +82,7 @@ layout_mode = 2
 size_flags_horizontal = 4
 theme_override_colors/font_color = Color(1, 1, 1, 1)
 theme_override_font_sizes/font_size = 24
+theme_override_styles/hover = SubResource("StyleBoxFlat_erv1k")
 text = "Play"
 
 [node name="LevelsButton" type="Button" parent="LevelSelect/VBoxContainer"]
@@ -77,7 +91,91 @@ layout_mode = 2
 size_flags_horizontal = 4
 theme_override_colors/font_color = Color(1, 1, 1, 1)
 theme_override_font_sizes/font_size = 24
+theme_override_styles/hover = SubResource("StyleBoxFlat_erv1k")
 text = "Levels"
+
+[node name="DifficultyButton" type="Button" parent="LevelSelect/VBoxContainer"]
+custom_minimum_size = Vector2(300, 70)
+layout_mode = 2
+size_flags_horizontal = 4
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_styles/hover = SubResource("StyleBoxFlat_erv1k")
+
+[node name="HBoxContainer" type="HBoxContainer" parent="LevelSelect/VBoxContainer/DifficultyButton"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="Label" type="Label" parent="LevelSelect/VBoxContainer/DifficultyButton/HBoxContainer"]
+custom_minimum_size = Vector2(150, 0)
+layout_mode = 2
+size_flags_horizontal = 4
+size_flags_vertical = 1
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_font_sizes/font_size = 24
+text = "Difficulty:"
+horizontal_alignment = 2
+vertical_alignment = 1
+
+[node name="SelectedDifficulty" type="Label" parent="LevelSelect/VBoxContainer/DifficultyButton/HBoxContainer"]
+custom_minimum_size = Vector2(150, 0)
+layout_mode = 2
+size_flags_horizontal = 4
+size_flags_vertical = 1
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_font_sizes/font_size = 24
+text = "Easy"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="DifficultyPanel" type="Panel" parent="LevelSelect/VBoxContainer"]
+visible = false
+custom_minimum_size = Vector2(300, 70)
+layout_mode = 2
+size_flags_horizontal = 4
+size_flags_vertical = 4
+theme_override_styles/panel = SubResource("StyleBoxEmpty_erv1k")
+
+[node name="HBoxContainer" type="HBoxContainer" parent="LevelSelect/VBoxContainer/DifficultyPanel"]
+layout_mode = 1
+anchors_preset = 13
+anchor_left = 0.5
+anchor_right = 0.5
+anchor_bottom = 1.0
+offset_left = -146.5
+offset_right = 146.5
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="EasyButton" type="Button" parent="LevelSelect/VBoxContainer/DifficultyPanel/HBoxContainer"]
+custom_minimum_size = Vector2(95, 0)
+layout_mode = 2
+size_flags_horizontal = 4
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_font_sizes/font_size = 12
+theme_override_styles/hover = SubResource("StyleBoxFlat_erv1k")
+text = "Easy"
+
+[node name="MediumButton" type="Button" parent="LevelSelect/VBoxContainer/DifficultyPanel/HBoxContainer"]
+custom_minimum_size = Vector2(95, 0)
+layout_mode = 2
+size_flags_horizontal = 4
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_font_sizes/font_size = 12
+theme_override_styles/hover = SubResource("StyleBoxFlat_erv1k")
+text = "Medium"
+
+[node name="HardButton" type="Button" parent="LevelSelect/VBoxContainer/DifficultyPanel/HBoxContainer"]
+custom_minimum_size = Vector2(95, 0)
+layout_mode = 2
+size_flags_horizontal = 4
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_font_sizes/font_size = 12
+theme_override_styles/hover = SubResource("StyleBoxFlat_erv1k")
+text = "Hard"
 
 [node name="LogoutButton" type="Button" parent="."]
 custom_minimum_size = Vector2(300, 70)
@@ -127,5 +225,3 @@ theme_override_colors/font_color = Color(1, 1, 1, 1)
 theme_override_font_sizes/font_size = 24
 text = "Delete Data"
 autowrap_mode = 3
-
-[connection signal="pressed" from="LevelSelect/VBoxContainer/PlayButton" to="." method="_on_play_button_pressed"]

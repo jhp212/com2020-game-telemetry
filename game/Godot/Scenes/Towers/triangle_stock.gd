@@ -58,7 +58,7 @@ func apply_recoil():
 	# Small movement backwards when it shoots
 	var body := $Body
 	var recoil_distance := 8.0
-	var recoil_time := 0.04
+	var recoil_time := 0.06
 
 	var recoil_dir = -body.transform.x
 	var start_pos = body.position
@@ -105,3 +105,6 @@ func upgrade(tower):
 		queue_free()
 		
 		return upgraded
+
+func sold():
+	self.queue_free()

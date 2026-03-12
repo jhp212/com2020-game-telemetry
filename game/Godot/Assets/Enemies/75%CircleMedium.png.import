@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://bu0o4gfb46p41"
-path="res://.godot/imported/Circle - Small.png-5378bccd85eb409dbc615512f5a0a2b5.ctex"
+uid="uid://dxl8167liv670"
+path="res://.godot/imported/75%CircleMedium.png-1911b9c282453554fec23413311691a8.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://Assets/Enemies/Circle - Small.png"
-dest_files=["res://.godot/imported/Circle - Small.png-5378bccd85eb409dbc615512f5a0a2b5.ctex"]
+source_file="res://Assets/Enemies/75%CircleMedium.png"
+dest_files=["res://.godot/imported/75%CircleMedium.png-1911b9c282453554fec23413311691a8.ctex"]
 
 [params]
 

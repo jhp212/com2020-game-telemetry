@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://bsmbkycrmjpea"
-path="res://.godot/imported/Circle - Large.png-93782e275a396002e669721d6ce2d1d1.ctex"
+uid="uid://dv4mbtofvn8ko"
+path="res://.godot/imported/25%CircleLarge.png-3312bc2505d760c0da334c6bd30c6950.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://Assets/Enemies/Circle - Large.png"
-dest_files=["res://.godot/imported/Circle - Large.png-93782e275a396002e669721d6ce2d1d1.ctex"]
+source_file="res://Assets/Enemies/25%CircleLarge.png"
+dest_files=["res://.godot/imported/25%CircleLarge.png-3312bc2505d760c0da334c6bd30c6950.ctex"]
 
 [params]
 

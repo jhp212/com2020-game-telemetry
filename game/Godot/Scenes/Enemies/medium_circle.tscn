@@ -1,7 +1,72 @@
-[gd_scene load_steps=4 format=3 uid="uid://cjvus6awcy4fx"]
+[gd_scene load_steps=12 format=3 uid="uid://cjvus6awcy4fx"]
 
 [ext_resource type="Script" uid="uid://b60sw4o57bejr" path="res://Scenes/Enemies/medium_circle.gd" id="1_8q8hi"]
-[ext_resource type="Texture2D" uid="uid://cffhrcyqbd3c" path="res://Assets/Enemies/Circle - Medium.png" id="1_oixid"]
+[ext_resource type="Texture2D" uid="uid://donhtt1knfnf0" path="res://Assets/Enemies/25%CircleMedium.png" id="2_l3kuf"]
+[ext_resource type="Texture2D" uid="uid://bnfvx4gck1j2j" path="res://Assets/Enemies/50%CircleMedium.png" id="3_85skx"]
+[ext_resource type="Texture2D" uid="uid://dxl8167liv670" path="res://Assets/Enemies/75%CircleMedium.png" id="4_02by8"]
+[ext_resource type="Texture2D" uid="uid://w5jmqkbyd1ys" path="res://Assets/Animations/EnemyDeath.png" id="5_2n83m"]
+[ext_resource type="Texture2D" uid="uid://dl7yy7b8jo86f" path="res://Assets/Enemies/CircleMedium.png" id="6_bwxcr"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_ogldl"]
+atlas = ExtResource("5_2n83m")
+region = Rect2(0, 0, 110, 110)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_q5h6v"]
+atlas = ExtResource("5_2n83m")
+region = Rect2(110, 0, 110, 110)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_4rhq1"]
+atlas = ExtResource("5_2n83m")
+region = Rect2(220, 0, 110, 110)
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_85skx"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("2_l3kuf")
+}],
+"loop": true,
+"name": &"25%health",
+"speed": 5.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("3_85skx")
+}],
+"loop": true,
+"name": &"50%health",
+"speed": 5.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("4_02by8")
+}],
+"loop": true,
+"name": &"75%health",
+"speed": 5.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_ogldl")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_q5h6v")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_4rhq1")
+}],
+"loop": false,
+"name": &"death",
+"speed": 12.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("6_bwxcr")
+}],
+"loop": true,
+"name": &"fullhealth",
+"speed": 5.0
+}]
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_8q8hi"]
 radius = 32.249
@@ -12,8 +77,10 @@ script = ExtResource("1_8q8hi")
 
 [node name="Body" type="CharacterBody2D" parent="."]
 
-[node name="Sprite2D" type="Sprite2D" parent="Body"]
-texture = ExtResource("1_oixid")
+[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="Body"]
+sprite_frames = SubResource("SpriteFrames_85skx")
+animation = &"death"
+autoplay = "fullhealth"
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="Body"]
 shape = SubResource("CircleShape2D_8q8hi")

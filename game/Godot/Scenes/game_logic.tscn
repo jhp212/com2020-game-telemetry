@@ -1,4 +1,4 @@
-[gd_scene load_steps=18 format=3 uid="uid://bw36ka3wx3gww"]
+[gd_scene load_steps=27 format=3 uid="uid://bw36ka3wx3gww"]
 
 [ext_resource type="Script" uid="uid://s0xabfgj4tei" path="res://Scenes/game_logic.gd" id="1_qxrlw"]
 [ext_resource type="Script" uid="uid://dkaot6l8a7grx" path="res://Scenes/ui.gd" id="3_3dryh"]
@@ -9,6 +9,7 @@
 [ext_resource type="Texture2D" uid="uid://cpc3vvvimuyld" path="res://Assets/UI/play_button.png" id="7_q556h"]
 [ext_resource type="Texture2D" uid="uid://cuu1dauurthu4" path="res://Assets/UI/pause_button.png" id="8_3jyqh"]
 [ext_resource type="Script" uid="uid://bfsr4j3mx585x" path="res://Scenes/tower_panel.gd" id="9_3jyqh"]
+[ext_resource type="Texture2D" uid="uid://byiyc4ajotdi6" path="res://Assets/UI/ArrowsDown - Copy.png" id="10_rduqs"]
 
 [sub_resource type="Gradient" id="Gradient_xsymc"]
 offsets = PackedFloat32Array(0)
@@ -56,6 +57,21 @@ _data = {
 &"pulse": SubResource("Animation_aoada")
 }
 
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_fskmv"]
+bg_color = Color(0.545098, 0, 0.137255, 0.470588)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(0.392157, 0, 0.137255, 1)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_bpmfh"]
+bg_color = Color(0.392157, 0, 0.137255, 0.627451)
+corner_radius_top_left = 1
+corner_radius_top_right = 1
+corner_radius_bottom_right = 1
+corner_radius_bottom_left = 1
+
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_q556h"]
 bg_color = Color(0.118581, 0.118581, 0.118581, 0.588235)
 border_width_left = 1
@@ -66,6 +82,17 @@ corner_radius_top_left = 2
 corner_radius_top_right = 2
 corner_radius_bottom_right = 2
 corner_radius_bottom_left = 2
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_y6li1"]
+bg_color = Color(0.517184, 0.517184, 0.517184, 1)
+border_color = Color(0.295867, 0.295867, 0.295866, 1)
+corner_radius_top_left = 3
+corner_radius_top_right = 3
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_r4kb3"]
+bg_color = Color(0.588235, 0.588235, 0.588235, 1)
+corner_radius_top_left = 2
+corner_radius_top_right = 2
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_3jyqh"]
 bg_color = Color(0.6, 0.6, 0.6, 0.12549)
@@ -80,6 +107,60 @@ corner_radius_top_left = 5
 corner_radius_top_right = 5
 corner_radius_bottom_right = 5
 corner_radius_bottom_left = 5
+
+[sub_resource type="Animation" id="Animation_rduqs"]
+resource_name = "tower_panel_up"
+length = 0.3
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("TowerPanel:position")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 0.3),
+"transitions": PackedFloat32Array(1, 1),
+"update": 0,
+"values": [Vector2(50, 684), Vector2(50, 405)]
+}
+
+[sub_resource type="Animation" id="Animation_fskmv"]
+length = 0.001
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("TowerPanel:position")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Vector2(50, 693)]
+}
+
+[sub_resource type="Animation" id="Animation_bpmfh"]
+resource_name = "tower_panel_down"
+length = 0.3
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("TowerPanel:position")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 0.3),
+"transitions": PackedFloat32Array(1, 1),
+"update": 0,
+"values": [Vector2(50, 405), Vector2(50, 684)]
+}
+
+[sub_resource type="AnimationLibrary" id="AnimationLibrary_y6li1"]
+_data = {
+&"RESET": SubResource("Animation_fskmv"),
+&"tower_panel_down": SubResource("Animation_bpmfh"),
+&"tower_panel_up": SubResource("Animation_rduqs")
+}
 
 [node name="GameLogic" type="Node2D"]
 script = ExtResource("1_qxrlw")
@@ -233,16 +314,84 @@ libraries = {
 &"": SubResource("AnimationLibrary_q556h")
 }
 
-[node name="TowerPanel" type="Panel" parent="UI"]
+[node name="PauseMenu" type="Panel" parent="UI/HUD"]
 visible = false
+custom_minimum_size = Vector2(400, 300)
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -20.0
+offset_top = -20.0
+offset_right = 20.0
+offset_bottom = 20.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_fskmv")
+
+[node name="Border" type="MarginContainer" parent="UI/HUD/PauseMenu"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/margin_left = 30
+theme_override_constants/margin_top = 10
+theme_override_constants/margin_right = 30
+theme_override_constants/margin_bottom = 10
+
+[node name="VBoxContainer" type="VBoxContainer" parent="UI/HUD/PauseMenu/Border"]
+layout_mode = 2
+
+[node name="Label" type="Label" parent="UI/HUD/PauseMenu/Border/VBoxContainer"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 34
+text = "Game Paused"
+horizontal_alignment = 1
+
+[node name="Spacing" type="Control" parent="UI/HUD/PauseMenu/Border/VBoxContainer"]
+custom_minimum_size = Vector2(0, 30)
+layout_mode = 2
+
+[node name="QuitButton" type="Button" parent="UI/HUD/PauseMenu/Border/VBoxContainer"]
+process_mode = 2
+layout_mode = 2
+theme_override_font_sizes/font_size = 26
+theme_override_styles/normal = SubResource("StyleBoxFlat_bpmfh")
+text = "Quit"
+
+[node name="GraceTimerLabel" type="Label" parent="UI/HUD"]
+visible = false
+layout_mode = 2
+offset_left = 112.0
+offset_top = 42.0
+offset_right = 158.0
+offset_bottom = 81.0
+theme_override_font_sizes/font_size = 28
+text = "20s"
+
+[node name="SkipButton" type="Button" parent="UI/HUD"]
+visible = false
+layout_mode = 2
+offset_left = 384.0
+offset_top = 33.0
+offset_right = 449.0
+offset_bottom = 97.0
+theme_override_font_sizes/font_size = 28
+text = "Skip"
+
+[node name="TowerPanel" type="Panel" parent="UI"]
 custom_minimum_size = Vector2(500, 300)
 anchors_preset = 2
 anchor_top = 1.0
 anchor_bottom = 1.0
 offset_left = 50.0
-offset_top = -299.0
+offset_top = -11.0
 offset_right = 550.0
-offset_bottom = 1.0
+offset_bottom = 289.0
 grow_vertical = 0
 theme_override_styles/panel = SubResource("StyleBoxFlat_q556h")
 script = ExtResource("9_3jyqh")
@@ -256,8 +405,28 @@ grow_horizontal = 2
 grow_vertical = 2
 theme_override_constants/separation = 20
 
-[node name="Padding" type="Control" parent="UI/TowerPanel/VBoxContainer"]
+[node name="MoveButton" type="Button" parent="UI/TowerPanel/VBoxContainer"]
+custom_minimum_size = Vector2(0, 20)
 layout_mode = 2
+theme_override_styles/hover = SubResource("StyleBoxFlat_y6li1")
+theme_override_styles/normal = SubResource("StyleBoxFlat_r4kb3")
+
+[node name="TextureRect" type="TextureRect" parent="UI/TowerPanel/VBoxContainer/MoveButton"]
+modulate = Color(0.147672, 0.147672, 0.147672, 1)
+texture_filter = 1
+layout_mode = 1
+anchors_preset = 13
+anchor_left = 0.5
+anchor_right = 0.5
+anchor_bottom = 1.0
+offset_left = -19.0
+offset_top = 1.0
+offset_right = 19.0
+offset_bottom = -1.0
+grow_horizontal = 2
+grow_vertical = 2
+texture = ExtResource("10_rduqs")
+expand_mode = 1
 
 [node name="TowerName" type="Label" parent="UI/TowerPanel/VBoxContainer"]
 layout_mode = 2
@@ -281,7 +450,7 @@ expand_mode = 1
 stretch_mode = 5
 
 [node name="Panel" type="Panel" parent="UI/TowerPanel/VBoxContainer/HBoxContainer"]
-custom_minimum_size = Vector2(310, 200)
+custom_minimum_size = Vector2(310, 180)
 layout_mode = 2
 size_flags_horizontal = 8
 theme_override_styles/panel = SubResource("StyleBoxFlat_rduqs")
@@ -301,7 +470,7 @@ theme_override_constants/margin_bottom = 5
 [node name="VBoxContainer" type="VBoxContainer" parent="UI/TowerPanel/VBoxContainer/HBoxContainer/Panel/MarginContainer"]
 custom_minimum_size = Vector2(300, 0)
 layout_mode = 2
-theme_override_constants/separation = 5
+theme_override_constants/separation = 2
 
 [node name="Label" type="Label" parent="UI/TowerPanel/VBoxContainer/HBoxContainer/Panel/MarginContainer/VBoxContainer"]
 layout_mode = 2
@@ -349,9 +518,18 @@ text = "-------"
 custom_minimum_size = Vector2(0, 13)
 layout_mode = 2
 
-[node name="SellButton2" type="Button" parent="UI/TowerPanel/VBoxContainer/HBoxContainer/Panel/MarginContainer/VBoxContainer"]
+[node name="SellButton" type="Button" parent="UI/TowerPanel/VBoxContainer/HBoxContainer/Panel/MarginContainer/VBoxContainer"]
 layout_mode = 2
 text = "Sell (for 50%)"
 
+[node name="AnimationPlayer" type="AnimationPlayer" parent="UI"]
+libraries = {
+&"": SubResource("AnimationLibrary_y6li1")
+}
+
 [connection signal="pressed" from="UI/HUD/PausePlay" to="UI" method="_on_pause_play_pressed"]
+[connection signal="pressed" from="UI/HUD/PauseMenu/Border/VBoxContainer/QuitButton" to="UI" method="_on_quit_button_pressed"]
+[connection signal="pressed" from="UI/HUD/SkipButton" to="." method="_on_skip_button_pressed"]
+[connection signal="pressed" from="UI/TowerPanel/VBoxContainer/MoveButton" to="UI/TowerPanel" method="_on_move_button_pressed"]
 [connection signal="pressed" from="UI/TowerPanel/VBoxContainer/HBoxContainer/Panel/MarginContainer/VBoxContainer/HBoxContainer/Upgrade1" to="UI/TowerPanel" method="_on_upgrade_1_pressed"]
+[connection signal="pressed" from="UI/TowerPanel/VBoxContainer/HBoxContainer/Panel/MarginContainer/VBoxContainer/SellButton" to="UI/TowerPanel" method="_on_sell_button_pressed"]

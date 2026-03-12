@@ -18,4 +18,5 @@ func _on_replay_level_pressed() -> void:
 
 func _on_main_menu_pressed() -> void:
 	# Back to main menu
+	
 	get_tree().change_scene_to_file("res://Scenes/scene_handler.tscn")

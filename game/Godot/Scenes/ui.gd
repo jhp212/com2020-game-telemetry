@@ -23,6 +23,7 @@ func _ready():
 	update_health_bar(GameData.base_health)
 	GameData.money_changed.connect(update_money)
 	update_money(GameData.money)
+	print(GameData.money)
 	# Play "pulse" animation on the play/pause button
 	$HUD/PausePlay/AnimationPlayer.play("pulse")
 	
@@ -83,6 +84,7 @@ func _on_pause_play_pressed() -> void:
 		# Unpause game
 		get_tree().paused = false
 		$HUD/PausePlay/AnimationPlayer.stop()
+		$HUD/PauseMenu.hide()
 	elif get_parent().current_wave == 0:
 		# Start first wave and log telemetry event
 		$HUD/PausePlay/AnimationPlayer.stop()
@@ -93,6 +95,10 @@ func _on_pause_play_pressed() -> void:
 		# Pause game
 		get_tree().paused = true
 		$HUD/PausePlay/AnimationPlayer.play("pulse")
+		$HUD/PauseMenu.show()
 
-
-	
+func _on_quit_button_pressed() -> void:
+	Telemetry.log_event("stage_quit", {})
+	GameData.reset()
+	get_tree().paused = false
+	get_tree().change_scene_to_file("res://Scenes/scene_handler.tscn")

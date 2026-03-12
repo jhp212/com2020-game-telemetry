@@ -26,6 +26,7 @@ var enemies_in_wave = 0
 var selected_tower
 
 func _ready():
+	$UI/TowerPanel.sell.connect(sell_tower)
 	# Connect signals for enemy count and game over
 	number_of_enemies.connect(GameData.add_enemy_amount)
 	GameData.game_finished.connect(on_game_over)
@@ -82,10 +83,32 @@ func spawn_enemies(wave_data):
 		await get_tree().create_timer(i[1]).timeout
 	start_grace_period()
 
+var grace_time := 20
+var grace_running := false
+var skip_requested := false
+
+
 func start_grace_period():
-	# Wait before starting next wave
-	await get_tree().create_timer(10).timeout
+	grace_running = true
+	$UI/HUD/GraceTimerLabel.show()
+	$UI/HUD/SkipButton.show()
+	var time_left = grace_time
+	while time_left > 0 and grace_running:
+		$UI/HUD/GraceTimerLabel.text = "Next wave in: %d" % time_left
+		await get_tree().create_timer(1).timeout
+		if skip_requested:
+			skip_requested = false
+			break
+		time_left -= 1
+	grace_running = false
+	$UI/HUD/GraceTimerLabel.hide()
+	$UI/HUD/SkipButton.hide()
 	start_next_wave()
+
+func _on_skip_button_pressed() -> void:
+	skip_requested = true
+	grace_running = false
+
 
 func _unhandled_input(event):
 	# Cancel build mode
@@ -167,11 +190,13 @@ func on_game_over(result):
 
 func on_tower_clicked(tower):
 	selected_tower = tower
-	$UI/TowerPanel.show()
+	if $UI/TowerPanel.shown == false:
+		$UI/AnimationPlayer.play("tower_panel_up")
+		$UI/TowerPanel.shown = true
 	$UI/TowerPanel.set_tower(tower)
 
 	# Connect the panel's upgrade signal to a handler
-	$UI/TowerPanel.upgrade.connect(request_upgrade, CONNECT_ONE_SHOT)
+	$UI/TowerPanel.upgrade.connect(request_upgrade)
 
 func request_upgrade(tower):
 	var upgrade_cost = GameData.tower_upgrades[tower.tower_type]["1cost"]
@@ -182,6 +207,8 @@ func request_upgrade(tower):
 		new_tower.tower_clicked.connect(on_tower_clicked)
 		
 		on_tower_clicked(new_tower)
-		
-		
-	
+
+func sell_tower(tower):
+	var money_back = GameData.tower_upgrades[tower.tower_type]["sell_price"]
+	GameData.add_money(money_back)
+	tower.sold()
