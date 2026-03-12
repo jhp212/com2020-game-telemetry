@@ -4,6 +4,10 @@ func _ready():
 	# Connect Main Menu buttons
 	get_node("MainMenu/Border/VBoxContainer/PlayButton").pressed.connect(Callable(self, "on_play_pressed"))
 	get_node("MainMenu/Border/VBoxContainer/LevelsButton").pressed.connect(Callable(self, "on_levels_pressed"))
+	get_node("MainMenu/Border/VBoxContainer/DifficultyButton").pressed.connect(Callable(self, "on_difficulty_pressed"))
+	get_node("MainMenu/Border/VBoxContainer/DifficultyPanel/HBoxContainer/EasyButton").pressed.connect(Callable(self, "on_easy_pressed"))
+	get_node("MainMenu/Border/VBoxContainer/DifficultyPanel/HBoxContainer/MediumButton").pressed.connect(Callable(self, "on_medium_pressed"))
+	get_node("MainMenu/Border/VBoxContainer/DifficultyPanel/HBoxContainer/HardButton").pressed.connect(Callable(self, "on_hard_pressed"))
 	
 	# Connect Level Selection buttons
 	get_node("LevelSelection/Border/VBoxContainer/Row1/Level1").pressed.connect(Callable(self, "on_levels_1_pressed"))
@@ -81,6 +85,27 @@ func on_levels_10_pressed():
 	# Changes scene to Level2
 	GameData.current_stage = 4
 	get_tree().change_scene_to_file("res://Scenes/Levels/level_10.tscn")
+
+func on_difficulty_pressed():
+	$MainMenu/Border/VBoxContainer/DifficultyPanel.show()
+
+func on_easy_pressed():
+	$MainMenu/Border/VBoxContainer/DifficultyPanel.hide()
+	$MainMenu/Border/VBoxContainer/DifficultyButton/HBoxContainer/SelectedDifficulty.text = "Easy"
+	GameData.difficulty_selected("easy")
+	
+
+func on_medium_pressed():
+	$MainMenu/Border/VBoxContainer/DifficultyPanel.hide()
+	$MainMenu/Border/VBoxContainer/DifficultyButton/HBoxContainer/SelectedDifficulty.text = "Medium"
+	GameData.difficulty_selected("medium")
+	print(GameData.enemy_data["big_boss_circle"]["health"])
+
+func on_hard_pressed():
+	$MainMenu/Border/VBoxContainer/DifficultyPanel.hide()
+	$MainMenu/Border/VBoxContainer/DifficultyButton/HBoxContainer/SelectedDifficulty.text = "Hard"
+	GameData.difficulty_selected("hard")
+	
 
 #func on_game_over(result):
 #	if result == "lose":
