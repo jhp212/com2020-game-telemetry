@@ -117,6 +117,7 @@ offset_bottom = 40.0
 
 [node name="DeleteDataButton" type="Button" parent="SettingsMenu"]
 custom_minimum_size = Vector2(300, 70)
+layout_mode = 0
 offset_left = 390.0
 offset_top = 200.0
 offset_right = 890.0
