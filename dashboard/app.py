@@ -672,7 +672,8 @@ async def runSimulation(payload: SimulationRequest):
     try:
         result = simulation(
             test_count=payload.test_count,
-            level=payload.level
+            level=payload.level,
+            difficulty = "hard"
         )
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
