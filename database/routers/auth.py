@@ -9,9 +9,34 @@ from database.security import get_password_hash, verify_password, create_access_
 
 router = APIRouter(prefix="/auth", tags=["Authentication"])
 
+# Password validation function to enforce strong password policies
+# Password must be at least 8 characters long and include uppercase, lowercase, digit, and special character
+def is_valid_password(password: str) -> bool:
+    if len(password) < 8:
+        return False
+    if " " in password:
+        return False
+    has_upper = any(c.isupper() for c in password)
+    has_lower = any(c.islower() for c in password)
+    has_digit = any(c.isdigit() for c in password)
+    has_special = any(c in "!@#$%^&*()-_=+[]{}|;:'\",.<>?/" for c in password)
+    return has_upper and has_lower and has_digit and has_special
+
+# Username validation function to ensure usernames are alphanumeric and of appropriate length
+# Usernames must be between 3 and 20 characters long and contain only letters, numbers, and dashes/underscores
+def is_valid_username(username: str) -> bool:
+    if len(username) < 3 or len(username) > 20:
+        return False
+    return all(c.isalnum() or c in "-_" for c in username)
+
 # Registration endpoint - creates a new user with hashed password
 @router.post("/register", response_model=schemas.UserResponse)
 def register_user(user: schemas.UserCreate, db: Session = Depends(get_db)):
+    if not is_valid_username(user.username):
+        raise HTTPException(status_code=400, detail="Username must be between 3 and 20 characters long and contain only alphanumeric characters")
+    if not is_valid_password(user.password):
+        raise HTTPException(status_code=400, detail="Password must be at least 8 characters long and include uppercase, lowercase, digit, and special character")
+    
     existing = db.query(Users).filter(Users.username == user.username).first()
     if existing:
         raise HTTPException(status_code=400, detail="Username already exists")
