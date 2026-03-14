@@ -1301,3 +1301,25 @@ async def clear_anomalies(request: Request):
         raise HTTPException(status_code=response.status_code, detail=response.text)
 
     return RedirectResponse(url="/anomalies", status_code=302)
+
+
+@app.post("/users/decline/{username}")
+async def decline_admin_request(request: Request, username: str):
+    try:
+        token = require_auth(request)
+    except HTTPException:
+        return RedirectResponse(url="/login", status_code=302)
+
+    response = requests.post(
+        f"{BASE_URL}/auth/reject_admin/{username}",
+        headers={"Authorization": f"Bearer {token}"},
+        timeout=5
+    )
+
+    if not response.ok:
+        raise HTTPException(
+            status_code=response.status_code,
+            detail=f"Failed to decline admin request: {response.text}"
+        )
+
+    return RedirectResponse(url="/admin_requests", status_code=302)
