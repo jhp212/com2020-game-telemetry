@@ -19,15 +19,15 @@ def is_valid_password(password: str) -> bool:
     has_upper = any(c.isupper() for c in password)
     has_lower = any(c.islower() for c in password)
     has_digit = any(c.isdigit() for c in password)
-    has_special = any(c in "!@#$%^&*()-_=+[]{}|;:'\",.<>?/" for c in password)
+    has_special = any(c in "!@#$%^&*()-_=+[]{}|;:'\",.<>?/\\" for c in password)
     return has_upper and has_lower and has_digit and has_special
 
 # Username validation function to ensure usernames are alphanumeric and of appropriate length
-# Usernames must be between 3 and 20 characters long and contain only letters, numbers, and dashes/underscores
+# Usernames must be between 3 and 20 characters long and contain only letters, numbers, and underscores
 def is_valid_username(username: str) -> bool:
     if len(username) < 3 or len(username) > 20:
         return False
-    return all(c.isalnum() or c in "-_" for c in username)
+    return all(c.isalnum() or c in "_" for c in username)
 
 # Registration endpoint - creates a new user with hashed password
 @router.post("/register", response_model=schemas.UserResponse)
@@ -51,6 +51,11 @@ def register_user(user: schemas.UserCreate, db: Session = Depends(get_db)):
 # Login endpoint - verifies credentials and returns User ID and JWT token
 @router.post("/token", response_model=schemas.TokenResponse)
 def login(form_data: OAuth2PasswordRequestForm = Depends(), db: Session = Depends(get_db)):
+    if not is_valid_username(form_data.username):
+        raise HTTPException(status_code=400, detail="Invalid username format")
+    if not is_valid_password(form_data.password):
+        raise HTTPException(status_code=400, detail="Invalid password format")
+    
     db_user = db.query(Users).filter(Users.username == form_data.username).first()
     if not db_user or not verify_password(form_data.password, db_user.password_hash):
         raise HTTPException(status_code=401, detail="Invalid credentials")

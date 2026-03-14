@@ -49,7 +49,6 @@ func register(username_input: String, password_input: String):
 	http_request.queue_free()
 	
 	var response_code = result[1]
-	var response_body = result[3].get_string_from_utf8()
 	
 	if response_code == 200 or response_code == 201:
 		return "OK"
