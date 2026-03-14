@@ -148,7 +148,7 @@ input[type="submit"]:hover,
                 {% if error %}
                 <div class="loginError">{{ error }}</div>
                 {% endif %}
-                <input name="username" type="text" placeholder="Username" required>
+                <input name="username" type="text" placeholder="Username" pattern="[A-Za-z0-9_]+" title="Use only letters, numbers, and underscores" required>
                 <input name="password" type="password" placeholder="Password" required>
 
                 <div class="annoyingRow">

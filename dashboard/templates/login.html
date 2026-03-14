@@ -146,8 +146,8 @@
                 <div class="loginError">{{ error }}</div>
                 {% endif %}
 
-                <input id="user" name="username" type="text" placeholder="Username" required>
-                <input id="pass" name="password" type="password" placeholder="Password" required>
+                <input id="user" name="username" type="text" placeholder="Username" minlength="3" maxlength="20" required>
+                <input id="pass" name="password" type="password" placeholder="Password" minlength="6" required>
 
                 <div class="annoyingRow">
                 <div class="wrapPls">

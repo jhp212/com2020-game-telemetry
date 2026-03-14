@@ -1,6 +1,7 @@
 import json
 import csv
 import io
+import re
 import zipfile
 from collections import Counter # Helpful for graphing
 from pathlib import Path
@@ -9,7 +10,7 @@ from fastapi.responses import HTMLResponse, StreamingResponse, RedirectResponse,
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates # Jinja2 will be used for templates
 import requests, os
-from pydantic import BaseModel # Will be used in POST requests
+from pydantic import BaseModel, field_validator # Will be used in POST requests
 from datetime import datetime
 from simulation.simulator import *
 from typing import Optional
@@ -664,6 +665,7 @@ async def getSimulation(request: Request):
     )
     
 class SimulationRequest(BaseModel):
+    test_difficulty: str
     test_count: int
     level: int    
     
@@ -673,7 +675,7 @@ async def runSimulation(payload: SimulationRequest):
         result = simulation(
             test_count=payload.test_count,
             level=payload.level,
-            difficulty = "hard"
+            difficulty = payload.test_difficulty
         )
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
@@ -706,6 +708,31 @@ async def login_action(
     password: str = Form(...),
     remember: bool = Form(False),
 ):
+    
+    
+    username = username.strip()
+
+    if not username or not password:
+        return templates.TemplateResponse(
+            "login.html",
+            {
+                "request": request,
+                "error": "Username and password are required",
+            },
+            status_code=400,
+        )
+
+ 
+    if len(password) < 6:
+        return templates.TemplateResponse(
+            "login.html",
+            {
+                "request": request,
+                "error": "Password must be at least 6 characters long",
+            },
+            status_code=400,
+        )
+
     r = requests.post(
         f"{BASE_URL}/auth/token",
         data={"username": username, "password": password},
@@ -817,6 +844,70 @@ async def register_action(
     username: str = Form(...),
     password: str = Form(...),
 ):
+    
+    username = username.strip()
+
+    if not username or not password:
+        return templates.TemplateResponse(
+            "signup.html",
+            {
+                "request": request,
+                "error": "All fields are required",
+            },
+            status_code=400,
+        )
+
+    if len(username) < 3 or len(username) > 20:
+        return templates.TemplateResponse(
+            "signup.html",
+            {
+                "request": request,
+                "error": "Username must be between 3 and 20 characters",
+            },
+            status_code=400,
+        )
+
+    if not all(c.isalnum() or c == "_" for c in username):
+        return templates.TemplateResponse(
+            "signup.html",
+            {
+                "request": request,
+                "error": "Username can only contain letters, numbers, and underscores",
+            },
+            status_code=400,
+        )
+
+    if len(password) < 8:
+        return templates.TemplateResponse(
+            "signup.html",
+            {
+                "request": request,
+                "error": "Password must be at least 8 characters long",
+            },
+            status_code=400,
+        )
+
+    if not any(c.isalpha() for c in password):
+        return templates.TemplateResponse(
+            "signup.html",
+            {
+                "request": request,
+                "error": "Password must contain at least one letter",
+            },
+            status_code=400,
+        )
+
+    if not any(c.isdigit() for c in password):
+        return templates.TemplateResponse(
+            "signup.html",
+            {
+                "request": request,
+                "error": "Password must contain at least one number",
+            },
+            status_code=400,
+        )
+
+    
     r = requests.post(
         f"{BASE_URL}/auth/register",
         json={
