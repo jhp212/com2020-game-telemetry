@@ -722,16 +722,6 @@ async def login_action(
             status_code=400,
         )
 
- 
-    if len(password) < 6:
-        return templates.TemplateResponse(
-            "login.html",
-            {
-                "request": request,
-                "error": "Password must be at least 6 characters long",
-            },
-            status_code=400,
-        )
 
     r = requests.post(
         f"{BASE_URL}/auth/token",
@@ -918,21 +908,19 @@ async def register_action(
     )
 
     if not r.ok:
-        if r.status_code == 400:
-            return templates.TemplateResponse(
-                "signup.html",
-                {
-                    "request": request,
-                    "error": "Username already exists",
-                },
-                status_code=400,
-            )
+        error_message = "Registration failed. Please try again."
+
+        try:
+            error_json = r.json()
+            error_message = error_json.get("detail", error_message)
+        except Exception:
+            pass
 
         return templates.TemplateResponse(
             "signup.html",
             {
                 "request": request,
-                "error": "Registration failed. Please try again.",
+                "error": error_message,
             },
             status_code=r.status_code,
         )

@@ -24,7 +24,7 @@ DEFAULT_PARAMETERS = [
 ]
 
 DEFAULT_USERS = [
-    {"username": "testadmin", "password": "adminpass", "is_admin": 1},
+    {"username": "testadmin", "password": "Adminpass1!", "is_admin": 1},
     {"username": "testplayer", "password": "playerpass", "is_admin": 0}
 ]
 
