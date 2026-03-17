@@ -8,14 +8,14 @@ A simple tower defence game that records user telemetry data in order to facilit
   - The Game: Godot based project exported to a web build, running through a FastAPI/Python server.
   - The Dashboard: FastAPI based web dashboard, incorporating HTML, CSS, JavaScript, and ChartJS.
   - The Database: FastAPI based API connecting to a SQLite database, facilitating the communication between Game and Dashboard.
-- Each component runs in a seperate docker container, with a docker compose script to deploy them all.
+- Each component runs in a separate docker container, with a docker compose script to deploy them all.
 
 ## Key Features
 
 - User Authentication using JSON Web Tokens.
 - Argon2 password hashing.
 - Role based security. 2 user types: Player and Admin
-- Seperate services so they can be run on seperate machines.
+- Separate services so they can be run on separate machines.
 
 ### Game
 
@@ -30,7 +30,7 @@ A simple tower defence game that records user telemetry data in order to facilit
 - 5 graphs, giving a visual representation for the data.
 - Page to view all telemetry events.
 - Parameter editor to tweak the balancing of the game.
-- Decision log to show when parameters where changed, by who, and why.
+- Decision log to show when parameters were changed, by who, and why.
 - Balancing rules to automatically suggest changes.
 - Simulation mode: simulated agents playing the game. Gives a success percentage for a specific level on a specific difficulty.
 - Telemetry anomalies: Dashboard detects anomalies in the telemetry, such as impossible ordering of events.
@@ -75,3 +75,11 @@ This will download, build, and deploy every container. To verify it is working, 
 ### Individual READMEs
 
 Each directory contains its own README.md file containing extra information pertaining to that specific section of the project
+
+## Links
+
+[GitHub Link](https://github.com/jhp212/com2020-game-telemetry)<br>
+[Scrum Board](https://trello.com/b/XYXJPd5i/team-project)
+
+[Game URL](https://gamev2.mm25564.uk)<br>
+[Dashboard URL](https://dashboardv2.mm25564.uk)
