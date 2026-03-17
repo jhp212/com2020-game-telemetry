@@ -25,7 +25,6 @@ Telemetry="*res://Singleton/telemetry.gd"
 window/size/viewport_width=1280
 window/size/viewport_height=704
 window/stretch/mode="canvas_items"
-window/stretch/aspect="expand"
 
 [global_group]
 
