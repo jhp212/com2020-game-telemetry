@@ -62,7 +62,6 @@ func _ready():
 func _on_range_body_entered(body: Node2D) -> void:
 	# Add enemy when it enters the range
 	enemy_array.append(body.get_parent())
-	print(enemy_array)
 
 func _on_range_body_exited(body: Node2D) -> void:
 	# Remove enemy when it leaves the range
@@ -72,10 +71,8 @@ func _on_click_area_input_event(viewport,event, shape_idx):
 	# Check if the tower has been clicked and send signal
 	if event is InputEventMouseButton and event.pressed and event.button_index == MOUSE_BUTTON_LEFT:
 		tower_clicked.emit(self)
-		print("square clicvked")
 
 func upgrade(tower):
-	print("upgraded")
 	if tower == self:
 		var upgraded_tower = load("res://Scenes/Towers/star_t_2.tscn")
 		var upgraded = upgraded_tower.instantiate()

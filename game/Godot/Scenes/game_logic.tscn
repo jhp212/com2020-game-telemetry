@@ -1,9 +1,12 @@
-[gd_scene load_steps=27 format=3 uid="uid://bw36ka3wx3gww"]
+[gd_scene load_steps=31 format=3 uid="uid://bw36ka3wx3gww"]
 
 [ext_resource type="Script" uid="uid://s0xabfgj4tei" path="res://Scenes/game_logic.gd" id="1_qxrlw"]
 [ext_resource type="Script" uid="uid://dkaot6l8a7grx" path="res://Scenes/ui.gd" id="3_3dryh"]
+[ext_resource type="StyleBox" uid="uid://er5b2lkc7r1t" path="res://Styles/tower_panel.tres" id="3_fskmv"]
 [ext_resource type="Texture2D" uid="uid://bg4cy6fcpqckt" path="res://Assets/Towers/TriangleStock.png" id="3_wrm1d"]
+[ext_resource type="StyleBox" uid="uid://d24h0rfnpaysn" path="res://Styles/panel_button_hover.tres" id="4_y6li1"]
 [ext_resource type="Texture2D" uid="uid://dr1dia6nyt4un" path="res://Assets/Towers/SquareStock.png" id="5_i6g32"]
+[ext_resource type="StyleBox" uid="uid://cqv1ct5kgouqu" path="res://Styles/panel_button.tres" id="5_r4kb3"]
 [ext_resource type="Texture2D" uid="uid://brx5cmnunc36u" path="res://Assets/Towers/StarStock.png" id="6_i6g32"]
 [ext_resource type="Texture2D" uid="uid://52mjc60fym5w" path="res://Assets/UI/Health Bar.png" id="6_q556h"]
 [ext_resource type="Texture2D" uid="uid://cpc3vvvimuyld" path="res://Assets/UI/play_button.png" id="7_q556h"]
@@ -11,13 +14,73 @@
 [ext_resource type="Script" uid="uid://bfsr4j3mx585x" path="res://Scenes/tower_panel.gd" id="9_3jyqh"]
 [ext_resource type="Texture2D" uid="uid://byiyc4ajotdi6" path="res://Assets/UI/ArrowsDown - Copy.png" id="10_rduqs"]
 
-[sub_resource type="Gradient" id="Gradient_xsymc"]
-offsets = PackedFloat32Array(0)
-colors = PackedColorArray(0.226707, 0.226707, 0.226707, 0.921569)
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_gwx22"]
+bg_color = Color(0.6, 0.6, 0.6, 0.12549)
 
-[sub_resource type="GradientTexture1D" id="GradientTexture1D_q556h"]
-gradient = SubResource("Gradient_xsymc")
-width = 125
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_mq5vq"]
+bg_color = Color(0.6, 0.6, 0.6, 0)
+border_width_left = 1
+border_width_top = 1
+border_width_right = 1
+border_width_bottom = 1
+corner_radius_top_left = 2
+corner_radius_top_right = 2
+corner_radius_bottom_right = 2
+corner_radius_bottom_left = 2
+
+[sub_resource type="Animation" id="Animation_mq5vq"]
+length = 0.001
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath(".:position")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Vector2(1230, 38)]
+}
+
+[sub_resource type="Animation" id="Animation_gwx22"]
+resource_name = "left"
+length = 0.3
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath(".:position")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 0.3),
+"transitions": PackedFloat32Array(1, 1),
+"update": 0,
+"values": [Vector2(1230, 38), Vector2(1082, 38)]
+}
+
+[sub_resource type="Animation" id="Animation_3tw1n"]
+resource_name = "right"
+length = 0.3
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath(".:position")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 0.3),
+"transitions": PackedFloat32Array(1, 1),
+"update": 0,
+"values": [Vector2(1082, 38), Vector2(1230, 38)]
+}
+
+[sub_resource type="AnimationLibrary" id="AnimationLibrary_2mvnc"]
+_data = {
+&"RESET": SubResource("Animation_mq5vq"),
+&"left": SubResource("Animation_gwx22"),
+&"right": SubResource("Animation_3tw1n")
+}
 
 [sub_resource type="Animation" id="Animation_xsymc"]
 length = 0.001
@@ -72,28 +135,6 @@ corner_radius_top_right = 1
 corner_radius_bottom_right = 1
 corner_radius_bottom_left = 1
 
-[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_q556h"]
-bg_color = Color(0.118581, 0.118581, 0.118581, 0.588235)
-border_width_left = 1
-border_width_top = 1
-border_width_right = 1
-border_width_bottom = 1
-corner_radius_top_left = 2
-corner_radius_top_right = 2
-corner_radius_bottom_right = 2
-corner_radius_bottom_left = 2
-
-[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_y6li1"]
-bg_color = Color(0.517184, 0.517184, 0.517184, 1)
-border_color = Color(0.295867, 0.295867, 0.295866, 1)
-corner_radius_top_left = 3
-corner_radius_top_right = 3
-
-[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_r4kb3"]
-bg_color = Color(0.588235, 0.588235, 0.588235, 1)
-corner_radius_top_left = 2
-corner_radius_top_right = 2
-
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_3jyqh"]
 bg_color = Color(0.6, 0.6, 0.6, 0.12549)
 
@@ -107,22 +148,6 @@ corner_radius_top_left = 5
 corner_radius_top_right = 5
 corner_radius_bottom_right = 5
 corner_radius_bottom_left = 5
-
-[sub_resource type="Animation" id="Animation_rduqs"]
-resource_name = "tower_panel_up"
-length = 0.3
-tracks/0/type = "value"
-tracks/0/imported = false
-tracks/0/enabled = true
-tracks/0/path = NodePath("TowerPanel:position")
-tracks/0/interp = 1
-tracks/0/loop_wrap = true
-tracks/0/keys = {
-"times": PackedFloat32Array(0, 0.3),
-"transitions": PackedFloat32Array(1, 1),
-"update": 0,
-"values": [Vector2(50, 684), Vector2(50, 405)]
-}
 
 [sub_resource type="Animation" id="Animation_fskmv"]
 length = 0.001
@@ -155,6 +180,22 @@ tracks/0/keys = {
 "values": [Vector2(50, 405), Vector2(50, 684)]
 }
 
+[sub_resource type="Animation" id="Animation_rduqs"]
+resource_name = "tower_panel_up"
+length = 0.3
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("TowerPanel:position")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 0.3),
+"transitions": PackedFloat32Array(1, 1),
+"update": 0,
+"values": [Vector2(50, 684), Vector2(50, 405)]
+}
+
 [sub_resource type="AnimationLibrary" id="AnimationLibrary_y6li1"]
 _data = {
 &"RESET": SubResource("Animation_fskmv"),
@@ -177,88 +218,205 @@ offset_right = 1250.0
 offset_bottom = 674.0
 mouse_filter = 2
 
-[node name="TextureRect" type="TextureRect" parent="UI/HUD"]
+[node name="TowerBuildPanel" type="Panel" parent="UI/HUD"]
 layout_mode = 2
-offset_left = 1063.0
+offset_left = 1230.0
 offset_top = 38.0
-offset_right = 1213.0
-offset_bottom = 395.0
-texture = SubResource("GradientTexture1D_q556h")
+offset_right = 1399.0
+offset_bottom = 365.0
+grow_horizontal = 2
+theme_override_styles/panel = ExtResource("3_fskmv")
 
-[node name="BuildBar" type="VBoxContainer" parent="UI/HUD/TextureRect"]
+[node name="HBoxContainer" type="HBoxContainer" parent="UI/HUD/TowerBuildPanel"]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
-theme_override_constants/separation = 20
 
-[node name="CashUI" type="ColorRect" parent="UI/HUD/TextureRect/BuildBar"]
-modulate = Color(1, 1, 1, 0.470588)
+[node name="MoveButton" type="Button" parent="UI/HUD/TowerBuildPanel/HBoxContainer"]
+custom_minimum_size = Vector2(20, 0)
+layout_mode = 2
+theme_override_styles/hover = ExtResource("4_y6li1")
+theme_override_styles/normal = ExtResource("5_r4kb3")
+
+[node name="TextureRect" type="TextureRect" parent="UI/HUD/TowerBuildPanel/HBoxContainer/MoveButton"]
+modulate = Color(0.147672, 0.147672, 0.147672, 1)
+texture_filter = 1
+layout_mode = 1
+anchors_preset = 14
+anchor_top = 0.5
+anchor_right = 1.0
+anchor_bottom = 0.5
+offset_left = -25.0
+offset_top = -57.5
+offset_right = -7.0
+offset_bottom = -39.5
+grow_horizontal = 2
+grow_vertical = 2
+rotation = -1.5708
+pivot_offset = Vector2(51, 25.5)
+texture = ExtResource("10_rduqs")
+expand_mode = 1
+
+[node name="BuildBar" type="VBoxContainer" parent="UI/HUD/TowerBuildPanel/HBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_constants/separation = 15
+
+[node name="Padding" type="Control" parent="UI/HUD/TowerBuildPanel/HBoxContainer/BuildBar"]
+layout_mode = 2
+
+[node name="CashUI" type="Panel" parent="UI/HUD/TowerBuildPanel/HBoxContainer/BuildBar"]
 custom_minimum_size = Vector2(0, 40)
 layout_mode = 2
-color = Color(0, 0, 0, 1)
+theme_override_styles/panel = SubResource("StyleBoxFlat_gwx22")
 
-[node name="HBoxContainer" type="HBoxContainer" parent="UI/HUD/TextureRect/BuildBar/CashUI"]
+[node name="HBoxContainer" type="HBoxContainer" parent="UI/HUD/TowerBuildPanel/HBoxContainer/BuildBar/CashUI"]
 layout_mode = 1
-anchors_preset = 4
+anchors_preset = 14
 anchor_top = 0.5
+anchor_right = 1.0
 anchor_bottom = 0.5
-offset_top = -20.0
-offset_right = 89.0
-offset_bottom = 20.0
+offset_top = -11.5
+offset_bottom = 11.5
+grow_horizontal = 2
 grow_vertical = 2
 
-[node name="Text" type="Label" parent="UI/HUD/TextureRect/BuildBar/CashUI/HBoxContainer"]
+[node name="Padding" type="Control" parent="UI/HUD/TowerBuildPanel/HBoxContainer/BuildBar/CashUI/HBoxContainer"]
+custom_minimum_size = Vector2(20, 0)
 layout_mode = 2
+
+[node name="Text" type="Label" parent="UI/HUD/TowerBuildPanel/HBoxContainer/BuildBar/CashUI/HBoxContainer"]
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 1, 1, 1)
 text = " Cash:"
 horizontal_alignment = 2
 
-[node name="Cash" type="Label" parent="UI/HUD/TextureRect/BuildBar/CashUI/HBoxContainer"]
+[node name="Cash" type="Label" parent="UI/HUD/TowerBuildPanel/HBoxContainer/BuildBar/CashUI/HBoxContainer"]
 layout_mode = 2
+theme_override_colors/font_color = Color(1, 1, 1, 1)
 theme_override_font_sizes/font_size = 16
 text = "00000"
 
-[node name="HBoxContainer" type="HBoxContainer" parent="UI/HUD/TextureRect/BuildBar"]
+[node name="Margin" type="MarginContainer" parent="UI/HUD/TowerBuildPanel/HBoxContainer/BuildBar"]
 layout_mode = 2
-theme_override_constants/separation = 30
+size_flags_horizontal = 3
+theme_override_constants/margin_left = 10
+theme_override_constants/margin_top = 0
+theme_override_constants/margin_right = 10
 
-[node name="VBoxContainer" type="VBoxContainer" parent="UI/HUD/TextureRect/BuildBar/HBoxContainer"]
+[node name="TowerList" type="VBoxContainer" parent="UI/HUD/TowerBuildPanel/HBoxContainer/BuildBar/Margin"]
+layout_mode = 2
+theme_override_constants/separation = 10
+
+[node name="Panel" type="Panel" parent="UI/HUD/TowerBuildPanel/HBoxContainer/BuildBar/Margin/TowerList"]
+custom_minimum_size = Vector2(0, 75)
+layout_mode = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_mq5vq")
+
+[node name="Triangle" type="HBoxContainer" parent="UI/HUD/TowerBuildPanel/HBoxContainer/BuildBar/Margin/TowerList/Panel"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/separation = 5
+
+[node name="Padding" type="Control" parent="UI/HUD/TowerBuildPanel/HBoxContainer/BuildBar/Margin/TowerList/Panel/Triangle"]
 layout_mode = 2
 
-[node name="triangle_stock" type="TextureButton" parent="UI/HUD/TextureRect/BuildBar/HBoxContainer/VBoxContainer" groups=["build_buttons"]]
-layout_mode = 2
-size_flags_horizontal = 4
-texture_normal = ExtResource("3_wrm1d")
-
-[node name="square_stock" type="TextureButton" parent="UI/HUD/TextureRect/BuildBar/HBoxContainer/VBoxContainer" groups=["build_buttons"]]
-layout_mode = 2
-size_flags_horizontal = 4
-texture_normal = ExtResource("5_i6g32")
-
-[node name="star_stock" type="TextureButton" parent="UI/HUD/TextureRect/BuildBar/HBoxContainer/VBoxContainer" groups=["build_buttons"]]
-layout_mode = 2
-size_flags_horizontal = 4
-texture_normal = ExtResource("6_i6g32")
-
-[node name="VBoxContainer2" type="VBoxContainer" parent="UI/HUD/TextureRect/BuildBar/HBoxContainer"]
+[node name="triangle_stock" type="TextureButton" parent="UI/HUD/TowerBuildPanel/HBoxContainer/BuildBar/Margin/TowerList/Panel/Triangle" groups=["build_buttons"]]
 layout_mode = 2
 size_flags_horizontal = 4
 size_flags_vertical = 4
-theme_override_constants/separation = 45
+texture_normal = ExtResource("3_wrm1d")
+texture_hover = ExtResource("3_wrm1d")
 
-[node name="TriangleCost" type="Label" parent="UI/HUD/TextureRect/BuildBar/HBoxContainer/VBoxContainer2"]
+[node name="Padding2" type="Control" parent="UI/HUD/TowerBuildPanel/HBoxContainer/BuildBar/Margin/TowerList/Panel/Triangle"]
+custom_minimum_size = Vector2(5, 0)
 layout_mode = 2
-text = "000"
 
-[node name="SquareCost" type="Label" parent="UI/HUD/TextureRect/BuildBar/HBoxContainer/VBoxContainer2"]
+[node name="TriangleCost" type="Label" parent="UI/HUD/TowerBuildPanel/HBoxContainer/BuildBar/Margin/TowerList/Panel/Triangle"]
 layout_mode = 2
+size_flags_horizontal = 4
 text = "000"
+horizontal_alignment = 1
 
-[node name="StarCost" type="Label" parent="UI/HUD/TextureRect/BuildBar/HBoxContainer/VBoxContainer2"]
+[node name="Panel2" type="Panel" parent="UI/HUD/TowerBuildPanel/HBoxContainer/BuildBar/Margin/TowerList"]
+custom_minimum_size = Vector2(0, 75)
 layout_mode = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_mq5vq")
+
+[node name="Square" type="HBoxContainer" parent="UI/HUD/TowerBuildPanel/HBoxContainer/BuildBar/Margin/TowerList/Panel2"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/separation = 5
+
+[node name="Padding" type="Control" parent="UI/HUD/TowerBuildPanel/HBoxContainer/BuildBar/Margin/TowerList/Panel2/Square"]
+layout_mode = 2
+
+[node name="square_stock" type="TextureButton" parent="UI/HUD/TowerBuildPanel/HBoxContainer/BuildBar/Margin/TowerList/Panel2/Square" groups=["build_buttons"]]
+layout_mode = 2
+size_flags_horizontal = 4
+size_flags_vertical = 4
+texture_normal = ExtResource("5_i6g32")
+texture_hover = ExtResource("5_i6g32")
+
+[node name="Padding2" type="Control" parent="UI/HUD/TowerBuildPanel/HBoxContainer/BuildBar/Margin/TowerList/Panel2/Square"]
+custom_minimum_size = Vector2(5, 0)
+layout_mode = 2
+
+[node name="SquareCost" type="Label" parent="UI/HUD/TowerBuildPanel/HBoxContainer/BuildBar/Margin/TowerList/Panel2/Square"]
+layout_mode = 2
+size_flags_horizontal = 4
 text = "000"
+horizontal_alignment = 1
+
+[node name="Panel3" type="Panel" parent="UI/HUD/TowerBuildPanel/HBoxContainer/BuildBar/Margin/TowerList"]
+custom_minimum_size = Vector2(0, 75)
+layout_mode = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_mq5vq")
+
+[node name="Star" type="HBoxContainer" parent="UI/HUD/TowerBuildPanel/HBoxContainer/BuildBar/Margin/TowerList/Panel3"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/separation = 5
+
+[node name="Padding" type="Control" parent="UI/HUD/TowerBuildPanel/HBoxContainer/BuildBar/Margin/TowerList/Panel3/Star"]
+layout_mode = 2
+
+[node name="star_stock" type="TextureButton" parent="UI/HUD/TowerBuildPanel/HBoxContainer/BuildBar/Margin/TowerList/Panel3/Star" groups=["build_buttons"]]
+layout_mode = 2
+size_flags_horizontal = 4
+size_flags_vertical = 4
+texture_normal = ExtResource("6_i6g32")
+texture_hover = ExtResource("6_i6g32")
+
+[node name="Padding2" type="Control" parent="UI/HUD/TowerBuildPanel/HBoxContainer/BuildBar/Margin/TowerList/Panel3/Star"]
+custom_minimum_size = Vector2(5, 0)
+layout_mode = 2
+
+[node name="StarCost" type="Label" parent="UI/HUD/TowerBuildPanel/HBoxContainer/BuildBar/Margin/TowerList/Panel3/Star"]
+layout_mode = 2
+size_flags_horizontal = 4
+text = "000"
+horizontal_alignment = 1
+
+[node name="AnimationPlayer" type="AnimationPlayer" parent="UI/HUD/TowerBuildPanel"]
+libraries = {
+&"": SubResource("AnimationLibrary_2mvnc")
+}
 
 [node name="HealthUI" type="ColorRect" parent="UI/HUD"]
 modulate = Color(1, 1, 1, 0.470588)
@@ -363,23 +521,30 @@ theme_override_font_sizes/font_size = 26
 theme_override_styles/normal = SubResource("StyleBoxFlat_bpmfh")
 text = "Quit"
 
-[node name="GraceTimerLabel" type="Label" parent="UI/HUD"]
+[node name="WaveTracker" type="HBoxContainer" parent="UI/HUD"]
+layout_mode = 0
+offset_left = 100.0
+offset_top = 33.0
+offset_right = 259.0
+offset_bottom = 83.0
+theme_override_constants/separation = 15
+
+[node name="WaveCounter" type="Label" parent="UI/HUD/WaveTracker"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 36
+text = "1"
+vertical_alignment = 1
+
+[node name="GraceTimerLabel" type="Label" parent="UI/HUD/WaveTracker"]
 visible = false
 layout_mode = 2
-offset_left = 112.0
-offset_top = 42.0
-offset_right = 158.0
-offset_bottom = 81.0
 theme_override_font_sizes/font_size = 28
 text = "20s"
+vertical_alignment = 1
 
-[node name="SkipButton" type="Button" parent="UI/HUD"]
+[node name="SkipButton" type="Button" parent="UI/HUD/WaveTracker"]
 visible = false
 layout_mode = 2
-offset_left = 384.0
-offset_top = 33.0
-offset_right = 449.0
-offset_bottom = 97.0
 theme_override_font_sizes/font_size = 28
 text = "Skip"
 
@@ -393,7 +558,7 @@ offset_top = -11.0
 offset_right = 550.0
 offset_bottom = 289.0
 grow_vertical = 0
-theme_override_styles/panel = SubResource("StyleBoxFlat_q556h")
+theme_override_styles/panel = ExtResource("3_fskmv")
 script = ExtResource("9_3jyqh")
 
 [node name="VBoxContainer" type="VBoxContainer" parent="UI/TowerPanel"]
@@ -408,8 +573,8 @@ theme_override_constants/separation = 20
 [node name="MoveButton" type="Button" parent="UI/TowerPanel/VBoxContainer"]
 custom_minimum_size = Vector2(0, 20)
 layout_mode = 2
-theme_override_styles/hover = SubResource("StyleBoxFlat_y6li1")
-theme_override_styles/normal = SubResource("StyleBoxFlat_r4kb3")
+theme_override_styles/hover = ExtResource("4_y6li1")
+theme_override_styles/normal = ExtResource("5_r4kb3")
 
 [node name="TextureRect" type="TextureRect" parent="UI/TowerPanel/VBoxContainer/MoveButton"]
 modulate = Color(0.147672, 0.147672, 0.147672, 1)
@@ -489,7 +654,14 @@ text = "Pew Pew"
 
 [node name="Description1" type="Label" parent="UI/TowerPanel/VBoxContainer/HBoxContainer/Panel/MarginContainer/VBoxContainer/HBoxContainer"]
 layout_mode = 2
+theme_override_font_sizes/font_size = 12
 text = "+1 shot"
+
+[node name="Cost" type="Label" parent="UI/TowerPanel/VBoxContainer/HBoxContainer/Panel/MarginContainer/VBoxContainer/HBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "Cost"
+horizontal_alignment = 2
 
 [node name="HBoxContainer2" type="HBoxContainer" parent="UI/TowerPanel/VBoxContainer/HBoxContainer/Panel/MarginContainer/VBoxContainer"]
 layout_mode = 2
@@ -501,6 +673,7 @@ text = "NO"
 
 [node name="Description2" type="Label" parent="UI/TowerPanel/VBoxContainer/HBoxContainer/Panel/MarginContainer/VBoxContainer/HBoxContainer2"]
 layout_mode = 2
+theme_override_font_sizes/font_size = 12
 text = "----------"
 
 [node name="HBoxContainer3" type="HBoxContainer" parent="UI/TowerPanel/VBoxContainer/HBoxContainer/Panel/MarginContainer/VBoxContainer"]
@@ -512,6 +685,7 @@ text = "NO"
 
 [node name="Description3" type="Label" parent="UI/TowerPanel/VBoxContainer/HBoxContainer/Panel/MarginContainer/VBoxContainer/HBoxContainer3"]
 layout_mode = 2
+theme_override_font_sizes/font_size = 12
 text = "-------"
 
 [node name="Control2" type="Control" parent="UI/TowerPanel/VBoxContainer/HBoxContainer/Panel/MarginContainer/VBoxContainer"]
@@ -527,9 +701,18 @@ libraries = {
 &"": SubResource("AnimationLibrary_y6li1")
 }
 
+[node name="WaveTimer" type="Timer" parent="."]
+process_mode = 1
+
+[node name="GraceTimer" type="Timer" parent="."]
+
+[connection signal="pressed" from="UI/HUD/TowerBuildPanel/HBoxContainer/MoveButton" to="UI" method="_on_move_button_pressed"]
+[connection signal="pressed" from="UI/HUD/TowerBuildPanel/HBoxContainer/BuildBar/Margin/TowerList/Panel/Triangle/triangle_stock" to="UI" method="_on_triangle_stock_pressed"]
+[connection signal="pressed" from="UI/HUD/TowerBuildPanel/HBoxContainer/BuildBar/Margin/TowerList/Panel2/Square/square_stock" to="UI" method="_on_square_stock_pressed"]
+[connection signal="pressed" from="UI/HUD/TowerBuildPanel/HBoxContainer/BuildBar/Margin/TowerList/Panel3/Star/star_stock" to="UI" method="_on_star_stock_pressed"]
 [connection signal="pressed" from="UI/HUD/PausePlay" to="UI" method="_on_pause_play_pressed"]
 [connection signal="pressed" from="UI/HUD/PauseMenu/Border/VBoxContainer/QuitButton" to="UI" method="_on_quit_button_pressed"]
-[connection signal="pressed" from="UI/HUD/SkipButton" to="." method="_on_skip_button_pressed"]
+[connection signal="pressed" from="UI/HUD/WaveTracker/SkipButton" to="." method="_on_skip_button_pressed"]
 [connection signal="pressed" from="UI/TowerPanel/VBoxContainer/MoveButton" to="UI/TowerPanel" method="_on_move_button_pressed"]
 [connection signal="pressed" from="UI/TowerPanel/VBoxContainer/HBoxContainer/Panel/MarginContainer/VBoxContainer/HBoxContainer/Upgrade1" to="UI/TowerPanel" method="_on_upgrade_1_pressed"]
 [connection signal="pressed" from="UI/TowerPanel/VBoxContainer/HBoxContainer/Panel/MarginContainer/VBoxContainer/SellButton" to="UI/TowerPanel" method="_on_sell_button_pressed"]

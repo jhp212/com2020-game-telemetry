@@ -1,5 +1,7 @@
 extends Node
 
+var htp_shown = false
+
 func _ready():
 	# Connect Main Menu buttons
 	get_node("MainMenu/LevelSelect/VBoxContainer/PlayButton").pressed.connect(Callable(self, "on_play_pressed"))
@@ -99,13 +101,19 @@ func on_medium_pressed():
 	$MainMenu/LevelSelect/VBoxContainer/DifficultyPanel.hide()
 	$MainMenu/LevelSelect/VBoxContainer/DifficultyButton/HBoxContainer/SelectedDifficulty.text = "Medium"
 	GameData.difficulty_selected("medium")
-	print(GameData.enemy_data["big_boss_circle"]["health"])
 
 func on_hard_pressed():
 	$MainMenu/LevelSelect/VBoxContainer/DifficultyPanel.hide()
 	$MainMenu/LevelSelect/VBoxContainer/DifficultyButton/HBoxContainer/SelectedDifficulty.text = "Hard"
 	GameData.difficulty_selected("hard")
-	
+
+func on_how_to_play_pressed():
+	if htp_shown == true:
+		$MainMenu/HowToPlay.hide()
+		htp_shown = false
+	elif htp_shown == false:
+		$MainMenu/HowToPlay.show()
+		htp_shown = true
 
 #func on_game_over(result):
 #	if result == "lose":

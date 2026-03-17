@@ -2,16 +2,17 @@ extends CanvasLayer
 
 # Connect nodes
 @onready var health_bar: TextureProgressBar = $HUD/HealthUI/HBoxContainer/HealthBar
-@onready var cash: Label = $HUD/TextureRect/BuildBar/CashUI/HBoxContainer/Cash
-@onready var triangle_cost: Label = $HUD/TextureRect/BuildBar/HBoxContainer/VBoxContainer2/TriangleCost
-@onready var square_cost: Label = $HUD/TextureRect/BuildBar/HBoxContainer/VBoxContainer2/SquareCost
-@onready var star_cost: Label = $HUD/TextureRect/BuildBar/HBoxContainer/VBoxContainer2/StarCost
-
+@onready var cash: Label = $HUD/TowerBuildPanel/HBoxContainer/BuildBar/CashUI/HBoxContainer/Cash
+@onready var triangle_cost: Label = $HUD/TowerBuildPanel/HBoxContainer/BuildBar/Margin/TowerList/Panel/Triangle/TriangleCost
+@onready var square_cost: Label = $HUD/TowerBuildPanel/HBoxContainer/BuildBar/Margin/TowerList/Panel2/Square/SquareCost
+@onready var star_cost: Label = $HUD/TowerBuildPanel/HBoxContainer/BuildBar/Margin/TowerList/Panel3/Star/StarCost
 
 var current_tween: Tween
 var lose
 
 var selected_tower
+
+var tower_build_panel_shown = false
 
 # Signal for when the game ends
 signal game_finished(result)
@@ -23,17 +24,16 @@ func _ready():
 	update_health_bar(GameData.base_health)
 	GameData.money_changed.connect(update_money)
 	update_money(GameData.money)
-	print(GameData.money)
 	# Play "pulse" animation on the play/pause button
 	$HUD/PausePlay/AnimationPlayer.play("pulse")
 	
-	triangle_cost.text = str(GameData.tower_data["triangle_stock"]["cost"])
-	square_cost.text = str(GameData.tower_data["square_stock"]["cost"])
-	star_cost.text = str(GameData.tower_data["star_stock"]["cost"])
+	triangle_cost.text = str("$" + str(GameData.tower_data["triangle_stock"]["cost"]))
+	square_cost.text = str("$" + str(GameData.tower_data["square_stock"]["cost"]))
+	star_cost.text = str("$" + str(GameData.tower_data["star_stock"]["cost"]))
 
 func update_money(amount: int):
 	# Update displayed cash
-	cash.text = str(amount)
+	cash.text = str("$" + str(amount))
 
 func set_tower_preview(tower_type, mouse_position):
 	# create a preview of the tower being placed
@@ -48,7 +48,6 @@ func set_tower_preview(tower_type, mouse_position):
 	range_texture.scale = Vector2(scaling, scaling)
 	var texture = load("res://Assets/UI/Range Indicator.png")
 	range_texture.texture = texture
-	
 	# Make the tower preview follow the mouse
 	var control = Control.new()
 	control.add_child(drag_tower, true)
@@ -102,3 +101,39 @@ func _on_quit_button_pressed() -> void:
 	GameData.reset()
 	get_tree().paused = false
 	get_tree().change_scene_to_file("res://Scenes/scene_handler.tscn")
+
+
+func _on_move_button_pressed() -> void:
+	if tower_build_panel_shown:
+		$HUD/TowerBuildPanel/AnimationPlayer.play("right")
+		tower_build_panel_shown = false
+	elif tower_build_panel_shown == false:
+		$HUD/TowerBuildPanel/AnimationPlayer.play("left")
+		tower_build_panel_shown = true
+
+
+func _on_triangle_stock_pressed() -> void:
+	if tower_build_panel_shown:
+		$HUD/TowerBuildPanel/AnimationPlayer.play("right")
+		tower_build_panel_shown = false
+	elif tower_build_panel_shown == false:
+		$HUD/TowerBuildPanel/AnimationPlayer.play("left")
+		tower_build_panel_shown = true
+
+
+func _on_star_stock_pressed() -> void:
+	if tower_build_panel_shown:
+		$HUD/TowerBuildPanel/AnimationPlayer.play("right")
+		tower_build_panel_shown = false
+	elif tower_build_panel_shown == false:
+		$HUD/TowerBuildPanel/AnimationPlayer.play("left")
+		tower_build_panel_shown = true
+
+
+func _on_square_stock_pressed() -> void:
+	if tower_build_panel_shown:
+		$HUD/TowerBuildPanel/AnimationPlayer.play("right")
+		tower_build_panel_shown = false
+	elif tower_build_panel_shown == false:
+		$HUD/TowerBuildPanel/AnimationPlayer.play("left")
+		tower_build_panel_shown = true
