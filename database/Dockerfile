@@ -9,4 +9,4 @@ EXPOSE 10101
 ENV PYTHONDONTWRITEBYTECODE=1
 ENV PYTHONUNBUFFERED=1
 
-CMD ["uvicorn", "database.main:app", "--host", "0.0.0.0", "--port", "10101", "--reload"]
+CMD ["uvicorn", "database.main:app", "--host", "0.0.0.0", "--port", "10101", "--workers", "1"]

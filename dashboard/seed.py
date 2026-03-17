@@ -99,29 +99,7 @@ def seed():
 
         db.commit()
         
-        telemetry_rows = db.query(Telemetry).all()
-
-        if len(telemetry_rows) >= 9:
-            anomaly_1 = Anomalies(
-                anomaly_type="Economy Spike",
-                resolution="Players are spending unusually high amounts of money. Review enemy reward values and tower costs."
-            )
-            anomaly_1.telemetry = telemetry_rows[0:3]
-
-            anomaly_2 = Anomalies(
-                anomaly_type="Upgrade Frequency",
-                resolution="Tower upgrades are happening too often. Consider increasing upgrade cost or reducing upgrade efficiency."
-            )
-            anomaly_2.telemetry = telemetry_rows[3:6]
-
-            anomaly_3 = Anomalies(
-                anomaly_type="Damage Intake Outlier",
-                resolution="Players are taking unusually high damage. Review enemy damage values or stage pacing."
-            )
-            anomaly_3.telemetry = telemetry_rows[6:9]
-
-            db.add_all([anomaly_1, anomaly_2, anomaly_3])
-            db.commit()
+    
         
 
     finally:

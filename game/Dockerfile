@@ -11,4 +11,4 @@ EXPOSE 10103
 ENV PYTHONDONTWRITEBYTECODE=1
 ENV PYTHONUNBUFFERED=1
 
-CMD ["uvicorn", "app:app", "--host", "0.0.0.0", "--port", "10103", "--reload"]
+CMD ["uvicorn", "app:app", "--host", "0.0.0.0", "--port", "10103"]

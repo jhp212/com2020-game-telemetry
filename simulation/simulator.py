@@ -3,7 +3,7 @@ try:
 	from simulation.path_godot_parser import path_interpreter
 	from simulation.base_statistics_godot_parser import player_base_health, player_base_money, enemy_data, tower_data,level_data
 	from simulation.vector import Vector
-except ImportError:
+except (ModuleNotFoundError, ImportError):
 	from path_godot_parser import path_interpreter
 	from base_statistics_godot_parser import player_base_health, player_base_money, enemy_data, tower_data,level_data
 	from vector import Vector
@@ -36,23 +36,33 @@ def reset():
 
 @lru_cache
 def within_bounds(tower_type: str, tower_location: tuple, path_location: tuple)  -> bool:
+	global triangle_range_multiplier, star_range_multiplier
 	match tower_type:
 		case 'triangle_stock':
-			return abs(Vector(tower_location) - Vector(path_location)) < tower_data['triangle_stock']['range']
+			return abs(Vector(tower_location) - Vector(path_location)) < (tower_data['triangle_stock']['range']*triangle_range_multiplier)
 		case 'square_stock':
 			return (abs(tower_location[1] - path_location[1]) < 30) or (abs(tower_location[1] - path_location[1]) < 30)
 		case 'star_stock':
-			return abs(Vector(tower_location) - Vector(path_location)) < tower_data['star_stock']['range']
+			return abs(Vector(tower_location) - Vector(path_location)) < (tower_data['star_stock']['range']*star_range_multiplier)
 		case _:
 			return False
 
-def simulation(test_count, level):
-	global wavecount, base_health, base_money, enemies, waves, towers, tower_queue, lvlname
-
+def simulation(test_count, level,difficulty):
+	global wavecount, base_health, base_money, enemies, waves, towers, tower_queue, lvlname, triangle_range_multiplier, star_range_multiplier
+	triangle_range_multiplier = get_parameter("triangle_radius_multiplier",1)
+	star_range_multiplier = get_parameter("star_radius_multiplier",1)
 	enemy_damage_mult = get_parameter("enemy_damage_multiplier", 1)
-	enemy_health_mult = 1
-	enemy_speed_mult = 1
-	player_rof_mult = 1
+	match difficulty.lower():
+		case "easy":
+			enemy_health_mult = get_parameter("easy_health_multiplier", 1)
+		case "medium":
+			enemy_health_mult = get_parameter("medium_health_multiplier", 1)
+		case "hard":
+			enemy_health_mult = get_parameter("hard_health_multiplier", 1)
+		case _:
+			return {"success_rate": 0,"suggestedAction": "Please input valid difficulty level"}
+	enemy_speed_mult = get_parameter("enemy_damage_multiplier", 1)
+	money_earned_multiplier = get_parameter("money_earned_multiplier",1)
 
 
 	timesamplerate = 1 #seconds / iteration: how many "seconds" are simulated every second
@@ -89,7 +99,7 @@ def simulation(test_count, level):
 		for enemy in wave:
 			maxduration = max(maxduration, offset + durations[enemy[0]])
 			offset += enemy[1]
-			earnable += enemy_data[enemy[0]]['cash']
+			earnable += enemy_data[enemy[0]]['cash'] * money_earned_multiplier
 		offset = maxduration
 	totaliterations = int(round(maxduration/timesamplerate,0))
 	
@@ -104,7 +114,7 @@ def simulation(test_count, level):
 		# Third: this constant rate of fire will deal an average amount of damage for the duration the enemy is within line of fire.
 		# Fourth: if you can place a tower, you will place a tower.
 		while base_money + earnable > 0:
-			tower = random.choice(list(tower_data.keys()))
+			tower = random.choice(["triangle_stock","square_stock","star_stock"])
 			#tower = 'triangle_stock'
 			tower_queue.append(tower)
 			base_money -= tower_data[tower]['cost']
@@ -152,7 +162,7 @@ def simulation(test_count, level):
 				if total_hit == 0:
 					pass
 				else:
-					damage = tower_data[tower]['damage'] * player_rof_mult * timesamplerate/ (tower_data[tower]['rof'])
+					damage = tower_data[tower]['damage'] *  timesamplerate/ (tower_data[tower]['rof'])
 					if tower == 'star_stock':
 						for enemy_id in enemieshit:
 							enemyind = enemy_ids.index(enemy_id)
@@ -165,7 +175,7 @@ def simulation(test_count, level):
 						
 			for enemyind, enemy in list(enumerate(enemies.copy()))[::-1]:
 				if enemy[3] <= 0:
-					money += enemy_data[enemy[0]]['cash']
+					money += enemy_data[enemy[0]]['cash'] * money_earned_multiplier
 					enemies.pop(enemyind)
 					enemy_ids.pop(enemyind)
 			# run player health checks
@@ -206,7 +216,7 @@ def simulation(test_count, level):
 if __name__ == "__main__":
 	import datetime
 	start = datetime.datetime.now() 
-	simulation(1000,1)
+	simulation(1000,1,'easy')
 	end = datetime.datetime.now()
 
 	print(end-start)

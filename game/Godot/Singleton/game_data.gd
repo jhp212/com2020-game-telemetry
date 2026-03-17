@@ -22,8 +22,9 @@ var money_earned_multiplier := 1.0
 var triangle_radius_multiplier := 1.0
 var star_radius_multiplier := 1.0
 
+var volume := 100.0
 
-func _ready() -> void:
+func update_data() -> void:
 	# Get damage multiplier from database
 	var json = await Telemetry.get_parameter("enemy_damage_multiplier")
 	enemy_damage_multiplier = json[0]["value"]
@@ -129,15 +130,24 @@ func difficulty_selected(difficulty):
 	if difficulty == "easy":
 		# Get easy enemy health multiplier from database
 		var json = await Telemetry.get_parameter("easy_health_multiplier")
-		health_multiplier = json[0]["value"]
+		if typeof(json) == 3: # float
+			health_multiplier = json
+		else:
+			health_multiplier = json[0]["value"]
 	elif difficulty == "medium":
 		# Get medium enemy health multiplier from database
 		var json = await Telemetry.get_parameter("medium_health_multiplier")
-		health_multiplier = json[0]["value"]
+		if typeof(json) == 3: # float
+			health_multiplier = json
+		else:
+			health_multiplier = json[0]["value"]
 	elif difficulty == "hard":
 		# Get hard enemy health multiplier from database
 		var json = await Telemetry.get_parameter("hard_health_multiplier")
-		health_multiplier = json[0]["value"]
+		if typeof(json) == 3: # float
+			health_multiplier = json
+		else:
+			health_multiplier = json[0]["value"]
 	else:
 		print("Invalid difficulty detected!")
 	enemy_data["medium_circle"]["health"] = enemy_data["medium_circle"]["health"] * health_multiplier
@@ -234,7 +244,7 @@ var tower_data = {
 	"star_stock": {
 		"damage": 5,
 		"rof": 1.5,
-		"range": 400 * star_radius_multiplier,
+		"range": 400,
 		"cost": 550},
 	"star_t_2": {
 		"damage": 10,

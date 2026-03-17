@@ -31,6 +31,8 @@ if __name__ == "__main__":
 
 del tower_data_start, potentialtowerdict, stack
 enemy_damage_multiplier = 1
+money_earned_multiplier = 1
+enemy_speed_multiplier = 1
 enemy_data_start: int = data.index("var enemy_data = {")
 potentialenemydict = ''.join(map(lambda line: line.lstrip("\t"),data[enemy_data_start+1:]))
 stack = ["{"]
@@ -51,6 +53,13 @@ if __name__ == "__main__":
 
 del enemy_data_start, potentialenemydict, stack
 
+sc = "small_circle"
+mc = "medium_circle"
+lc = "large_circle"
+mbc = "mini_boss_circle"
+bbc = "big_boss_circle"
+
+
 level_data_start: int = data.index("var level_data = {")
 potentialleveldict = ''.join(map(lambda line: line.lstrip("\t"),data[level_data_start+1:]))
 stack = ["{"]
@@ -69,4 +78,4 @@ for index,char in enumerate(potentialleveldict):
 if __name__ == "__main__":
     print(level_data)
 
-del level_data_start, potentialleveldict, stack
+del level_data_start, potentialleveldict, stack, sc, mc, lc, mbc, bbc

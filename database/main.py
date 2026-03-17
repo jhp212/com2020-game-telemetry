@@ -24,8 +24,8 @@ DEFAULT_PARAMETERS = [
 ]
 
 DEFAULT_USERS = [
-    {"username": "testadmin", "password": "adminpass", "is_admin": 1},
-    {"username": "testplayer", "password": "playerpass", "is_admin": 0}
+    {"username": "testadmin", "password": "Adminpass1!", "is_admin": 1},
+    {"username": "testplayer", "password": "Playerpass1!", "is_admin": 0}
 ]
 
 def initialize_db_defaults():

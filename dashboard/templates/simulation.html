@@ -6,18 +6,25 @@
 
 <div id="sim-page-container">
     <section id="sim-left">
+
+    <select id="TestDifficultySelect">
+        <option value="easy">Easy</option>
+        <option value="medium">Medium</option>
+        <option value="hard">Hard</option>
+        
+    </select>
     <div>
     <label>Number of Tests to Run</label>
     </div>
 
-    <input id="TestCountInput" rows="2" style="width:10%"></textarea>
+    <input id="TestCountInput" rows="2" style="width:50%">
 
 
     <div>
         <label>Level to be Tested</label>
     </div>
 
-    <input id="TestLevelInput" rows="2" style="width:10%"></textarea>
+    <input id="TestLevelInput" rows="2" style="width:10%">
 
     <div>
         <button id="test-btn">Commence Test</button>
@@ -54,6 +61,7 @@
         const overlay = document.getElementById("loading-overlay");
         overlay.classList.remove("hidden");
 
+        const testDifficulty = document.getElementById("TestDifficultySelect").value;
         const testCount = document.getElementById("TestCountInput").value;
         const testLevel = document.getElementById("TestLevelInput").value;
 
@@ -62,6 +70,7 @@
                 method: "POST",
                 headers: {"Content-Type": "application/json"},
                 body: JSON.stringify({
+                    test_difficulty: testDifficulty,
                     test_count: Number(testCount),
                     level: Number(testLevel)
                 })

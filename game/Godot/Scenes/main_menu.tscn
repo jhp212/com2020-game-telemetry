@@ -1,4 +1,10 @@
-[gd_scene load_steps=5 format=3 uid="uid://ceqwvifw0ojeu"]
+[gd_scene load_steps=11 format=3 uid="uid://ceqwvifw0ojeu"]
+
+[ext_resource type="Script" uid="uid://dc61sudfhqrl6" path="res://Scenes/main_menu.gd" id="1_28flt"]
+[ext_resource type="Texture2D" uid="uid://cirl1dvpj7d11" path="res://Assets/UI/cog.png" id="2_48xlc"]
+[ext_resource type="Script" uid="uid://c76i4eqv47igq" path="res://Scenes/cog.gd" id="3_1ehe0"]
+[ext_resource type="Script" uid="uid://ik5pevyfqfak" path="res://Scenes/volume_slider.gd" id="4_ce3w2"]
+[ext_resource type="AudioStream" uid="uid://chg547ffg2rms" path="res://Audio/SFX/SCi fi placement noise.mp3" id="5_n45e2"]
 
 [sub_resource type="Gradient" id="Gradient_erv1k"]
 offsets = PackedFloat32Array(0.142857, 0.55, 0.728571, 1)
@@ -25,6 +31,12 @@ corner_radius_bottom_left = 2
 
 [sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_erv1k"]
 
+[sub_resource type="StyleBoxLine" id="StyleBoxLine_1ehe0"]
+color = Color(1, 0.387955, 0.319725, 1)
+grow_begin = -5.0
+grow_end = -5.0
+thickness = 5
+
 [node name="MainMenu" type="Control"]
 layout_mode = 3
 anchors_preset = 15
@@ -32,6 +44,7 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
+script = ExtResource("1_28flt")
 
 [node name="Background" type="TextureRect" parent="."]
 modulate = Color(1, 0, 0, 1)
@@ -39,11 +52,16 @@ layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
+offset_left = 11.0
+offset_top = -7.0
+offset_right = 11.0
+offset_bottom = 9.0
 grow_horizontal = 2
 grow_vertical = 2
 texture = SubResource("GradientTexture2D_28flt")
 
-[node name="Border" type="MarginContainer" parent="."]
+[node name="LevelSelect" type="MarginContainer" parent="."]
+visible = false
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -55,23 +73,23 @@ theme_override_constants/margin_top = 70
 theme_override_constants/margin_right = 70
 theme_override_constants/margin_bottom = 70
 
-[node name="VBoxContainer" type="VBoxContainer" parent="Border"]
+[node name="VBoxContainer" type="VBoxContainer" parent="LevelSelect"]
 custom_minimum_size = Vector2(400, 0)
 layout_mode = 2
 size_flags_horizontal = 0
 theme_override_constants/separation = 10
 
-[node name="MainMenuText" type="Label" parent="Border/VBoxContainer"]
+[node name="MainMenuText" type="Label" parent="LevelSelect/VBoxContainer"]
 layout_mode = 2
 theme_override_font_sizes/font_size = 64
-text = "Main Menu"
+text = "Shapes TD 26"
 horizontal_alignment = 1
 
-[node name="Spacing" type="Control" parent="Border/VBoxContainer"]
+[node name="Spacing" type="Control" parent="LevelSelect/VBoxContainer"]
 custom_minimum_size = Vector2(0, 20)
 layout_mode = 2
 
-[node name="PlayButton" type="Button" parent="Border/VBoxContainer"]
+[node name="PlayButton" type="Button" parent="LevelSelect/VBoxContainer"]
 custom_minimum_size = Vector2(300, 70)
 layout_mode = 2
 size_flags_horizontal = 4
@@ -80,7 +98,7 @@ theme_override_font_sizes/font_size = 24
 theme_override_styles/hover = SubResource("StyleBoxFlat_erv1k")
 text = "Play"
 
-[node name="LevelsButton" type="Button" parent="Border/VBoxContainer"]
+[node name="LevelsButton" type="Button" parent="LevelSelect/VBoxContainer"]
 custom_minimum_size = Vector2(300, 70)
 layout_mode = 2
 size_flags_horizontal = 4
@@ -89,14 +107,14 @@ theme_override_font_sizes/font_size = 24
 theme_override_styles/hover = SubResource("StyleBoxFlat_erv1k")
 text = "Levels"
 
-[node name="DifficultyButton" type="Button" parent="Border/VBoxContainer"]
+[node name="DifficultyButton" type="Button" parent="LevelSelect/VBoxContainer"]
 custom_minimum_size = Vector2(300, 70)
 layout_mode = 2
 size_flags_horizontal = 4
 theme_override_colors/font_color = Color(1, 1, 1, 1)
 theme_override_styles/hover = SubResource("StyleBoxFlat_erv1k")
 
-[node name="HBoxContainer" type="HBoxContainer" parent="Border/VBoxContainer/DifficultyButton"]
+[node name="HBoxContainer" type="HBoxContainer" parent="LevelSelect/VBoxContainer/DifficultyButton"]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -104,7 +122,7 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 
-[node name="Label" type="Label" parent="Border/VBoxContainer/DifficultyButton/HBoxContainer"]
+[node name="Label" type="Label" parent="LevelSelect/VBoxContainer/DifficultyButton/HBoxContainer"]
 custom_minimum_size = Vector2(150, 0)
 layout_mode = 2
 size_flags_horizontal = 4
@@ -115,7 +133,7 @@ text = "Difficulty:"
 horizontal_alignment = 2
 vertical_alignment = 1
 
-[node name="SelectedDifficulty" type="Label" parent="Border/VBoxContainer/DifficultyButton/HBoxContainer"]
+[node name="SelectedDifficulty" type="Label" parent="LevelSelect/VBoxContainer/DifficultyButton/HBoxContainer"]
 custom_minimum_size = Vector2(150, 0)
 layout_mode = 2
 size_flags_horizontal = 4
@@ -126,7 +144,7 @@ text = "Easy"
 horizontal_alignment = 1
 vertical_alignment = 1
 
-[node name="DifficultyPanel" type="Panel" parent="Border/VBoxContainer"]
+[node name="DifficultyPanel" type="Panel" parent="LevelSelect/VBoxContainer"]
 visible = false
 custom_minimum_size = Vector2(300, 70)
 layout_mode = 2
@@ -134,7 +152,7 @@ size_flags_horizontal = 4
 size_flags_vertical = 4
 theme_override_styles/panel = SubResource("StyleBoxEmpty_erv1k")
 
-[node name="HBoxContainer" type="HBoxContainer" parent="Border/VBoxContainer/DifficultyPanel"]
+[node name="HBoxContainer" type="HBoxContainer" parent="LevelSelect/VBoxContainer/DifficultyPanel"]
 layout_mode = 1
 anchors_preset = 13
 anchor_left = 0.5
@@ -145,7 +163,7 @@ offset_right = 146.5
 grow_horizontal = 2
 grow_vertical = 2
 
-[node name="EasyButton" type="Button" parent="Border/VBoxContainer/DifficultyPanel/HBoxContainer"]
+[node name="EasyButton" type="Button" parent="LevelSelect/VBoxContainer/DifficultyPanel/HBoxContainer"]
 custom_minimum_size = Vector2(95, 0)
 layout_mode = 2
 size_flags_horizontal = 4
@@ -154,7 +172,7 @@ theme_override_font_sizes/font_size = 12
 theme_override_styles/hover = SubResource("StyleBoxFlat_erv1k")
 text = "Easy"
 
-[node name="MediumButton" type="Button" parent="Border/VBoxContainer/DifficultyPanel/HBoxContainer"]
+[node name="MediumButton" type="Button" parent="LevelSelect/VBoxContainer/DifficultyPanel/HBoxContainer"]
 custom_minimum_size = Vector2(95, 0)
 layout_mode = 2
 size_flags_horizontal = 4
@@ -163,7 +181,7 @@ theme_override_font_sizes/font_size = 12
 theme_override_styles/hover = SubResource("StyleBoxFlat_erv1k")
 text = "Medium"
 
-[node name="HardButton" type="Button" parent="Border/VBoxContainer/DifficultyPanel/HBoxContainer"]
+[node name="HardButton" type="Button" parent="LevelSelect/VBoxContainer/DifficultyPanel/HBoxContainer"]
 custom_minimum_size = Vector2(95, 0)
 layout_mode = 2
 size_flags_horizontal = 4
@@ -172,4 +190,90 @@ theme_override_font_sizes/font_size = 12
 theme_override_styles/hover = SubResource("StyleBoxFlat_erv1k")
 text = "Hard"
 
-[connection signal="pressed" from="Border/VBoxContainer/PlayButton" to="." method="_on_play_button_pressed"]
+[node name="LogoutButton" type="Button" parent="."]
+custom_minimum_size = Vector2(300, 70)
+layout_mode = 0
+offset_left = 960.0
+offset_top = 626.0
+offset_right = 1260.0
+offset_bottom = 696.0
+size_flags_horizontal = 4
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_font_sizes/font_size = 24
+text = "Logout"
+
+[node name="Username" type="Label" parent="."]
+layout_mode = 0
+offset_left = 11.0
+offset_top = 568.0
+offset_right = 1260.0
+offset_bottom = 616.0
+theme_override_font_sizes/font_size = 30
+text = "Logged in as: "
+horizontal_alignment = 2
+vertical_alignment = 1
+autowrap_mode = 2
+
+[node name="Cog" type="Sprite2D" parent="."]
+position = Vector2(1206, 63)
+scale = Vector2(0.42, 0.42)
+texture = ExtResource("2_48xlc")
+script = ExtResource("3_1ehe0")
+
+[node name="SettingsMenu" type="Control" parent="."]
+anchors_preset = 0
+offset_right = 40.0
+offset_bottom = 40.0
+script = ExtResource("4_ce3w2")
+
+[node name="DeleteDataButton" type="Button" parent="SettingsMenu"]
+custom_minimum_size = Vector2(300, 70)
+layout_mode = 0
+offset_left = 390.0
+offset_top = 200.0
+offset_right = 890.0
+offset_bottom = 300.0
+size_flags_horizontal = 4
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_font_sizes/font_size = 24
+text = "Delete Data"
+autowrap_mode = 3
+
+[node name="VolumeLabel" type="Label" parent="SettingsMenu"]
+offset_left = 389.0
+offset_top = 318.0
+offset_right = 487.0
+offset_bottom = 352.0
+size_flags_horizontal = 4
+size_flags_vertical = 1
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_font_sizes/font_size = 24
+text = "Volume:"
+vertical_alignment = 1
+
+[node name="VolumeSlider" type="HSlider" parent="SettingsMenu"]
+layout_mode = 0
+offset_left = 496.0
+offset_top = 330.0
+offset_right = 813.0
+offset_bottom = 346.0
+theme_override_styles/slider = SubResource("StyleBoxLine_1ehe0")
+max_value = 1.0
+step = 0.01
+value = 1.0
+
+[node name="VolumeValueLabel" type="Label" parent="SettingsMenu"]
+offset_left = 820.0
+offset_top = 321.0
+offset_right = 887.0
+offset_bottom = 355.0
+size_flags_horizontal = 4
+size_flags_vertical = 1
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_font_sizes/font_size = 24
+text = "100%"
+horizontal_alignment = 2
+vertical_alignment = 1
+
+[node name="PlacementSfx" type="AudioStreamPlayer" parent="SettingsMenu"]
+stream = ExtResource("5_n45e2")

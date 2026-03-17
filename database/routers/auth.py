@@ -9,9 +9,34 @@ from database.security import get_password_hash, verify_password, create_access_
 
 router = APIRouter(prefix="/auth", tags=["Authentication"])
 
+# Password validation function to enforce strong password policies
+# Password must be at least 8 characters long and include uppercase, lowercase, digit, and special character
+def is_valid_password(password: str) -> bool:
+    if len(password) < 8:
+        return False
+    if " " in password:
+        return False
+    has_upper = any(c.isupper() for c in password)
+    has_lower = any(c.islower() for c in password)
+    has_digit = any(c.isdigit() for c in password)
+    has_special = any(c in "!@#$%^&*()-_=+[]{}|;:'\",.<>?/\\" for c in password)
+    return has_upper and has_lower and has_digit and has_special
+
+# Username validation function to ensure usernames are alphanumeric and of appropriate length
+# Usernames must be between 3 and 20 characters long and contain only letters, numbers, and underscores
+def is_valid_username(username: str) -> bool:
+    if len(username) < 3 or len(username) > 20:
+        return False
+    return all(c.isalnum() or c in "_" for c in username)
+
 # Registration endpoint - creates a new user with hashed password
 @router.post("/register", response_model=schemas.UserResponse)
 def register_user(user: schemas.UserCreate, db: Session = Depends(get_db)):
+    if not is_valid_username(user.username):
+        raise HTTPException(status_code=400, detail="Username must be between 3 and 20 characters long and contain only alphanumeric characters")
+    if not is_valid_password(user.password):
+        raise HTTPException(status_code=400, detail="Password must be at least 8 characters long and include uppercase, lowercase, digit, and special character")
+    
     existing = db.query(Users).filter(Users.username == user.username).first()
     if existing:
         raise HTTPException(status_code=400, detail="Username already exists")
@@ -26,6 +51,11 @@ def register_user(user: schemas.UserCreate, db: Session = Depends(get_db)):
 # Login endpoint - verifies credentials and returns User ID and JWT token
 @router.post("/token", response_model=schemas.TokenResponse)
 def login(form_data: OAuth2PasswordRequestForm = Depends(), db: Session = Depends(get_db)):
+    if not is_valid_username(form_data.username):
+        raise HTTPException(status_code=400, detail="Invalid username format")
+    if not is_valid_password(form_data.password):
+        raise HTTPException(status_code=400, detail="Invalid password format")
+    
     db_user = db.query(Users).filter(Users.username == form_data.username).first()
     if not db_user or not verify_password(form_data.password, db_user.password_hash):
         raise HTTPException(status_code=401, detail="Invalid credentials")
@@ -77,3 +107,10 @@ def reject_admin_request(username: str, db: Session = Depends(get_db), current_u
     db.commit()
     db.refresh(user)
     return {"username": user.username, "is_requesting_admin": user.is_requesting_admin}
+
+# Endpoint to delete the current user's account and all associated data. Only that user can make this request
+@router.delete("/delete_account")
+def delete_user_account(db: Session = Depends(get_db), current_user: Users = Depends(get_current_user)):
+    db.delete(current_user)
+    db.commit()
+    return {"detail": f"User '{current_user.username}' and all associated data have been deleted."}
