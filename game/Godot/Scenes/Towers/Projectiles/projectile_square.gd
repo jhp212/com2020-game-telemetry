@@ -14,7 +14,8 @@ var enemy
 var speed: float = 300
 var spin_speed = 15
 
-
+func _ready() -> void:
+	$DistanceTimeout.start()
 
 func _process(delta: float) -> void:
 	# Constantly spin
@@ -24,15 +25,11 @@ func _physics_process(delta: float) -> void:
 	# Move in direction based on rotation
 	global_position += Vector2(1,0).rotated(rotation) * speed * delta
 	Glow.position = Vector2(0,0).rotated(-rotation)
-	
-func _on_animation_player_animation_finished(anim_name: StringName) -> void:
-	# Remove projectile after "remove" animation ends
-	if anim_name == "remove":
-		queue_free()
+
 
 func _on_distance_timeout_timeout() -> void:
 	# Start "remove" animation if existed for too long
-	AnimPlayer.play("remove")
+	queue_free()
 
 
 func _on_area_body_entered(body: Node2D) -> void:

@@ -107,10 +107,8 @@ func _on_click_area_input_event(viewport,event, shape_idx):
 	# Check if the tower has been clicked and send signal
 	if event is InputEventMouseButton and event.pressed and event.button_index == MOUSE_BUTTON_LEFT:
 		tower_clicked.emit(self)
-		print("square clicvked")
 
 func upgrade(tower):
-	print("upgraded")
 	if tower == self:
 		var upgraded_tower = load("res://Scenes/Towers/square_t_3.tscn")
 		var upgraded = upgraded_tower.instantiate()

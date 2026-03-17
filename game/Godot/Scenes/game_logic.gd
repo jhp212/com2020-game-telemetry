@@ -46,19 +46,23 @@ func get_map():
 func _process(delta):
 	# Check for win condition and log telemetry event
 	if current_wave == (GameData.level_data[get_parent().name]["number_of_waves"] + 1) and GameData.enemy_amount == 0:
-		print("waves completed")
 		Telemetry.log_event("stage_end", {})
 		GameData.reset()
 		get_tree().change_scene_to_file("res://Scenes/win_screen.tscn")
+	if current_wave == (GameData.level_data[get_parent().name]["number_of_waves"] + 1) and GameData.enemy_amount < 0:
+		print("Number of enemies is less than one, this is invalid!")
 	# Update toqer preview when placing
 	if build_mode:
 		update_tower_preview()
 
 func start_next_wave():
 	# Start next wave
+	update_wave_counter()
 	## round event log
 	if current_wave <= GameData.level_data[get_parent().name]["number_of_waves"]:
 		var wave_data = retrieve_wave_data()
+		if current_wave != 1:
+			GameData.add_money(300 + (20 * (current_wave - 1)))
 		current_wave += 1
 		spawn_enemies(wave_data)
 
@@ -66,7 +70,6 @@ func retrieve_wave_data():
 	# Get wave data from GameData
 	var wave_data = GameData.level_data[get_parent().name]["wave_" + str(current_wave)]
 	var enemies_in_wave = wave_data.size()
-	print("cw " + str(current_wave))
 	# Notify GameData how many enemies will spawn
 	number_of_enemies.emit(enemies_in_wave)
 	return wave_data
@@ -80,7 +83,9 @@ func spawn_enemies(wave_data):
 		new_enemy.enemy_damage.connect(GameData.damage_base)
 		new_enemy.enemy_death.connect(GameData.remove_enemy_amount)
 		map_node.get_node("Path2D").add_child(new_enemy, true)
-		await get_tree().create_timer(i[1]).timeout
+		$WaveTimer.wait_time = i[1]
+		$WaveTimer.start()
+		await $WaveTimer.timeout
 	start_grace_period()
 
 var grace_time := 20
@@ -90,19 +95,20 @@ var skip_requested := false
 
 func start_grace_period():
 	grace_running = true
-	$UI/HUD/GraceTimerLabel.show()
-	$UI/HUD/SkipButton.show()
+	$UI/HUD/WaveTracker/SkipButton.show()
+	$UI/HUD/WaveTracker/GraceTimerLabel.show()
 	var time_left = grace_time
 	while time_left > 0 and grace_running:
-		$UI/HUD/GraceTimerLabel.text = "Next wave in: %d" % time_left
-		await get_tree().create_timer(1).timeout
+		$UI/HUD/WaveTracker/GraceTimerLabel.text = "Next wave in: %d" % time_left
+		$GraceTimer.start()
+		await $GraceTimer.timeout
 		if skip_requested:
 			skip_requested = false
 			break
 		time_left -= 1
 	grace_running = false
-	$UI/HUD/GraceTimerLabel.hide()
-	$UI/HUD/SkipButton.hide()
+	$UI/HUD/WaveTracker/GraceTimerLabel.hide()
+	$UI/HUD/WaveTracker/SkipButton.hide()
 	start_next_wave()
 
 func _on_skip_button_pressed() -> void:
@@ -120,7 +126,6 @@ func _unhandled_input(event):
 		cancel_build_mode()
 
 func initiate_build_mode(tower_type):
-	print(tower_type)
 	# Start building a tower
 	if build_mode:
 		cancel_build_mode()
@@ -212,3 +217,6 @@ func sell_tower(tower):
 	var money_back = GameData.tower_upgrades[tower.tower_type]["sell_price"]
 	GameData.add_money(money_back)
 	tower.sold()
+
+func update_wave_counter():
+	$UI/HUD/WaveTracker/WaveCounter.text = str(current_wave)

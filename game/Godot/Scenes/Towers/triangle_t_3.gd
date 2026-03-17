@@ -91,7 +91,6 @@ func _ready():
 func _on_range_body_entered(body: Node2D) -> void:
 	# Add enemy when it enters the range
 	enemy_array.append(body.get_parent())
-	print(enemy_array)
 
 func _on_range_body_exited(body: Node2D) -> void:
 	# Remove enemy when it leaves the range

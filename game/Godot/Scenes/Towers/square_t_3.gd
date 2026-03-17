@@ -99,7 +99,6 @@ func _on_click_area_input_event(viewport,event, shape_idx):
 	# Check if the tower has been clicked and send signal
 	if event is InputEventMouseButton and event.pressed and event.button_index == MOUSE_BUTTON_LEFT:
 		tower_clicked.emit(self)
-		print("square clicvked")
 
 func sold():
 	self.queue_free()

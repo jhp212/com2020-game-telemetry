@@ -1,14 +1,17 @@
 extends Node
 
+var htp_shown = false
+
 func _ready():
 	# Connect Main Menu buttons
-	get_node("MainMenu/Border/VBoxContainer/PlayButton").pressed.connect(Callable(self, "on_play_pressed"))
-	get_node("MainMenu/Border/VBoxContainer/LevelsButton").pressed.connect(Callable(self, "on_levels_pressed"))
-	get_node("MainMenu/Border/VBoxContainer/DifficultyButton").pressed.connect(Callable(self, "on_difficulty_pressed"))
-	get_node("MainMenu/Border/VBoxContainer/DifficultyPanel/HBoxContainer/EasyButton").pressed.connect(Callable(self, "on_easy_pressed"))
-	get_node("MainMenu/Border/VBoxContainer/DifficultyPanel/HBoxContainer/MediumButton").pressed.connect(Callable(self, "on_medium_pressed"))
-	get_node("MainMenu/Border/VBoxContainer/DifficultyPanel/HBoxContainer/HardButton").pressed.connect(Callable(self, "on_hard_pressed"))
-	
+	get_node("MainMenu/LevelSelect/VBoxContainer/PlayButton").pressed.connect(Callable(self, "on_play_pressed"))
+	get_node("MainMenu/LevelSelect/VBoxContainer/LevelsButton").pressed.connect(Callable(self, "on_levels_pressed"))
+	get_node("MainMenu/LevelSelect/VBoxContainer/DifficultyButton").pressed.connect(Callable(self, "on_difficulty_pressed"))
+	get_node("MainMenu/LevelSelect/VBoxContainer/DifficultyPanel/HBoxContainer/EasyButton").pressed.connect(Callable(self, "on_easy_pressed"))
+	get_node("MainMenu/LevelSelect/VBoxContainer/DifficultyPanel/HBoxContainer/MediumButton").pressed.connect(Callable(self, "on_medium_pressed"))
+	get_node("MainMenu/LevelSelect/VBoxContainer/DifficultyPanel/HBoxContainer/HardButton").pressed.connect(Callable(self, "on_hard_pressed"))
+	get_node("MainMenu/LevelSelect/VBoxContainer/HowToPlay").pressed.connect(Callable(self, "on_how_to_play_pressed"))
+
 	# Connect Level Selection buttons
 	get_node("LevelSelection/Border/VBoxContainer/Row1/Level1").pressed.connect(Callable(self, "on_levels_1_pressed"))
 	get_node("LevelSelection/Border/VBoxContainer/Row1/Level2").pressed.connect(Callable(self, "on_levels_2_pressed"))
@@ -99,13 +102,19 @@ func on_medium_pressed():
 	$MainMenu/Border/VBoxContainer/DifficultyPanel.hide()
 	$MainMenu/Border/VBoxContainer/DifficultyButton/HBoxContainer/SelectedDifficulty.text = "Medium"
 	GameData.difficulty_selected("medium")
-	print(GameData.enemy_data["big_boss_circle"]["health"])
 
 func on_hard_pressed():
 	$MainMenu/Border/VBoxContainer/DifficultyPanel.hide()
 	$MainMenu/Border/VBoxContainer/DifficultyButton/HBoxContainer/SelectedDifficulty.text = "Hard"
 	GameData.difficulty_selected("hard")
-	
+
+func on_how_to_play_pressed():
+	if htp_shown == true:
+		$MainMenu/HowToPlay.hide()
+		htp_shown = false
+	elif htp_shown == false:
+		$MainMenu/HowToPlay.show()
+		htp_shown = true
 
 #func on_game_over(result):
 #	if result == "lose":

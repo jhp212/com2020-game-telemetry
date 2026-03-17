@@ -41,5 +41,4 @@ func _on_area_body_entered(body: Node2D) -> void:
 	if enemy.is_in_group("enemies"):
 		enemy_array.append(enemy)
 		enemy.on_hit(GameData.tower_data["star_stock"]["damage"])
-		print("hit")
 	queue_free()
