@@ -61,6 +61,18 @@ To run the entire project, we use Docker Compose to deploy 3 containers:
 [Guide to installing Docker Desktop](https://docs.docker.com/desktop/)<br>
 [Docker Engine for Linux](https://docs.docker.com/engine/install/)
 
+### Configuration
+
+You will need to configure a .env file with two keys: SECRET_KEY, and HTTPS_ONLY. The first is used for JSON Web Token encoding. Keeping this key secure is vital, as if someone finds what it is, they can generate valid tokens for your installation without being authorised. The second key dictates whether cookies from the dashboard should only be stored if the user is connected through an HTTPS connection. This value can either be true or false. An example configuration is shown:
+
+SECRET_KEY=*insert secure key here*<br>
+HTTPS_ONLY=true
+
+If the .env file is not created, the default keys are
+
+SECRET_KEY=SUPER_SECRET_DEV_KEY_CHANGE_IN_PRODUCTION<br>
+HTTPS_ONLY=false
+
 ### Deploying the containers
 
 First, run Docker Desktop if you have it installed. Then, clone the git repository into a new directory. In the root directory of the project, on the same level as `docker-compose.yaml` run:<br>

@@ -19,6 +19,8 @@ from typing import Optional
 BASE_DIR = Path(__file__).resolve().parent
 BASE_URL = os.getenv("API_URL", "http://127.0.0.1:10101")
 
+HTTPS_ONLY = os.getenv("HTTPS_ONLY", "false").lower() == "true"
+print(f"HTTPS_ONLY is set to {HTTPS_ONLY}. Cookies will {'require' if HTTPS_ONLY else 'not require'} secure flag.")
 
 def api_get_with_token(path: str, token: str) -> requests.Response:
     return requests.get(
@@ -751,7 +753,7 @@ async def login_action(
         key="access_token",
         value=token,
         httponly=True,
-        secure=False,
+        secure=HTTPS_ONLY,
         samesite="lax",
         max_age=max_age,
         path="/",
