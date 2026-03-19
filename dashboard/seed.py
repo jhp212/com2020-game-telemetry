@@ -10,24 +10,15 @@ def seed():
     db = SessionLocal()
 
     try:
-        params = [
-            ("Enemy Damage Multiplier", 1)
-        ]
         
         # deleting child tables first to avoid errors during seeding
         db.query(DecisionLog).delete()
         db.query(Telemetry).delete()
         db.query(Anomalies).delete()
-        db.query(Parameters).delete()
         db.commit()
 
 
-        for name, value in params:
-            existing = db.query(Parameters).filter(Parameters.name == name).first()
-            if existing:
-                existing.value = value # type: ignore (safe to ignore as we checked for existence)
-            else:
-                db.add(Parameters(name=name, value=value))
+
 
         # Seed telemetry rows
         base_time = datetime.now() - timedelta(minutes=60)
@@ -86,7 +77,7 @@ def seed():
 
             return {}
         
-        for i in range(300):
+        for i in range(2000):
             telemetry_type = random.choice(allowed_types)
             t = Telemetry(
                 user_id = random.randint(1, 10000),
