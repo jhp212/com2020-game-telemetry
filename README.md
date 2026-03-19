@@ -76,7 +76,7 @@ HTTPS_ONLY=false
 ### Deploying the containers
 
 First, run Docker Desktop if you have it installed. Then, clone the git repository into a new directory. In the root directory of the project, on the same level as `docker-compose.yaml` run:<br>
-`docker compose up --build -d`<br>
+`docker-compose up --build -d`<br>
 This will download, build, and deploy every container. To verify it is working, visit:
 
 - `http://localhost:10102` You should see the dashboard.

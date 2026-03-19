@@ -12,7 +12,7 @@ class Telemetry(Base):
     dateTime = Column(DateTime, default=datetime.now, nullable=False)
     data = Column(JSON)
     user = relationship("Users", back_populates="telemetry")
-    anomalies = relationship("Anomalies", secondary="TelemetryAnomaly", back_populates="telemetry")
+    anomalies = relationship("Anomalies", secondary="TelemetryAnomaly", back_populates="telemetry", cascade="all, delete")
 
 class Parameters(Base):
     __tablename__ = "Parameters"
@@ -58,7 +58,7 @@ class Anomalies(Base):
 
 class TelemetryAnomaly(Base):
     __tablename__ = "TelemetryAnomaly"
-    telemetry_id = Column(Integer, ForeignKey("Telemetry.id"), primary_key=True)
-    anomaly_id = Column(Integer, ForeignKey("Anomalies.id"), primary_key=True)
+    telemetry_id = Column(Integer, ForeignKey("Telemetry.id", ondelete="CASCADE"), primary_key=True)
+    anomaly_id = Column(Integer, ForeignKey("Anomalies.id", ondelete="CASCADE"), primary_key=True)
     telemetry = relationship("Telemetry", viewonly=True)
     anomaly = relationship("Anomalies", viewonly=True)

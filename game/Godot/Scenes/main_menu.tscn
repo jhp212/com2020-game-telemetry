@@ -1,9 +1,9 @@
-[gd_scene load_steps=11 format=3 uid="uid://ceqwvifw0ojeu"]
+[gd_scene load_steps=12 format=3 uid="uid://ceqwvifw0ojeu"]
 
 [ext_resource type="Script" uid="uid://dc61sudfhqrl6" path="res://Scenes/main_menu.gd" id="1_28flt"]
 [ext_resource type="Texture2D" uid="uid://cirl1dvpj7d11" path="res://Assets/UI/cog.png" id="2_48xlc"]
 [ext_resource type="Script" uid="uid://c76i4eqv47igq" path="res://Scenes/cog.gd" id="3_1ehe0"]
-[ext_resource type="Script" uid="uid://ik5pevyfqfak" path="res://Scenes/volume_slider.gd" id="4_ce3w2"]
+[ext_resource type="Script" uid="uid://ik5pevyfqfak" path="res://Scenes/settings.gd" id="4_ce3w2"]
 [ext_resource type="AudioStream" uid="uid://chg547ffg2rms" path="res://Audio/SFX/SCi fi placement noise.mp3" id="5_n45e2"]
 
 [sub_resource type="Gradient" id="Gradient_erv1k"]
@@ -37,6 +37,8 @@ grow_begin = -5.0
 grow_end = -5.0
 thickness = 5
 
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_n45e2"]
+
 [node name="MainMenu" type="Control"]
 layout_mode = 3
 anchors_preset = 15
@@ -52,10 +54,7 @@ layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
-offset_left = 11.0
-offset_top = -7.0
-offset_right = 11.0
-offset_bottom = 9.0
+offset_bottom = 16.0
 grow_horizontal = 2
 grow_vertical = 2
 texture = SubResource("GradientTexture2D_28flt")
@@ -279,3 +278,34 @@ vertical_alignment = 1
 
 [node name="PlacementSfx" type="AudioStreamPlayer" parent="SettingsMenu"]
 stream = ExtResource("5_n45e2")
+
+[node name="TelemetryLabel" type="Label" parent="SettingsMenu"]
+layout_mode = 0
+offset_left = 389.0
+offset_top = 365.0
+offset_right = 487.0
+offset_bottom = 399.0
+size_flags_horizontal = 4
+size_flags_vertical = 1
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_font_sizes/font_size = 24
+text = "Toggle Optional Telemetry Data:"
+vertical_alignment = 1
+
+[node name="TelemetryToggle" type="CheckButton" parent="SettingsMenu"]
+layout_mode = 1
+anchors_preset = 6
+anchor_left = 1.0
+anchor_top = 0.5
+anchor_right = 1.0
+anchor_bottom = 0.5
+offset_left = 765.0
+offset_top = 343.0
+offset_right = 851.0
+offset_bottom = 385.0
+grow_horizontal = 0
+grow_vertical = 2
+theme_override_font_sizes/font_size = 24
+theme_override_styles/focus = SubResource("StyleBoxEmpty_n45e2")
+button_pressed = true
+text = "ON"

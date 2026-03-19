@@ -208,13 +208,14 @@ func get_parameter(parameter_name, default_value := 1.0):
 		return default_value
 	
 func log_event(event_type: String, payload := {}):
-	# Create a telemetry event
-	var telemetry_data := {
-		"user_id": user_id, 
-		"stage_id": GameData.current_stage,
-		"telemetry_type": event_type,
-		"dateTime": Time.get_datetime_string_from_system(),
-		"data": payload
-	}
-	print("telemetry logging")
-	await create_telemetry(telemetry_data)
+	if GameData.telemetry_enabled:
+		# Create a telemetry event
+		var telemetry_data := {
+			"user_id": user_id, 
+			"stage_id": GameData.current_stage,
+			"telemetry_type": event_type,
+			"dateTime": Time.get_datetime_string_from_system(),
+			"data": payload
+		}
+		print("telemetry logging")
+		await create_telemetry(telemetry_data)
