@@ -75,7 +75,7 @@ def db_client(db_session):
 @pytest.fixture
 def test_credentials():
     #admin login credentials 
-    return {"username": "testadmin", "password": "adminpass"}
+    return {"username": "testadmin", "password": "Adminpass1!"}
 
 #ensures test user exists 
 @pytest.fixture
@@ -112,7 +112,7 @@ def auth_db_client(db_client, auth_headers):
 
 
 #dashboard integration client 
-# simulates dahsboard calling database api using requests  
+#simulates dahsboard calling database api using requests  
 @pytest.fixture
 def dashboard_client(auth_db_client, monkeypatch):
     #fake response object to mimic requests.Response 
@@ -139,7 +139,7 @@ def dashboard_client(auth_db_client, monkeypatch):
         #handles the token request
         if url.endswith("/auth/token"):
             token = auth_db_client.headers["Authorization"].replace("Bearer ", "")
-            return FakeResponse(200, "OK", {"access_token": token})
+            return FakeResponse(200, "OK", json_data={"access_token": token})
         #forward other POST requests to test db client 
         path = _to_path(url)
         r = auth_db_client.post(path, data=data, json=json, headers=headers, params=kwargs.get("params"))
@@ -156,27 +156,43 @@ def dashboard_client(auth_db_client, monkeypatch):
             params=kwargs.get("params"),
             headers=kwargs.get("headers"),
         )
+
+        return FakeResponse(
+            r.status_code,
+            r.text,
+            json_data=(r.json() if r.headers.get("content-type") == "application/json" else None),
+            headers=dict(r.headers),
+        )
+
+    def fake_delete(url, **kwargs):
+        path = _to_path(url)
+        r = auth_db_client.delete(
+            path,
+            params=kwargs.get("params"),
+            headers=kwargs.get("headers"),
+        )
         try:
             return FakeResponse(r.status_code, r.text, r.json(), headers=dict(r.headers))
         except Exception:
             return FakeResponse(r.status_code, r.text, None, headers=dict(r.headers))
-    
+
     #replaces requests in dashboard app with fake functions 
     monkeypatch.setattr(dash_app.requests, "post", fake_post)
     monkeypatch.setattr(dash_app.requests, "get", fake_get)
+    monkeypatch.setattr(dash_app.requests, "delete", fake_delete)
 
     #return dashboard test client
     with TestClient(dash_app.app) as c:
+        c.cookies.set("access_token", auth_db_client.headers["Authorization"].replace("Bearer ", ""))
         yield c
 
 
-#dhasboard init test client 
+#dashboard init test client 
 #used when requests.get/post is faked inside the individual tests 
 @pytest.fixture
 def dashboard_unit_client():
     with TestClient(dash_app.app) as c:
         yield c
-
 
 
 #keeps the old fixtures (before I refactorijng testing to improve readability) so old tests dont break
@@ -187,4 +203,5 @@ def auth_client(auth_db_client):
 
 @pytest.fixture
 def client(dashboard_unit_client):
+    dashboard_unit_client.cookies.set("access_token", "TEST_TOKEN")
     return dashboard_unit_client

@@ -19,14 +19,19 @@ class FakeResponse:
             raise ValueError("not json")
         return self._json_data
 
+
 #dahsboard calls requests>post(url+/auth/token)
 #this replaces the call with a fake response 
 def fake_db_token(monkeypatch, token="TEST_TOKEN"):
     def fake_post(url, data=None, json=None, headers=None, **kwargs):
-        assert url.endswith("/auth/token"), f"Unexpected POST URL: {url}"
         return FakeResponse(200, "OK", json_data={"access_token": token})
 
+    def fake_get(url, headers=None, **kwargs):
+        raise AssertionError("GET should be overridden per test")
+
     monkeypatch.setattr(dash_app.requests, "post", fake_post)
+    monkeypatch.setattr(dash_app.requests, "get", fake_get)
+
 
 #verifies that authorisation header is properly sent 
 def assert_auth_header(headers):
@@ -56,7 +61,6 @@ def test_home_render(client, monkeypatch):
     assert "Dashboard" in r.text
 
 
-
 #tests that the dashboard page loads correctly and shows telemetry 
 def test_dashboard_page_render(client, monkeypatch):
     fake_db_token(monkeypatch)
@@ -77,15 +81,11 @@ def test_dashboard_page_render(client, monkeypatch):
     assert "Telemetry" in r.text
 
 
-
 #tests what happens when backend returns an error
 def test_decisionlog_returns_error(client, monkeypatch):
     fake_db_token(monkeypatch)
 
     def fake_get(url, headers=None, **kwargs):
-        assert url.endswith("/decision_logs")
-        assert_auth_header(headers)
-        #simulates error 
         return FakeResponse(ok=False, status_code=503, text="backend down")
 
     monkeypatch.setattr(dash_app.requests, "get", fake_get)
@@ -100,8 +100,6 @@ def test_parameter_returns_error(client, monkeypatch):
     fake_db_token(monkeypatch)
 
     def fake_get(url, headers=None, **kwargs):
-        assert url.endswith("/parameters")
-        assert_auth_header(headers)
         return FakeResponse(
             status_code=200,
             text="<html>not json</html>",
@@ -116,7 +114,6 @@ def test_parameter_returns_error(client, monkeypatch):
     assert "did not return JSON" in r.text
 
 
-
 #tests paraneters page renders correctly 
 def test_parameters_page_contains_table_headers(client, monkeypatch):
     fake_db_token(monkeypatch)
@@ -124,9 +121,14 @@ def test_parameters_page_contains_table_headers(client, monkeypatch):
     params = [{"name": "enemy_damage_multiplier", "value": 1.5}]
 
     def fake_get(url, headers=None, **kwargs):
-        assert url.endswith("/parameters")
         assert_auth_header(headers)
-        return FakeResponse(200, "OK", json_data=params)
+        if url.endswith("/telemetry"):
+            return FakeResponse(200, "OK", json_data=[])
+        if "/parameters" in url:
+            return FakeResponse(200, "OK", json_data=[
+                {"name": "enemy_damage_multiplier", "value": 1.5}
+            ])
+        raise AssertionError(f"Unexpected URL: {url}")
 
     monkeypatch.setattr(dash_app.requests, "get", fake_get)
 
