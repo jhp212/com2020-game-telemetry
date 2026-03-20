@@ -4,7 +4,7 @@
 [ext_resource type="Texture2D" uid="uid://cirl1dvpj7d11" path="res://Assets/UI/cog.png" id="2_48xlc"]
 [ext_resource type="StyleBox" uid="uid://cp3nn22dgwq7t" path="res://Styles/main_menu_button_hover.tres" id="2_opfnp"]
 [ext_resource type="Script" uid="uid://c76i4eqv47igq" path="res://Scenes/cog.gd" id="3_1ehe0"]
-[ext_resource type="Script" path="res://Scenes/volume_slider.gd" id="4_ce3w2"]
+[ext_resource type="Script" uid="uid://ik5pevyfqfak" path="res://Scenes/settings.gd" id="4_ce3w2"]
 [ext_resource type="AudioStream" uid="uid://chg547ffg2rms" path="res://Audio/SFX/SCi fi placement noise.mp3" id="5_n45e2"]
 
 [sub_resource type="Gradient" id="Gradient_erv1k"]
