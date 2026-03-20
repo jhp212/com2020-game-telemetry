@@ -22,7 +22,6 @@ var money_earned_multiplier := 1.0
 var triangle_radius_multiplier := 1.0
 var star_radius_multiplier := 1.0
 
-var volume := 100.0
 var telemetry_enabled := true
 
 func update_data() -> void:

@@ -6,6 +6,8 @@ extends CanvasLayer
 @onready var triangle_cost: Label = $HUD/TowerBuildPanel/HBoxContainer/BuildBar/Margin/TowerList/Panel/Triangle/TriangleCost
 @onready var square_cost: Label = $HUD/TowerBuildPanel/HBoxContainer/BuildBar/Margin/TowerList/Panel2/Square/SquareCost
 @onready var star_cost: Label = $HUD/TowerBuildPanel/HBoxContainer/BuildBar/Margin/TowerList/Panel3/Star/StarCost
+@onready var volume_slider = $HUD/PauseMenu/VolumeSlider
+@onready var volume_value_label = $HUD/PauseMenu/VolumeValueLabel
 
 var current_tween: Tween
 var lose
@@ -30,7 +32,22 @@ func _ready():
 	triangle_cost.text = str("$" + str(GameData.tower_data["triangle_stock"]["cost"]))
 	square_cost.text = str("$" + str(GameData.tower_data["square_stock"]["cost"]))
 	star_cost.text = str("$" + str(GameData.tower_data["star_stock"]["cost"]))
+	
+	var volume := AudioServer.get_bus_volume_linear(AudioServer.get_bus_index("Master"))
+	volume_slider.value = volume
+	volume_value_label.text = str(int(volume*100))
+	
+	volume_slider.connect("value_changed", _on_slider_moved)
+	volume_slider.connect("drag_ended", _on_drag_ended)
 
+func _on_slider_moved(value: float):
+	volume_value_label.text = "{0}%".format([int(value*100)])
+
+func _on_drag_ended(moved: bool):
+	if moved:
+		AudioServer.set_bus_volume_db(AudioServer.get_bus_index("Master"), linear_to_db(volume_slider.value))
+		$HUD/PauseMenu/PlacementSfx.play()
+		
 func update_money(amount: int):
 	# Update displayed cash
 	cash.text = str("$" + str(amount))

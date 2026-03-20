@@ -15,7 +15,6 @@ func _on_slider_moved(value: float):
 
 func _on_drag_ended(moved: bool):
 	if moved:
-		GameData.volume = slider.value*100
 		AudioServer.set_bus_volume_db(AudioServer.get_bus_index("Master"), linear_to_db(slider.value))
 		test_sound.play()
 

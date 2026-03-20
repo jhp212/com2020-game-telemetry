@@ -321,13 +321,14 @@ text = "ON"
 
 [node name="HowToPlay" type="ScrollContainer" parent="."]
 visible = false
-layout_mode = 0
-offset_left = 495.0
-offset_top = 173.0
-offset_right = 1217.0
-offset_bottom = 529.0
+layout_mode = 2
+offset_left = 553.0
+offset_top = 128.0
+offset_right = 1148.0
+offset_bottom = 552.0
 
 [node name="Label" type="Label" parent="HowToPlay"]
+custom_minimum_size = Vector2(595, 424)
 layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3

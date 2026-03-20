@@ -1,4 +1,4 @@
-[gd_scene load_steps=31 format=3 uid="uid://bw36ka3wx3gww"]
+[gd_scene load_steps=33 format=3 uid="uid://bw36ka3wx3gww"]
 
 [ext_resource type="Script" uid="uid://s0xabfgj4tei" path="res://Scenes/game_logic.gd" id="1_qxrlw"]
 [ext_resource type="Script" uid="uid://dkaot6l8a7grx" path="res://Scenes/ui.gd" id="3_3dryh"]
@@ -13,6 +13,7 @@
 [ext_resource type="Texture2D" uid="uid://cuu1dauurthu4" path="res://Assets/UI/pause_button.png" id="8_3jyqh"]
 [ext_resource type="Script" uid="uid://bfsr4j3mx585x" path="res://Scenes/tower_panel.gd" id="9_3jyqh"]
 [ext_resource type="Texture2D" uid="uid://byiyc4ajotdi6" path="res://Assets/UI/ArrowsDown - Copy.png" id="10_rduqs"]
+[ext_resource type="AudioStream" uid="uid://chg547ffg2rms" path="res://Audio/SFX/SCi fi placement noise.mp3" id="13_r4kb3"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_mq5vq"]
 bg_color = Color(0.6, 0.6, 0.6, 0)
@@ -131,6 +132,12 @@ corner_radius_top_left = 1
 corner_radius_top_right = 1
 corner_radius_bottom_right = 1
 corner_radius_bottom_left = 1
+
+[sub_resource type="StyleBoxLine" id="StyleBoxLine_y6li1"]
+color = Color(1, 0.387955, 0.319725, 1)
+grow_begin = -5.0
+grow_end = -5.0
+thickness = 5
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_gwx22"]
 bg_color = Color(0.6, 0.6, 0.6, 0.12549)
@@ -488,6 +495,48 @@ layout_mode = 2
 theme_override_font_sizes/font_size = 26
 theme_override_styles/normal = SubResource("StyleBoxFlat_bpmfh")
 text = "Quit"
+
+[node name="VolumeLabel" type="Label" parent="UI/HUD/PauseMenu"]
+layout_mode = 2
+offset_left = 30.0
+offset_top = 135.0
+offset_right = 125.0
+offset_bottom = 170.0
+size_flags_horizontal = 4
+size_flags_vertical = 1
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_font_sizes/font_size = 24
+text = "Volume:"
+vertical_alignment = 1
+
+[node name="VolumeSlider" type="HSlider" parent="UI/HUD/PauseMenu"]
+process_mode = 3
+layout_mode = 2
+offset_left = 133.0
+offset_top = 148.0
+offset_right = 303.0
+offset_bottom = 164.0
+theme_override_styles/slider = SubResource("StyleBoxLine_y6li1")
+max_value = 1.0
+step = 0.01
+value = 1.0
+
+[node name="VolumeValueLabel" type="Label" parent="UI/HUD/PauseMenu"]
+process_mode = 3
+offset_left = 302.0
+offset_top = 138.0
+offset_right = 369.0
+offset_bottom = 172.0
+size_flags_horizontal = 4
+size_flags_vertical = 1
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_font_sizes/font_size = 24
+text = "100%"
+horizontal_alignment = 2
+vertical_alignment = 1
+
+[node name="PlacementSfx" type="AudioStreamPlayer" parent="UI/HUD/PauseMenu"]
+stream = ExtResource("13_r4kb3")
 
 [node name="WaveTracker" type="HBoxContainer" parent="UI/HUD"]
 layout_mode = 0

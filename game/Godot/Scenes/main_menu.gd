@@ -3,8 +3,6 @@ extends Control
 var settings_visible := false
 var confirmed_clicks := 0
 
-var htp_shown = false
-
 func _ready() -> void:
 	$LogoutButton.connect("pressed", _on_logout_button_pressed)
 	var username = Telemetry.username
@@ -17,7 +15,8 @@ func _on_logout_button_pressed():
 	get_tree().change_scene_to_file("res://Scenes/login.tscn")
 
 func _toggle_settings_menu():
-	$LevelSelect.visible = not $LevelSelect.visible
+	$LevelSelect.visible  = not $LevelSelect.visible
+	$HowToPlay.visible    = false
 	$SettingsMenu.visible = not $SettingsMenu.visible
 
 func _on_delete_data_button_pressed():
@@ -34,9 +33,4 @@ func _on_delete_data_button_pressed():
 
 
 func _on_htp_button_pressed() -> void:
-	if htp_shown == false:
-		$HowToPlay.show()
-		htp_shown = true
-	elif htp_shown == true:
-		$HowToPlay.hide()
-		htp_shown = false
+	$HowToPlay.visible = not $HowToPlay.visible
