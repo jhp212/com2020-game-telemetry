@@ -66,9 +66,11 @@
         const testLevel = document.getElementById("TestLevelInput").value;
 
         try {
+            
             const response = await fetch("/simulation/run", {
                 method: "POST",
                 headers: {"Content-Type": "application/json"},
+
                 body: JSON.stringify({
                     test_difficulty: testDifficulty,
                     test_count: Number(testCount),
@@ -76,7 +78,14 @@
                 })
             });
 
-            const data = await response.json();
+            const text = await response.text();
+
+            console.log("RAW RESPONSE:", text);
+
+
+            const data = JSON.parse(text);
+            console.log("PARSED:", data);
+
             fillTable(data);
 
         } finally {
@@ -86,15 +95,28 @@
 
     function fillTable(data) {
         const tbody = document.querySelector("#testTable tbody");
+        tbody.innerHTML = "";
 
-        data.forEach(row => {
+    
+        if (Array.isArray(data)) {
+            data.forEach(row => {
+                const tr = document.createElement("tr");
+                tr.innerHTML = `<td>${Number(row.success_rate).toFixed(1)}%</td><td>${row.suggestedAction}</td>`;
+                tbody.appendChild(tr);
+            });
+            return;
+        }
+
+    
+        if (data.success_rate !== undefined) {
             const tr = document.createElement("tr");
-            tr.innerHTML = `
-                <td>${row.success_rate}</td>
-                <td>${row.suggestedAction}</td>
-            `;
+            tr.innerHTML = `<td>${Number(data.success_rate).toFixed(1)}%</td><td>${data.suggestedAction}</td>`;
             tbody.appendChild(tr);
-        });
+            return;
+        }
+
+        
+        console.error("Unexpected response:", data);
     }
 
 </script>
