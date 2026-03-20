@@ -10,12 +10,6 @@ def seed():
     db = SessionLocal()
 
     try:
-        
-        # deleting child tables first to avoid errors during seeding
-        db.query(DecisionLog).delete()
-        db.query(Telemetry).delete()
-        db.query(Anomalies).delete()
-        db.commit()
 
 
 
@@ -23,13 +17,26 @@ def seed():
         # Seed telemetry rows
         base_time = datetime.now() - timedelta(minutes=60)
 
-        allowed_types = ["stage_start", "stage_end", "enemy_defeated", "damage_taken", "tower_spawn","tower_upgrade","money_spent"] 
+        allowed_types = [
+            "stage_start",
+            "stage_end",
+            "stage_fail",
+            "stage_quit",
+            "enemy_defeated",
+            "damage_taken",
+            "tower_spawn",
+            "tower_upgrade",
+            "money_spent",
+            "boss_start",
+            "boss_fail",
+            "boss_defeated",
+        ]
 
         def generate_telemetry_data(telemetry_type):
             if telemetry_type == "stage_end":
                 return {
                     "enemy_defeated": random.randint(1, 50),
-                    "damage_taken": random.randint(1, 200),
+                    "damage_taken": random.randint(1, 2000),
                     "tower_spawn": random.randint(1, 200),
                     "tower_upgrade": random.randint(9, 20),
                     "money_spent": random.randint(3500, 10000)
@@ -38,16 +45,12 @@ def seed():
             if telemetry_type == "enemy_defeated":
                 return {
                     "enemy_id": random.randint(1, 500),
-                    "enemy_type": random.choice(["small", "medium", "big"]),
-                    "enemy_health": random.randint(50, 500),
                 }
 
             if telemetry_type == "tower_spawn":
                 return {
-                    "tower_type": random.choice(["square", "triangle", "star"]),
-                    "tower_cost": random.randint(100, 800),
-                    "xPos": random.randint(0, 15),
-                    "yPos": random.randint(0, 15)
+                    "tower_id": random.choice(["1", "2", "3"]),
+                    
                 }
 
             if telemetry_type == "tower_upgrade":
@@ -65,13 +68,13 @@ def seed():
                 
             if telemetry_type == "money_spent":
                 return {
-                    "amount": random.randint(1000, 10000)
+                    "amount": random.randint(-10, 100000)
                     
                 }
                 
             if telemetry_type == "damage_taken":
                 return {
-                    "amount": random.randint(1, 100)
+                    "amount": random.randint(1, 200)
                     
                 }
 

@@ -1050,6 +1050,21 @@ async def request_admin_page(request: Request):
     
 def detect_anomalies_from_telemetry(telemetry: list[dict]) -> list[dict]:
     
+    ALLOWED_TELEMETRY_TYPES = [
+        "stage_start",
+        "stage_end",
+        "stage_fail",
+        "stage_quit",
+        "enemy_defeated",
+        "damage_taken",
+        "tower_spawn",
+        "tower_upgrade",
+        "money_spent",
+        "boss_start",
+        "boss_fail",
+        "boss_defeated",
+    ]
+    
     anomalies = []
 
     tower_upgrade_counts = {}
@@ -1075,23 +1090,6 @@ def detect_anomalies_from_telemetry(telemetry: list[dict]) -> list[dict]:
         if telemetry_type == "stage_end" and stage_id is not None:
             stage_ended.add(stage_id)
 
-        if telemetry_type == "tower_spawn":
-            tower_type = data.get("tower_type", "unknown")
-            key = (stage_id, tower_type)
-            tower_spawned_by_stage.setdefault(key, 0)
-            tower_spawned_by_stage[key] += 1
-
-            x = int(data.get("xPos", -1) or -1)
-            y = int(data.get("yPos", -1) or -1)
-
-            if x < 0 or y < 0 or x > 15 or y > 15:
-                anomalies.append(
-                    {
-                        "telemetry_ids": [telemetry_id],
-                        "anomaly_type": "Invalid Tower Position",
-                        "resolution": f"Tower spawned at invalid position ({x}, {y}). Check map boundary validation."
-                    }
-                )
 
         if telemetry_type == "tower_upgrade":
             tower_type = data.get("tower_type", "unknown")
@@ -1161,16 +1159,17 @@ def detect_anomalies_from_telemetry(telemetry: list[dict]) -> list[dict]:
                         "resolution": f"Money spent value {amount} exceeds the allowed threshold. Check economy validation."
                     }
                 )
-
+                
+        enemy_defeat_count = 0
         if telemetry_type == "enemy_defeated":
-            enemy_health = int(data.get("enemy_health", 0) or 0)
+            enemy_defeat_count += 1
 
-            if enemy_health <= 0:
+            if enemy_defeat_count > 100:
                 anomalies.append(
                     {
                         "telemetry_ids": [telemetry_id],
-                        "anomaly_type": "Invalid Enemy Health",
-                        "resolution": f"Enemy defeated event recorded with health {enemy_health}. Check enemy state logging."
+                        "anomaly_type": "Impossible number of enemies defeated",
+                        "resolution": f"Enemy defeated event recorded {enemy_defeat_count} times. Check enemy_defeated logging."
                     }
                 )
 
