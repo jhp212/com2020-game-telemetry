@@ -1,9 +1,10 @@
-[gd_scene load_steps=12 format=3 uid="uid://ceqwvifw0ojeu"]
+[gd_scene load_steps=13 format=3 uid="uid://ceqwvifw0ojeu"]
 
 [ext_resource type="Script" uid="uid://dc61sudfhqrl6" path="res://Scenes/main_menu.gd" id="1_28flt"]
 [ext_resource type="Texture2D" uid="uid://cirl1dvpj7d11" path="res://Assets/UI/cog.png" id="2_48xlc"]
+[ext_resource type="StyleBox" uid="uid://cp3nn22dgwq7t" path="res://Styles/main_menu_button_hover.tres" id="2_opfnp"]
 [ext_resource type="Script" uid="uid://c76i4eqv47igq" path="res://Scenes/cog.gd" id="3_1ehe0"]
-[ext_resource type="Script" uid="uid://ik5pevyfqfak" path="res://Scenes/settings.gd" id="4_ce3w2"]
+[ext_resource type="Script" path="res://Scenes/volume_slider.gd" id="4_ce3w2"]
 [ext_resource type="AudioStream" uid="uid://chg547ffg2rms" path="res://Audio/SFX/SCi fi placement noise.mp3" id="5_n45e2"]
 
 [sub_resource type="Gradient" id="Gradient_erv1k"]
@@ -188,6 +189,14 @@ theme_override_font_sizes/font_size = 12
 theme_override_styles/hover = SubResource("StyleBoxFlat_erv1k")
 text = "Hard"
 
+[node name="HTPButton" type="Button" parent="LevelSelect/VBoxContainer"]
+custom_minimum_size = Vector2(300, 70)
+layout_mode = 2
+size_flags_horizontal = 4
+theme_override_font_sizes/font_size = 24
+theme_override_styles/hover = ExtResource("2_opfnp")
+text = "How to play?"
+
 [node name="LogoutButton" type="Button" parent="."]
 custom_minimum_size = Vector2(300, 70)
 layout_mode = 0
@@ -309,3 +318,72 @@ theme_override_font_sizes/font_size = 24
 theme_override_styles/focus = SubResource("StyleBoxEmpty_n45e2")
 button_pressed = true
 text = "ON"
+
+[node name="HowToPlay" type="ScrollContainer" parent="."]
+visible = false
+layout_mode = 0
+offset_left = 495.0
+offset_top = 173.0
+offset_right = 1217.0
+offset_bottom = 529.0
+
+[node name="Label" type="Label" parent="HowToPlay"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+text = "The Main Menu
+
+When you initially load up the game you are presented with the main menu. From here, there are buttons on the screen which you can press:
+
+Play – begins the game from level one so you can play through all the levels
+
+Select Level – takes you to a different screen where you can chose which specific level to play
+To select the level, click anywhere on the picture
+
+Difficulty – allows the user to select between an easy, medium and hard difficulty.
+Difficulties change the enemies health multiplier
+
+Cog - settings, from here you can select whether you want your game to send telemetry events, adjust volume and delete your data from the database if you so wish.
+
+Setup
+
+Once a level has been loaded, time is given to the player to place towers. Once ready to start the first wave, press the play button at the top right of the screen.
+
+Tower Placement
+
+UI on the right side of the screen displays images of the towers that can be placed along with their cost.
+
+To place a tower:
+- Left click on the image of the tower you would like to place, you will enter build mode
+- Move the preview tower (your mouse position) to a valid tile on the map
+- Left click again to place
+
+The tile is invalid if the colour of the preview tower and its range go red.
+If you selected the wrong tower type, click on the right ones image and it will automatically switch the preview tower type.
+Left click to escape build mode.
+
+Levels & Waves
+
+Each level has a set amount of wave with predetermined enemy spawns. A wave lasts as long as it takes to spawn in all the enemies for that wave. Between each wave the player is given a 20 second grace period to prepare for the next wave.
+Every 5 waves is a mini boss/ big boss wave.
+The game can be paused at any point during the level by pressing the pause button, pressing again resumes.
+
+Money
+
+850 cash is given to the player at the beginning of every level. Money is gained for every enemy killed (the stronger the enemy, the more money gained) and after every wave (with the amount gained gradually increasing).
+
+Upgrades
+
+When a tower is clicked, a panel appears displaying that towers information. This panel shows the upgrades available for the tower as well as its cost. 
+The tower can also be sold by pressing the sell (for 50%) button.
+
+Game Over
+
+You win if you complete every wave of the level and defeat every enemy.
+You lose if you let enough enemies through and lose all your health.
+
+
+"
+autowrap_mode = 2
+
+[connection signal="pressed" from="LevelSelect/VBoxContainer/HTPButton" to="." method="_on_htp_button_pressed"]

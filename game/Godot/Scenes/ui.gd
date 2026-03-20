@@ -2,7 +2,7 @@ extends CanvasLayer
 
 # Connect nodes
 @onready var health_bar: TextureProgressBar = $HUD/HealthUI/HBoxContainer/HealthBar
-@onready var cash: Label = $HUD/TowerBuildPanel/HBoxContainer/BuildBar/CashUI/HBoxContainer/Cash
+@onready var cash: Label = $HUD/CashUI/HBoxContainer/Cash
 @onready var triangle_cost: Label = $HUD/TowerBuildPanel/HBoxContainer/BuildBar/Margin/TowerList/Panel/Triangle/TriangleCost
 @onready var square_cost: Label = $HUD/TowerBuildPanel/HBoxContainer/BuildBar/Margin/TowerList/Panel2/Square/SquareCost
 @onready var star_cost: Label = $HUD/TowerBuildPanel/HBoxContainer/BuildBar/Margin/TowerList/Panel3/Star/StarCost

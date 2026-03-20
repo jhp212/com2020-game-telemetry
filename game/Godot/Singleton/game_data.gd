@@ -123,11 +123,11 @@ func update_data() -> void:
 	}
 
 func difficulty_selected(difficulty):
-	enemy_data["medium_circle"]["health"] = 50
-	enemy_data["small_circle"]["health"] = 200
-	enemy_data["large_circle"]["health"] = 40
+	enemy_data["medium_circle"]["health"] = 40
+	enemy_data["small_circle"]["health"] = 20
+	enemy_data["large_circle"]["health"] = 150
 	enemy_data["mini_boss_circle"]["health"] = 1000
-	enemy_data["big_boss_circle"]["health"] = 10000
+	enemy_data["big_boss_circle"]["health"] = 2000
 	if difficulty == "easy":
 		# Get easy enemy health multiplier from database
 		var json = await Telemetry.get_parameter("easy_health_multiplier")
@@ -264,7 +264,7 @@ var tower_upgrades = {
 		"1": "Pew Pew",
 		"1desc": "+1 shot",
 		"1cost": 400,
-		"sell_price": 130
+		"sell_price": 125
 		
 	},
 	"TriangleT2": {
@@ -272,47 +272,47 @@ var tower_upgrades = {
 		"1": "Pew Pew Pew",
 		"1desc": "+1 shot",
 		"1cost": 600,
-		"sell_price": 330
+		"sell_price": 325
 	},
 	"TriangleT3": {
 		"stage": 3,
-		"sell_price": 680
+		"sell_price": 625
 	},
 	"SquareStock": {
 		"stage": 1,
 		"1": "Radial Sweep",
 		"1desc": "Double projectiles",
 		"1cost": 500,
-		"sell_price": 280
+		"sell_price": 100
 	},
 	"SquareT2": {
 		"stage": 2,
 		"1": "Radial Sweep 2.0",
 		"1desc": "Double Projectiles",
 		"1cost": 1400,
-		"sell_price": 430
+		"sell_price": 350
 	},
 	"SquareT3": {
 		"stage": 3,
-		"sell_price": 830
+		"sell_price": 1050
 	},
 	"StarStock": {
 		"stage": 1,
 		"1": "Supernova",
 		"1desc": "+ damage & range",
 		"1cost": 600,
-		"sell_price": 280
+		"sell_price": 275
 	},
 	"StarT2": {
 		"stage": 2,
 		"1": "Blackhole",
 		"1desc": "++ damage & range",
-		"1cost": 1000,
-		"sell_price": 590
+		"1cost": 1200,
+		"sell_price": 575
 	},
 	"StarT3": {
 		"stage": 3,
-		"sell_price": 1090
+		"sell_price": 1075
 	}
 	
 }

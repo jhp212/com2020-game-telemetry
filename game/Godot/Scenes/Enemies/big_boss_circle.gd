@@ -29,7 +29,7 @@ func die(condition):
 	if condition == 0:
 		# Give money to player and log telemetry event
 		GameData.add_money(GameData.enemy_data["big_boss_circle"]["cash"])
-		Telemetry.log_event("enemy_defeated", {"enemy_id": 5})
+		Telemetry.log_event("boss_defeated", {"enemy_id": 5})
 		$Body/AnimatedSprite2D.play("death")
 		self.PROCESS_MODE_PAUSABLE
 		await $Body/AnimatedSprite2D.animation_finished
