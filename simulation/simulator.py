@@ -14,9 +14,11 @@ from functools import lru_cache
 
 API_URL = os.getenv("API_URL", "http://127.0.0.1:10101")
 
-def get_parameter(parameter_name: str, default_value):
+def get_parameter(parameter_name: str, default_value, JWT: str | None = None):
+	if JWT is None:
+		return default_value
 	try:
-		response = requests.get(f"{API_URL}/parameters/?parameter_name={parameter_name}")
+		response = requests.get(f"{API_URL}/parameters/?parameter_name={parameter_name}", headers={"Authorization": f"Bearer {JWT}"})
 		value = response.json()[0].get("value", default_value)
 		return value
 	except Exception:
@@ -47,22 +49,25 @@ def within_bounds(tower_type: str, tower_location: tuple, path_location: tuple) 
 		case _:
 			return False
 
-def simulation(test_count, level,difficulty):
+def simulation(test_count, level, difficulty, JWT: str | None = None):
+	if JWT is None:
+		return {"success_rate": 0,"suggestedAction": "Not authenticated, JWT not found"}
+	
 	global wavecount, base_health, base_money, enemies, waves, towers, tower_queue, lvlname, triangle_range_multiplier, star_range_multiplier
-	triangle_range_multiplier = get_parameter("triangle_radius_multiplier",1)
-	star_range_multiplier = get_parameter("star_radius_multiplier",1)
-	enemy_damage_mult = get_parameter("enemy_damage_multiplier", 1)
+	triangle_range_multiplier = get_parameter("triangle_radius_multiplier",1, JWT)
+	star_range_multiplier = get_parameter("star_radius_multiplier",1, JWT)
+	enemy_damage_mult = get_parameter("enemy_damage_multiplier", 1, JWT)
 	match difficulty.lower():
 		case "easy":
-			enemy_health_mult = get_parameter("easy_health_multiplier", 1)
+			enemy_health_mult = get_parameter("easy_health_multiplier", 1, JWT)
 		case "medium":
-			enemy_health_mult = get_parameter("medium_health_multiplier", 1)
+			enemy_health_mult = get_parameter("medium_health_multiplier", 1, JWT)
 		case "hard":
-			enemy_health_mult = get_parameter("hard_health_multiplier", 1)
+			enemy_health_mult = get_parameter("hard_health_multiplier", 1, JWT)
 		case _:
 			return {"success_rate": 0,"suggestedAction": "Please input valid difficulty level"}
-	enemy_speed_mult = get_parameter("enemy_damage_multiplier", 1)
-	money_earned_multiplier = get_parameter("money_earned_multiplier",1)
+	enemy_speed_mult = get_parameter("enemy_damage_multiplier", 1, JWT)
+	money_earned_multiplier = get_parameter("money_earned_multiplier",1, JWT)
 
 
 	timesamplerate = 1 #seconds / iteration: how many "seconds" are simulated every second
