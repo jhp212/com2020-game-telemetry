@@ -672,12 +672,18 @@ class SimulationRequest(BaseModel):
     level: int    
     
 @app.post("/simulation/run")
-async def runSimulation(payload: SimulationRequest):
+async def runSimulation(request: Request,payload: SimulationRequest):
+    try:
+        token = require_auth(request)
+    except HTTPException:
+        return JSONResponse(status_code=401, content={"detail": "Not authenticated"})
+    
     try:
         result = simulation(
             test_count=payload.test_count,
             level=payload.level,
-            difficulty = payload.test_difficulty
+            difficulty = payload.test_difficulty,
+            JWT = token
         )
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))

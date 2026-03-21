@@ -221,7 +221,7 @@ def simulation(test_count, level, difficulty, JWT: str | None = None):
 if __name__ == "__main__":
 	import datetime
 	start = datetime.datetime.now() 
-	simulation(1000,1,'easy')
+	#simulation(1000,1,'easy')
 	end = datetime.datetime.now()
 
 	print(end-start)
