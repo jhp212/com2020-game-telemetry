@@ -27,3 +27,4 @@ To run specific tests:
 
 - `pytest tests/api`
 - `pytest tests/db`
+- `pytest tests/dashboard`
