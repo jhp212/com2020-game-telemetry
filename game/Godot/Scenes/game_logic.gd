@@ -207,7 +207,7 @@ func request_upgrade(tower):
 	var upgrade_cost = GameData.tower_upgrades[tower.tower_type]["1cost"]
 	if GameData.spend(upgrade_cost):
 		print("tower_upgraded", {tower: GameData.tower_upgrades[tower.tower_type]["1cost"]})
-		Telemetry.log_event("tower_upgraded", {tower: GameData.tower_upgrades[tower.tower_type]["1cost"]})
+		Telemetry.log_event("tower_upgrade", {tower: GameData.tower_upgrades[tower.tower_type]["1cost"]})
 		
 		var new_tower = tower.upgrade(tower)
 	

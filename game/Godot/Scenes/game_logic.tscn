@@ -523,6 +523,7 @@ value = 1.0
 
 [node name="VolumeValueLabel" type="Label" parent="UI/HUD/PauseMenu"]
 process_mode = 3
+layout_mode = 0
 offset_left = 302.0
 offset_top = 138.0
 offset_right = 369.0

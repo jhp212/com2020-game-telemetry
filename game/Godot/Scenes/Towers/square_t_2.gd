@@ -93,7 +93,7 @@ func _ready():
 	if built:
 		placement_sfx.play()
 		collision_shape.shape.radius = GameData.tower_data["square_t_2"]["range"]
-		Telemetry.log_event("tower_upgraded", {"tower_id": 2})
+		Telemetry.log_event("tower_upgrade", {"tower_id": 2})
 
 func _on_range_body_entered(body: Node2D) -> void:
 	# Add enemy when it enters the range

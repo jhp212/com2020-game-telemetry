@@ -86,7 +86,7 @@ func _ready():
 		# PLay sound effect when placed
 		placement_sfx.play()
 		collision_shape.shape.radius = GameData.tower_data["triangle_t_3"]["range"] / 2
-		Telemetry.log_event("tower_upgraded", {"tower_id": 1})
+		Telemetry.log_event("tower_upgrade", {"tower_id": 1})
 
 func _on_range_body_entered(body: Node2D) -> void:
 	# Add enemy when it enters the range
