@@ -5,6 +5,7 @@ from contextlib import asynccontextmanager
 from database.database import engine, SessionLocal # type: ignore
 from database.models import Base, Parameters, Users # type: ignore
 from database.security import get_password_hash
+from database.constants import DEFAULT_PARAMETERS, DEFAULT_USERS
 
 from database.routers import auth, users, game_data
 
@@ -12,22 +13,6 @@ from database.routers import auth, users, game_data
 Base.metadata.create_all(bind=engine)
 
 # Setup Defaults
-DEFAULT_PARAMETERS = [
-    {"name": "enemy_damage_multiplier", "value": 1.0},
-    {"name": "enemy_speed_multiplier", "value": 1.0},
-    {"name": "money_earned_multiplier", "value": 1.0},
-    {"name": "easy_health_multiplier", "value": 1.0},
-    {"name": "medium_health_multiplier", "value": 1.0},
-    {"name": "hard_health_multiplier", "value": 1.0},
-    {"name": "triangle_radius_multiplier", "value": 1.0},
-    {"name": "star_radius_multiplier", "value": 1.0},
-]
-
-DEFAULT_USERS = [
-    {"username": "testadmin", "password": "Adminpass1!", "is_admin": 1},
-    {"username": "testplayer", "password": "Playerpass1!", "is_admin": 0}
-]
-
 def initialize_db_defaults():
     db = SessionLocal()
     try:

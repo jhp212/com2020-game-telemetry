@@ -19,7 +19,7 @@ This directory contains the Database System that stores telemetry data and game 
 - enemy_defeated {enemy_id: Integer}
 - damage_taken {amount: Integer, remaining_health: Integer}
 - tower_spawn {tower_id: Integer}
-- tower_upgrade {tower_id: Integer, upgrade_id: Integer}
+- tower_upgrade {tower_id: Integer}
 - money_spent {amount: Integer, remaining_amount: Integer}
 - boss_start {}
 - boss_fail {}
@@ -38,7 +38,7 @@ This directory contains the Database System that stores telemetry data and game 
 
 ## Balancing rules
 
-- enemy_damage_stage_fail_rate {"If the death rate is greater than __%, reduce the enemy_damage_multipler"}
+- Win Rate, expected value 80-95%. Increase damage if >95%, decrease if <80%
 
 ## Endpoints
 
