@@ -188,9 +188,9 @@ async def home(request: Request):
         est_money_earned_values.append(round(est_earned, 2))
     
     return templates.TemplateResponse(
-        "home.html",
-        {
-            
+        request=request,
+        name="home.html",
+        context={
             "request": request,
             "title": "Home",
             
@@ -264,8 +264,9 @@ async def dashboard(request: Request):
         )
     # return to template to be displayed      
     return templates.TemplateResponse(
-        "dashboard.html",
-        {"request": request, "title": "Telemetry Dashboard", "telemetry_rows": telemetry_rows}
+        request=request,
+        name="dashboard.html",
+        context={"title": "Telemetry Dashboard", "telemetry_rows": telemetry_rows}
     )
     
     
@@ -313,8 +314,9 @@ async def decisionLog(request: Request):
         
     # return to template to be displayed      
     return templates.TemplateResponse(
-        "decision_log.html",
-        {"request": request, "title": "Decision Log", "decision_log_rows": decision_log_rows}
+        request=request,
+        name="decision_log.html",
+        context={"title": "Decision Log", "decision_log_rows": decision_log_rows}
     )
     
 @app.get("/parameters", response_class=HTMLResponse)
@@ -355,8 +357,9 @@ async def parameters(request: Request):
     
     #return to template to be displayed        
     return templates.TemplateResponse(
-        "parameters.html",
-        {"request": request, "title": "Parameters", "parameter_rows": parameter_rows}
+        request=request,
+        name="parameters.html",
+        context={"title": "Parameters", "parameter_rows": parameter_rows}
     )
 
 
@@ -647,8 +650,9 @@ async def dashboard_balancing(request: Request):
     
     
     return templates.TemplateResponse(
-        "balancing.html",
-        {"request": request, "title": "Balancing", "balancing_response": balancing_response}
+        request=request,
+        name="balancing.html",
+        context={"title": "Balancing", "balancing_response": balancing_response}
     )
     
     
@@ -662,8 +666,9 @@ async def getSimulation(request: Request):
     
   
     return templates.TemplateResponse(
-        "simulation.html",
-        {"request": request, "title": "Simulation"}
+        request=request,
+        name="simulation.html",
+        context={"title": "Simulation"}
     )
     
 class SimulationRequest(BaseModel):
@@ -704,8 +709,9 @@ async def login_page(request: Request):
         return RedirectResponse(url="/", status_code=302)
 
     return templates.TemplateResponse(
-        "login.html",
-        {"request": request, "error": None},
+        request=request,
+        name="login.html",
+        context={"error": None},
     )
 
 
@@ -722,8 +728,9 @@ async def login_action(
 
     if not username or not password:
         return templates.TemplateResponse(
-            "login.html",
-            {
+            request=request,
+            name="login.html",
+            context={
                 "request": request,
                 "error": "Username and password are required",
             },
@@ -739,9 +746,9 @@ async def login_action(
 
     if not r.ok:
         return templates.TemplateResponse(
-            "login.html",
-            {
-                "request": request,
+            request=request,
+            name="login.html",
+            context={
                 "error": "Invalid username or password",
             },
             status_code=401,
@@ -814,9 +821,9 @@ async def anomalies(request: Request):
         )
 
     return templates.TemplateResponse(
-        "anomalies.html",
-        {
-            "request": request,
+        request=request,
+        name="anomalies.html",
+        context={
             "title": "Anomalies",
             "anomaly_response": anomaly_response
         }
@@ -832,8 +839,9 @@ async def register_page(request: Request):
         return RedirectResponse(url="/", status_code=302)
 
     return templates.TemplateResponse(
-        "signup.html",
-        {"request": request, "error": None},
+        request=request,
+        name="signup.html",
+        context={"error": None},
     )
     
 @app.post("/register")
@@ -847,9 +855,9 @@ async def register_action(
 
     if not username or not password:
         return templates.TemplateResponse(
-            "signup.html",
-            {
-                "request": request,
+            request=request,
+            name="signup.html",
+            context={
                 "error": "All fields are required",
             },
             status_code=400,
@@ -857,9 +865,9 @@ async def register_action(
 
     if len(username) < 3 or len(username) > 20:
         return templates.TemplateResponse(
-            "signup.html",
-            {
-                "request": request,
+            request=request,
+            name="signup.html",
+            context={
                 "error": "Username must be between 3 and 20 characters",
             },
             status_code=400,
@@ -867,9 +875,9 @@ async def register_action(
 
     if not all(c.isalnum() or c == "_" for c in username):
         return templates.TemplateResponse(
-            "signup.html",
-            {
-                "request": request,
+            request=request,
+            name="signup.html",
+            context={
                 "error": "Username can only contain letters, numbers, and underscores",
             },
             status_code=400,
@@ -877,9 +885,9 @@ async def register_action(
 
     if len(password) < 8:
         return templates.TemplateResponse(
-            "signup.html",
-            {
-                "request": request,
+            request=request,
+            name="signup.html",
+            context={
                 "error": "Password must be at least 8 characters long",
             },
             status_code=400,
@@ -887,9 +895,9 @@ async def register_action(
 
     if not any(c.isalpha() for c in password):
         return templates.TemplateResponse(
-            "signup.html",
-            {
-                "request": request,
+            request=request,
+            name="signup.html",
+            context={
                 "error": "Password must contain at least one letter",
             },
             status_code=400,
@@ -897,9 +905,9 @@ async def register_action(
 
     if not any(c.isdigit() for c in password):
         return templates.TemplateResponse(
-            "signup.html",
-            {
-                "request": request,
+            request=request,
+            name="signup.html",
+            context={
                 "error": "Password must contain at least one number",
             },
             status_code=400,
@@ -925,9 +933,9 @@ async def register_action(
             pass
 
         return templates.TemplateResponse(
-            "signup.html",
-            {
-                "request": request,
+            request=request,
+            name="signup.html",
+            context={
                 "error": error_message,
             },
             status_code=r.status_code,
@@ -970,9 +978,9 @@ async def users_page(request: Request):
     users = response.json()
 
     return templates.TemplateResponse(
-        "users.html",
-        {
-            "request": request,
+        request=request,
+        name="users.html",
+        context={
             "title": "Users",
             "users": users
         }
@@ -994,9 +1002,9 @@ async def admin_requests(request: Request):
     requests_list = response.json()
 
     return templates.TemplateResponse(
-        "admin_requests.html",
-        {
-            "request": request,
+        request=request,
+        name="admin_requests.html",
+        context={
             "title": "Admin Requests",
             "requests": requests_list
         }
@@ -1019,9 +1027,9 @@ async def request_admin(request: Request):
     if not response.ok:
         if response.status_code == 400:
             return templates.TemplateResponse(
-                "request_admin.html",
-                {
-                    "request": request,
+                request=request,
+                name="request_admin.html",
+                context={
                     "title": "Admin Access Required",
                     "message": response.json().get("detail", "Admin request already submitted.")
                 },
@@ -1030,9 +1038,9 @@ async def request_admin(request: Request):
         raise HTTPException(status_code=response.status_code, detail=response.text)
 
     return templates.TemplateResponse(
-        "request_admin.html",
-        {
-            "request": request,
+        request=request,
+        name="request_admin.html",
+        context={
             "title": "Admin Access Required",
             "message": "Your admin request has been submitted successfully."
         }
@@ -1046,9 +1054,9 @@ async def request_admin_page(request: Request):
         return RedirectResponse(url="/login", status_code=302)
 
     return templates.TemplateResponse(
-        "request_admin.html",
-        {
-            "request": request,
+        request=request,
+        name="request_admin.html",
+        context={
             "title": "Admin Access Required",
             "message": None
         }
