@@ -19,12 +19,16 @@ Assumes the `database/` directory is located at the same level as the `tests/` d
 
 Run tests from the **project root directory**
 
-To run all tests:
+To run all tests, run:
 
-- `pytest`
+```bash
+pytest
+```
 
 To run specific tests:
 
-- `pytest tests/api`
-- `pytest tests/db`
-- `pytest tests/dashboard`
+```bash
+pytest tests/api
+pytest tests/db
+pytest tests/dashboard
+```
