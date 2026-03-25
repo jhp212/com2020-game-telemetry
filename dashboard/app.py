@@ -584,9 +584,9 @@ async def dashboard_balancing(request: Request):
         average_tower_upgrades = total_tower_upgrades / stage_count
     
     # Expected value constants
-    MONEY_SPENT = 1
-    ENEMIES_DEFEATED = 1000
-    TOWER_UPGRADES = 1
+    MONEY_SPENT = 5000
+    ENEMIES_DEFEATED = 40
+    TOWER_UPGRADES = 10
     
     balancing_response= []
     if win_ratio > 95:
@@ -644,7 +644,16 @@ async def dashboard_balancing(request: Request):
             }
         )
         
-    
+    if(average_enemies_defeated < ENEMIES_DEFEATED*0.5):
+        balancing_response.append(
+            {
+                "balancing_area": "Defeating Enemies",
+                "expected_value": str(ENEMIES_DEFEATED),
+                "actual_value": str(average_enemies_defeated),
+                "issue": "Players are really struggling to defeat almost all enemies",
+                "balancing_suggestion": "Decrease enemy health significantly"
+            }
+        )
         
     
     

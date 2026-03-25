@@ -38,7 +38,12 @@ This directory contains the Database System that stores telemetry data and game 
 
 ## Balancing rules
 
-- Win Rate, expected value 80-95%. Increase damage if >95%, decrease if <80%
+- Win Rate > 95%, suggest increasing damage or health multiplier
+- Win Rate < 80%, suggest decreasing damage or health multiplier
+- Average money spent > 5000$, suggest decreasing money earned
+- Average total upgrades per level > 10, increase tower upgrade cost
+- Average enemies defeated per level < 40, suggest decreasing enemy health
+- Average enemies defeated per level < 20, suggest decreasing enemy health significantly
 
 ## Endpoints
 
